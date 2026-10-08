@@ -89,6 +89,10 @@
                     <i class="fa-solid fa-calculator w-5 text-center text-sky-400"></i>
                     <span data-i18n="navCalculator">Margin Calculator</span>
                 </button>
+                <button onclick="switchTab('pics')" id="nav-pics" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
+                    <i class="fa-solid fa-user-shield w-5 text-center text-indigo-400"></i>
+                    <span data-i18n="navPics">Tim & PIC Agency</span>
+                </button>
                 <button onclick="switchTab('freelancers')" id="nav-freelancers" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
                     <i class="fa-solid fa-users-gear w-5 text-center text-purple-400"></i>
                     <span data-i18n="navFreelancers">Talent Pool (Freelancer)</span>
@@ -296,9 +300,6 @@
 
                             <select id="project-filter-pic" onchange="renderProjects()" class="bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-gray-100">
                                 <option value="ALL" data-i18n="allPics">Semua PIC</option>
-                                <option value="Imam (Founder)">Imam (Founder)</option>
-                                <option value="Rekan 1">Rekan 1</option>
-                                <option value="Rekan 2">Rekan 2</option>
                             </select>
 
                             <select id="project-filter-category" onchange="renderProjects()" class="bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-gray-100">
@@ -541,7 +542,26 @@
                     </div>
                 </section>
 
-                <!-- TAB 5: FREELANCERS -->
+                <!-- TAB 5: PICS & TEAM MANAGEMENT (NEW) -->
+                <section id="tab-pics" class="space-y-6 hidden">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                        <div class="flex flex-wrap items-center gap-3 flex-1">
+                            <div class="relative flex-1 min-w-[200px]">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                <input type="text" id="pic-search" oninput="renderPics()" placeholder="Cari nama, peran, atau kontak PIC..." data-i18n-placeholder="picSearchPlaceholder" class="w-full pl-9 pr-4 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800 dark:text-gray-100">
+                            </div>
+                        </div>
+
+                        <button onclick="openPicModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-md shadow-indigo-500/20 transition">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <span data-i18n="picAddBtn">Tambah PIC Baru</span>
+                        </button>
+                    </div>
+
+                    <div id="pics-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                </section>
+
+                <!-- TAB 6: FREELANCERS -->
                 <section id="tab-freelancers" class="space-y-6 hidden">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
                         <div class="flex flex-wrap items-center gap-3 flex-1">
@@ -569,7 +589,7 @@
                     <div id="freelancers-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </section>
 
-                <!-- TAB 6: VENDORS -->
+                <!-- TAB 7: VENDORS -->
                 <section id="tab-vendors" class="space-y-6 hidden">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
                         <div class="flex flex-wrap items-center gap-3 flex-1">
@@ -585,11 +605,6 @@
                                 <option value="Legal & Notaris">Legal & Notaris</option>
                                 <option value="Event & Venue">Event & Venue</option>
                             </select>
-
-                            <select id="vendor-sort-by" onchange="renderVendors()" class="bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-800 dark:text-gray-100">
-                                <option value="rating-desc">Rating Tertinggi</option>
-                                <option value="name-asc">Nama (A-Z)</option>
-                            </select>
                         </div>
 
                         <button onclick="openVendorModal()" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-md shadow-teal-500/20 transition">
@@ -601,16 +616,16 @@
                     <div id="vendors-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </section>
 
-                <!-- TAB 7: INVOICES -->
+                <!-- TAB 8: INVOICES -->
                 <section id="tab-invoices" class="space-y-6 hidden">
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                         <div class="lg:col-span-5 bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-4 no-print">
                             <h3 class="text-lg font-bold text-gray-800 dark:text-white border-b pb-3 border-gray-100 dark:border-gray-700" data-i18n="invConfigTitle">Pengaturan Faktur / Invoice</h3>
                             
                             <div>
-                                <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Impor Data dari Proyek</label>
+                                <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="invImportProjectLabel">Impor Data dari Proyek</label>
                                 <select id="invoice-project-select" onchange="loadProjectIntoInvoice()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    <option value="">-- Pilih Proyek Pipeline --</option>
+                                    <option value="" data-i18n="invSelectProjectDefault">-- Pilih Proyek Pipeline --</option>
                                 </select>
                             </div>
 
@@ -743,9 +758,7 @@
                     <div>
                         <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">PIC / Penanggung Jawab</label>
                         <select id="proj-pic" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="Imam (Founder)">Imam (Founder)</option>
-                            <option value="Rekan 1">Rekan 1</option>
-                            <option value="Rekan 2">Rekan 2</option>
+                            <!-- Dynamic from PICs -->
                         </select>
                     </div>
                     <div>
@@ -829,9 +842,7 @@
                         <div>
                             <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-300 block mb-1">PIC Pembuat Log</label>
                             <select id="log-pic" class="w-full px-3 py-1.5 bg-white dark:bg-gray-800 rounded-lg text-xs border border-gray-200 dark:border-gray-600">
-                                <option value="Imam (Founder)">Imam (Founder)</option>
-                                <option value="Rekan 1">Rekan 1</option>
-                                <option value="Rekan 2">Rekan 2</option>
+                                <!-- Dynamic from PICs -->
                             </select>
                         </div>
                     </div>
@@ -868,7 +879,40 @@
         </div>
     </div>
 
-    <!-- MODAL 3: ADD / EDIT FREELANCER -->
+    <!-- MODAL 3: ADD / EDIT PIC (NEW) -->
+    <div id="modal-pic" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-700">
+            <div class="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                <h3 id="modal-pic-title" class="text-lg font-bold text-gray-800 dark:text-white" data-i18n="modalPicAddTitle">Tambah PIC / Anggota Tim</h3>
+                <button onclick="closePicModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="form-pic" onsubmit="savePic(event)" class="p-5 space-y-4">
+                <input type="hidden" id="pic-id">
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Nama PIC / Anggota Tim</label>
+                    <input type="text" id="pic-name" required placeholder="Contoh: Imam (Founder)" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Peran / Jabatan Utama</label>
+                    <input type="text" id="pic-role" required placeholder="Contoh: Project Manager & Tech Lead" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Alamat Email Kontak</label>
+                    <input type="email" id="pic-email" placeholder="imam@3sagency.id" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Nomor WhatsApp (62...)</label>
+                    <input type="text" id="pic-phone" required placeholder="6281234567890" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                </div>
+                <div class="pt-3 flex justify-end space-x-3 border-t border-gray-100 dark:border-gray-700">
+                    <button type="button" onclick="closePicModal()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 rounded-xl">Batal</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-bold bg-indigo-600 text-white rounded-xl shadow-md">Simpan PIC</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 4: ADD / EDIT FREELANCER -->
     <div id="modal-freelancer" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden p-4">
         <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-700">
             <div class="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
@@ -916,7 +960,7 @@
         </div>
     </div>
 
-    <!-- MODAL 4: ADD / EDIT VENDOR -->
+    <!-- MODAL 5: ADD / EDIT VENDOR -->
     <div id="modal-vendor" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden p-4">
         <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-700">
             <div class="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
@@ -975,7 +1019,7 @@
         </div>
     </div>
 
-    <!-- MODAL 5: CONFIRMATION MODAL -->
+    <!-- MODAL 6: CONFIRMATION MODAL -->
     <div id="modal-confirm" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden p-4">
         <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-700 p-6 space-y-4 text-center">
             <div id="confirm-icon-container" class="w-14 h-14 rounded-full flex items-center justify-center mx-auto text-2xl"></div>
@@ -1008,6 +1052,7 @@
                 navProjects: "Projects & Pipeline",
                 navCalendar: "Kalender Project",
                 navCalculator: "Margin Calculator",
+                navPics: "Tim & PIC Agency",
                 navFreelancers: "Talent Pool (Freelancer)",
                 navVendors: "Vendor & Partner Directory",
                 navInvoices: "Invoice Generator",
@@ -1045,7 +1090,26 @@
                 tableView: "Tabel",
                 kanbanView: "Kanban Board",
                 noProjectsFound: "Tidak ada proyek tersimpan.",
-                demoBadge: "DEMO"
+                demoBadge: "DEMO",
+                picSearchPlaceholder: "Cari nama, peran, atau kontak PIC...",
+                picAddBtn: "Tambah PIC Baru",
+                modalPicAddTitle: "Tambah PIC / Anggota Tim",
+                calcPresetTitle: "Template Paket Layanan Instan",
+                calcPresetSub: "Klik untuk memuat variabel harga default",
+                calcStructureTitle: "Simulasi Struktur Biaya",
+                calcSelectVendorLabel: "Pilih Vendor/Freelancer Terdaftar (Opsional)",
+                calcManualOption: "-- Bebas / Input Manual --",
+                calcSubcontractCost: "Biaya Vendor / Sub-Kontrak (IDR)",
+                calcBufferLabel: "Buffer Risiko & Scope Creep (%)",
+                calcOverheadLabel: "Overhead Operasional Agency (%)",
+                calcTargetMarginLabel: "Target Net Margin Agency (%)",
+                calcRecQuote: "Rekomendasi Penawaran Klien",
+                calcNetProfit: "Laba Bersih Agency",
+                calcBreakeven: "Harga Break-Even",
+                calcConvertToProj: "Jadikan Proyek / Pitching",
+                invConfigTitle: "Pengaturan Faktur / Invoice",
+                invImportProjectLabel: "Impor Data dari Proyek",
+                invSelectProjectDefault: "-- Pilih Proyek Pipeline --"
             },
             en: {
                 appName: "3's Agency",
@@ -1054,6 +1118,7 @@
                 navProjects: "Projects & Pipeline",
                 navCalendar: "Project Calendar",
                 navCalculator: "Margin Calculator",
+                navPics: "Team & Agency PICs",
                 navFreelancers: "Talent Pool (Freelancers)",
                 navVendors: "Vendor & Partner Directory",
                 navInvoices: "Invoice Generator",
@@ -1091,9 +1156,34 @@
                 tableView: "Table",
                 kanbanView: "Kanban Board",
                 noProjectsFound: "No projects saved.",
-                demoBadge: "DEMO"
+                demoBadge: "DEMO",
+                picSearchPlaceholder: "Search PIC name, role, or contact...",
+                picAddBtn: "Add New PIC",
+                modalPicAddTitle: "Add PIC / Team Member",
+                calcPresetTitle: "Instant Service Package Templates",
+                calcPresetSub: "Click to load default pricing variables",
+                calcStructureTitle: "Cost Structure Simulation",
+                calcSelectVendorLabel: "Select Registered Vendor/Freelancer (Optional)",
+                calcManualOption: "-- Custom / Manual Input --",
+                calcSubcontractCost: "Subcontractor / Vendor Cost (IDR)",
+                calcBufferLabel: "Risk Buffer & Scope Creep (%)",
+                calcOverheadLabel: "Agency Operational Overhead (%)",
+                calcTargetMarginLabel: "Target Agency Net Margin (%)",
+                calcRecQuote: "Recommended Client Quote",
+                calcNetProfit: "Agency Net Profit",
+                calcBreakeven: "Break-Even Price",
+                calcConvertToProj: "Convert to Project / Pitching",
+                invConfigTitle: "Invoice Configuration",
+                invImportProjectLabel: "Import Data from Project",
+                invSelectProjectDefault: "-- Select Pipeline Project --"
             }
         };
+
+        const DEFAULT_PICS = [
+            { id: 'pic_1', name: 'Imam (Founder)', role: 'Founder & Director', email: 'imam@3sagency.id', phone: '6281234567890', isDummy: false },
+            { id: 'pic_2', name: 'Rekan 1', role: 'Project Manager', email: 'pm1@3sagency.id', phone: '6281234567891', isDummy: false },
+            { id: 'pic_3', name: 'Rekan 2', role: 'Account Executive', email: 'ae@3sagency.id', phone: '6281234567892', isDummy: false }
+        ];
 
         const SAMPLE_DEMO_PROJECTS = [
             { id: 'demo_p1', client: 'PT Digital Nusantara', title: 'Rebrand & Modern Web Development', pic: 'Imam (Founder)', category: 'Web Dev', revenue: 35000000, cost: 18000000, freelancer: 'Budi Santoso', deadline: '2026-10-25', status: 'In Progress', isDummy: true, logs: [{ id: 'l1', date: '2026-10-08', pic: 'Imam (Founder)', note: 'Kickoff meeting selesai, struktur sitemap disetujui.', statusUpdate: 'In Progress' }] },
@@ -1111,6 +1201,7 @@
         ];
 
         window.projects = [];
+        window.pics = [];
         window.freelancers = [];
         window.vendors = [];
         window.currentTab = 'dashboard';
@@ -1123,7 +1214,6 @@
 
         let chartRevExp = null;
         let chartCategory = null;
-        let chartCalc = null;
 
         window.onload = function () {
             loadLocalData();
@@ -1185,9 +1275,11 @@
         }
 
         function refreshActiveUI() {
+            populatePicDropdowns();
             renderDashboard();
             renderProjects();
             renderCalendar();
+            renderPics();
             renderFreelancers();
             renderVendors();
             populateCalculatorVendorDropdown();
@@ -1196,6 +1288,7 @@
 
         function loadLocalData() {
             const sp = localStorage.getItem('3s_agency_projects');
+            const spi = localStorage.getItem('3s_agency_pics');
             const sf = localStorage.getItem('3s_agency_freelancers');
             const sv = localStorage.getItem('3s_agency_vendors');
             const sl = localStorage.getItem('3s_agency_lang');
@@ -1204,6 +1297,13 @@
             if (sf) window.freelancers = JSON.parse(sf);
             if (sv) window.vendors = JSON.parse(sv);
             if (sl) window.currentLang = sl;
+
+            if (spi) {
+                window.pics = JSON.parse(spi);
+            } else {
+                window.pics = [...DEFAULT_PICS];
+                localStorage.setItem('3s_agency_pics', JSON.stringify(window.pics));
+            }
         }
 
         function t(key, replacements = {}) {
@@ -1248,7 +1348,7 @@
 
         function switchTab(tabId) {
             window.currentTab = tabId;
-            const tabs = ['dashboard', 'projects', 'calendar', 'calculator', 'freelancers', 'vendors', 'invoices'];
+            const tabs = ['dashboard', 'projects', 'calendar', 'calculator', 'pics', 'freelancers', 'vendors', 'invoices'];
             tabs.forEach(tName => {
                 const el = document.getElementById(`tab-${tName}`);
                 const nav = document.getElementById(`nav-${tName}`);
@@ -1283,6 +1383,32 @@
         function getDemoBadgeHTML(isDummy) {
             if (!isDummy) return '';
             return `<span class="bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[10px] font-black px-1.5 py-0.5 rounded border border-amber-500/30 mr-1.5 uppercase">${t('demoBadge')}</span>`;
+        }
+
+        function populatePicDropdowns() {
+            const filterSelect = document.getElementById('project-filter-pic');
+            const projPicSelect = document.getElementById('proj-pic');
+            const logPicSelect = document.getElementById('log-pic');
+
+            if (filterSelect) {
+                const currentVal = filterSelect.value;
+                filterSelect.innerHTML = `<option value="ALL">${t('allPics')}</option>`;
+                pics.forEach(p => {
+                    filterSelect.innerHTML += `<option value="${p.name}">${p.name}</option>`;
+                });
+                if (currentVal) filterSelect.value = currentVal;
+            }
+
+            [projPicSelect, logPicSelect].forEach(select => {
+                if (select) {
+                    const currentVal = select.value;
+                    select.innerHTML = '';
+                    pics.forEach(p => {
+                        select.innerHTML += `<option value="${p.name}">${p.name} (${p.role || 'PIC'})</option>`;
+                    });
+                    if (currentVal) select.value = currentVal;
+                }
+            });
         }
 
         // DASHBOARD RENDERING
@@ -1601,6 +1727,98 @@
             }
         }
 
+        // PIC / TEAM MANAGEMENT (NEW)
+        function renderPics() {
+            const grid = document.getElementById('pics-grid');
+            if (!grid) return;
+            const search = document.getElementById('pic-search').value.toLowerCase();
+
+            const filtered = pics.filter(p => p.name.toLowerCase().includes(search) || p.role.toLowerCase().includes(search));
+
+            grid.innerHTML = '';
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">Tidak ada PIC tersimpan.</div>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                const assignedProjects = projects.filter(proj => proj.pic === p.name).length;
+                grid.innerHTML += `
+                    <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-950 font-bold text-indigo-700 dark:text-indigo-300 flex items-center justify-center text-lg border border-indigo-200 dark:border-indigo-800">
+                                ${p.name.charAt(0)}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-base text-gray-900 dark:text-white">${p.name}</h4>
+                                <span class="text-xs text-indigo-600 dark:text-indigo-400 font-medium block">${p.role}</span>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5 text-xs text-gray-500 dark:text-gray-400 border-t border-b py-3 border-gray-100 dark:border-gray-700">
+                            <div class="flex justify-between"><span>Email:</span><span class="font-semibold text-gray-800 dark:text-gray-200">${p.email || '-'}</span></div>
+                            <div class="flex justify-between"><span>Proyek Dipegang:</span><span class="font-bold text-emerald-600">${assignedProjects} Proyek</span></div>
+                        </div>
+                        <div class="flex items-center justify-between pt-1">
+                            <a href="https://wa.me/${p.phone}" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition">
+                                <i class="fa-brands fa-whatsapp"></i><span>WA Kontak</span>
+                            </a>
+                            <div class="flex space-x-1">
+                                <button onclick="editPic('${p.id}')" class="p-1.5 text-gray-400 hover:text-blue-500"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="deletePic('${p.id}')" class="p-1.5 text-gray-400 hover:text-rose-500"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openPicModal() {
+            document.getElementById('form-pic').reset();
+            document.getElementById('pic-id').value = '';
+            document.getElementById('modal-pic').classList.remove('hidden');
+        }
+
+        function closePicModal() {
+            document.getElementById('modal-pic').classList.add('hidden');
+        }
+
+        function editPic(id) {
+            const p = pics.find(item => item.id === id);
+            if (!p) return;
+            document.getElementById('pic-id').value = p.id;
+            document.getElementById('pic-name').value = p.name;
+            document.getElementById('pic-role').value = p.role;
+            document.getElementById('pic-email').value = p.email || '';
+            document.getElementById('pic-phone').value = p.phone || '';
+            document.getElementById('modal-pic').classList.remove('hidden');
+        }
+
+        function savePic(e) {
+            e.preventDefault();
+            const id = document.getElementById('pic-id').value || `pic_${Date.now()}`;
+            const newPic = {
+                id: id,
+                name: document.getElementById('pic-name').value,
+                role: document.getElementById('pic-role').value,
+                email: document.getElementById('pic-email').value,
+                phone: document.getElementById('pic-phone').value
+            };
+
+            const idx = pics.findIndex(p => p.id === id);
+            if (idx !== -1) pics[idx] = newPic;
+            else pics.unshift(newPic);
+
+            closePicModal();
+            saveItem('pics', newPic);
+            showToast("PIC Tim berhasil disimpan!");
+        }
+
+        function deletePic(id) {
+            pics = pics.filter(p => p.id !== id);
+            deleteItem('pics', id);
+            showToast("PIC berhasil dihapus!");
+        }
+
         // MARGIN CALCULATOR
         function populateCalculatorVendorDropdown() {
             const select = document.getElementById('calc-quick-vendor');
@@ -1675,7 +1893,7 @@
             showToast("Preset loaded");
         }
 
-        // FREELANCERS RENDERING (FULL)
+        // FREELANCERS RENDERING
         function renderFreelancers() {
             const grid = document.getElementById('freelancers-grid');
             const search = document.getElementById('freelancer-search').value.toLowerCase();
@@ -1775,7 +1993,7 @@
             showToast("Freelancer dihapus");
         }
 
-        // VENDORS RENDERING (FULL)
+        // VENDORS RENDERING
         function renderVendors() {
             const grid = document.getElementById('vendors-grid');
             const search = document.getElementById('vendor-search').value.toLowerCase();
@@ -1872,10 +2090,10 @@
             showToast("Vendor dihapus");
         }
 
-        // INVOICES & PROPOSAL SETUP (FULL)
+        // INVOICES & PROPOSAL SETUP
         function setupInvoiceSelectOptions() {
             const select = document.getElementById('invoice-project-select');
-            select.innerHTML = `<option value="">-- Pilih Proyek Pipeline --</option>`;
+            select.innerHTML = `<option value="">${t('invSelectProjectDefault')}</option>`;
             projects.forEach(p => {
                 select.innerHTML += `<option value="${p.id}">${p.client} - ${p.title}</option>`;
             });
@@ -1910,10 +2128,11 @@
             document.getElementById('prev-inv-due').innerText = due || '-';
         }
 
-        // BACKUP EXPORT & IMPORT DATA (FULL)
+        // BACKUP EXPORT & IMPORT DATA
         function exportData() {
             const backupData = {
                 projects: window.projects,
+                pics: window.pics,
                 freelancers: window.freelancers,
                 vendors: window.vendors,
                 exportedAt: new Date().toISOString()
@@ -1936,9 +2155,11 @@
                     if (parsed.projects && parsed.freelancers) {
                         window.projects = parsed.projects;
                         window.freelancers = parsed.freelancers;
+                        if (parsed.pics) window.pics = parsed.pics;
                         if (parsed.vendors) window.vendors = parsed.vendors;
 
                         localStorage.setItem('3s_agency_projects', JSON.stringify(window.projects));
+                        localStorage.setItem('3s_agency_pics', JSON.stringify(window.pics));
                         localStorage.setItem('3s_agency_freelancers', JSON.stringify(window.freelancers));
                         localStorage.setItem('3s_agency_vendors', JSON.stringify(window.vendors));
 
@@ -1968,7 +2189,7 @@
             document.getElementById('proj-id').value = p.id;
             document.getElementById('proj-client').value = p.client;
             document.getElementById('proj-title').value = p.title;
-            document.getElementById('proj-pic').value = p.pic || 'Imam (Founder)';
+            document.getElementById('proj-pic').value = p.pic || (pics[0] ? pics[0].name : 'Imam (Founder)');
             document.getElementById('proj-category').value = p.category;
             document.getElementById('proj-status').value = p.status;
             document.getElementById('proj-revenue').value = p.revenue;
@@ -2012,7 +2233,7 @@
             showToast("Proyek berhasil dihapus");
         }
 
-        // DEMO DATA CONTROLS (FULL)
+        // DEMO DATA CONTROLS
         function generateDemoData() {
             const timestamp = Date.now();
             const newProjects = SAMPLE_DEMO_PROJECTS.map(p => ({ ...p, id: `demo_${timestamp}_${Math.random().toString(36).substring(2, 6)}`, isDummy: true }));
@@ -2089,12 +2310,14 @@
                 const allVendIds = vendors.map(v => v.id);
 
                 window.projects = [];
+                window.pics = [...DEFAULT_PICS];
                 window.freelancers = [];
                 window.vendors = [];
 
                 allProjIds.forEach(id => deleteItem('projects', id));
                 allFreeIds.forEach(id => deleteItem('freelancers', id));
                 allVendIds.forEach(id => deleteItem('vendors', id));
+                localStorage.setItem('3s_agency_pics', JSON.stringify(window.pics));
 
                 showToast("Workspace di-reset total!");
             }
