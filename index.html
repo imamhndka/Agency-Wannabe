@@ -1416,50 +1416,50 @@
         };
 
         function initFirebaseOrFallback() {
-			const syncBadge = document.getElementById('sync-status');
-			const syncText = document.getElementById('sync-text');
+    const syncBadge = document.getElementById('sync-status');
+    const syncText = document.getElementById('sync-text');
 
-			// Safe guard: cegah error jika elemen HTML belum dirender
-			if (!syncBadge || !syncText) {
-				console.warn("Elemen indikator status belum siap di DOM.");
-				return;
-			}
+    // Jika elemen belum siap, tunggu 100ms lalu coba lagi otomatis
+    if (!syncBadge || !syncText) {
+        setTimeout(initFirebaseOrFallback, 100);
+        return;
+    }
 
-			// 1. Cek ketersediaan SDK & Config
-			if (typeof firebase === 'undefined' || !firebaseConfig.apiKey || firebaseConfig.apiKey.includes("YOUR_")) {
-				enableLocalMode("Local Storage Mode");
-				return;
-			}
+    // 1. Cek ketersediaan SDK & Config
+    if (typeof firebase === 'undefined' || !firebaseConfig.apiKey || firebaseConfig.apiKey.includes("YOUR_")) {
+        enableLocalMode("Local Storage Mode");
+        return;
+    }
 
-			try {
-				if (!firebase.apps.length) {
-					firebase.initializeApp(firebaseConfig);
-				}
-				db = firebase.firestore();
+    try {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        db = firebase.firestore();
 
-				// 2. Update indikator status ke Cloud Synced
-				isCloudMode = true;
-				syncBadge.className = "flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300";
-				syncText.innerText = "Cloud Synced - Live Team";
+        // 2. Set status ke Cloud Synced
+        isCloudMode = true;
+        syncBadge.className = "flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300";
+        syncText.innerText = "Cloud Synced - Live Team";
 
-				// 3. Sync Data Real-Time
-				db.collection('projects').onSnapshot((snapshot) => {
-					if (!snapshot.empty) {
-						projects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-					}
-					renderAll();
-				}, (error) => {
-					console.warn("Firestore listener fallback:", error);
-					enableLocalMode("Local Mode");
-				});
-			} catch (err) {
-				console.error("Firebase init error:", err);
-				enableLocalMode("Local Storage Mode");
-			}
-		}
+        // 3. Sync Data Real-Time
+        db.collection('projects').onSnapshot((snapshot) => {
+            if (!snapshot.empty) {
+                projects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            }
+            renderAll();
+        }, (error) => {
+            console.warn("Firestore listener fallback:", error);
+            enableLocalMode("Local Storage Mode");
+        });
+    } catch (err) {
+        console.error("Firebase init error:", err);
+        enableLocalMode("Local Storage Mode");
+    }
+}
 
-// Pastikan fungsi baru dipanggil setelah seluruh HTML selesai dimuat
-document.addEventListener('DOMContentLoaded', () => {
+// Pastikan dipanggil setelah seluruh elemen halaman (termasuk CSS/Header) selesai dimuat
+window.addEventListener('load', () => {
     initFirebaseOrFallback();
 });
 
