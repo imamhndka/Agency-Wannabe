@@ -1,0 +1,2494 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agile Agency OS & Margin Calculator</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Firebase SDK (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; color: black !important; }
+            #invoice-paper { border: none !important; box-shadow: none !important; padding: 0 !important; width: 100% !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-full flex flex-col transition-colors duration-200">
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside id="sidebar" class="w-64 bg-slate-900 text-white flex flex-col z-20 transition-all duration-300 no-print flex-shrink-0">
+            <!-- Agency Branding Header -->
+            <div class="p-5 flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-xl text-white shadow-lg">
+                        A
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-base tracking-wide leading-tight" data-i18n="appName">AGILE AGENCY</h1>
+                        <span class="text-xs text-blue-400 font-medium" data-i18n="appSub">OS & Margin Calculator</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto no-scrollbar">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
+                    <i class="fa-solid fa-chart-pie w-5 text-center text-blue-400"></i>
+                    <span data-i18n="navDashboard">Dashboard Utama</span>
+                </button>
+                <button onclick="switchTab('projects')" id="nav-projects" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
+                    <i class="fa-solid fa-diagram-project w-5 text-center text-emerald-400"></i>
+                    <span data-i18n="navProjects">Projects & Pipeline</span>
+                </button>
+                <button onclick="switchTab('calculator')" id="nav-calculator" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
+                    <i class="fa-solid fa-calculator w-5 text-center text-amber-400"></i>
+                    <span data-i18n="navCalculator">Margin Calculator</span>
+                </button>
+                <button onclick="switchTab('freelancers')" id="nav-freelancers" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
+                    <i class="fa-solid fa-users-gear w-5 text-center text-purple-400"></i>
+                    <span data-i18n="navFreelancers">Talent Pool (Freelancer)</span>
+                </button>
+                <button onclick="switchTab('vendors')" id="nav-vendors" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
+                    <i class="fa-solid fa-handshake w-5 text-center text-teal-400"></i>
+                    <span data-i18n="navVendors">Vendor & Partner Directory</span>
+                </button>
+                <button onclick="switchTab('invoices')" id="nav-invoices" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
+                    <i class="fa-solid fa-file-invoice-dollar w-5 text-center text-rose-400"></i>
+                    <span data-i18n="navInvoices">Invoice Generator</span>
+                </button>
+            </nav>
+
+            <!-- Data Management & Backup Controls -->
+            <div class="p-4 border-t border-slate-800 space-y-2">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1" data-i18n="sidebarDataHeader">Kelola Data Workspace</span>
+                
+                <button onclick="generateDemoData()" class="w-full flex items-center justify-center space-x-2 py-2 px-3 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/30 text-xs font-semibold transition">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span data-i18n="btnGenerateDemo">Generate Data Demo</span>
+                </button>
+
+                <button onclick="askClearDemoData()" class="w-full flex items-center justify-center space-x-2 py-2 px-3 rounded-lg bg-amber-600/20 hover:bg-amber-600/40 text-amber-300 border border-amber-500/30 text-xs font-semibold transition">
+                    <i class="fa-solid fa-broom"></i>
+                    <span data-i18n="btnClearDemo">Hapus Data Demo Saja</span>
+                </button>
+
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <button onclick="exportData()" class="flex items-center justify-center space-x-1 py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 font-medium transition" title="Export Backup">
+                        <i class="fa-solid fa-download"></i>
+                        <span data-i18n="exportBtn">Export</span>
+                    </button>
+                    <label class="flex items-center justify-center space-x-1 py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 font-medium cursor-pointer transition" title="Import Data">
+                        <i class="fa-solid fa-upload"></i>
+                        <span data-i18n="importBtn">Import</span>
+                        <input type="file" id="import-file" onchange="importData(event)" class="hidden" accept=".json">
+                    </label>
+                </div>
+
+                <button onclick="askResetAllData()" class="w-full flex items-center justify-center space-x-2 py-2 px-3 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs font-semibold transition mt-2">
+                    <i class="fa-solid fa-trash-can"></i>
+                    <span data-i18n="btnResetAll">Reset Total Workspace</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            
+            <header class="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 z-10 no-print flex-shrink-0">
+                <div class="flex items-center space-x-4">
+                    <h2 id="page-title" class="text-xl font-bold text-gray-800 dark:text-white" data-i18n="navDashboard">Dashboard Utama</h2>
+                    
+                    <!-- Realtime Multi-User Sync Badge -->
+                    <div id="sync-badge" class="flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
+                        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                        <span id="sync-text" data-i18n="syncConnecting">Connecting Cloud...</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <!-- Language Switcher (ID / EN) -->
+                    <div class="flex items-center bg-gray-100 dark:bg-gray-700 p-1 rounded-xl text-xs font-bold text-gray-600 dark:text-gray-300">
+                        <button id="lang-btn-id" onclick="setLanguage('id')" class="px-2.5 py-1 rounded-lg transition-all">ID</button>
+                        <button id="lang-btn-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-lg transition-all">EN</button>
+                    </div>
+
+                    <!-- Theme Switcher -->
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition" title="Toggle Light/Dark Theme">
+                        <i id="theme-toggle-icon" class="fa-solid fa-moon text-lg"></i>
+                    </button>
+
+                    <!-- Add Project CTA Button -->
+                    <button onclick="openProjectModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-md shadow-blue-500/20 transition">
+                        <i class="fa-solid fa-plus"></i>
+                        <span class="hidden sm:inline" data-i18n="newProject">Proyek Baru</span>
+                    </button>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900">
+                
+                <!-- Toast Notification Box -->
+                <div id="toast" class="fixed top-20 right-6 z-50 transform translate-x-full transition-transform duration-300 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 pointer-events-none">
+                    <i class="fa-solid fa-circle-check text-xl"></i>
+                    <span id="toast-message" class="text-sm font-medium">Notifikasi</span>
+                </div>
+
+                <section id="tab-dashboard" class="space-y-6">
+                    
+                    <!-- Financial Health Alert Banner -->
+                    <div id="financial-health-banner" class="p-4 rounded-2xl flex items-center justify-between shadow-sm transition">
+                        <!-- Dynamic via JS -->
+                    </div>
+
+                    <!-- KPI Cards Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                            <div class="flex items-center justify-between text-gray-500 dark:text-gray-400 mb-2">
+                                <span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpiRevenue">Total Omzet</span>
+                                <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                                    <i class="fa-solid fa-wallet text-sm"></i>
+                                </div>
+                            </div>
+                            <div id="kpi-revenue" class="text-xl font-bold text-gray-900 dark:text-white">Rp 0</div>
+                            <span class="text-xs text-gray-400" data-i18n="kpiRevenueSub">Total nilai semua proyek</span>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                            <div class="flex items-center justify-between text-gray-500 dark:text-gray-400 mb-2">
+                                <span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpiExpenses">Beban Sub-Kontrak</span>
+                                <div class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                                    <i class="fa-solid fa-hand-holding-dollar text-sm"></i>
+                                </div>
+                            </div>
+                            <div id="kpi-expenses" class="text-xl font-bold text-gray-900 dark:text-white">Rp 0</div>
+                            <span class="text-xs text-gray-400" data-i18n="kpiExpensesSub">Freelancer & Vendor</span>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                            <div class="flex items-center justify-between text-gray-500 dark:text-gray-400 mb-2">
+                                <span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpiProfit">Laba Bersih Agency</span>
+                                <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                    <i class="fa-solid fa-sack-dollar text-sm"></i>
+                                </div>
+                            </div>
+                            <div id="kpi-profit" class="text-xl font-bold text-gray-900 dark:text-white">Rp 0</div>
+                            <span class="text-xs text-gray-400" data-i18n="kpiProfitSub">Omzet - Sub-Kontrak</span>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                            <div class="flex items-center justify-between text-gray-500 dark:text-gray-400 mb-2">
+                                <span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpiMargin">Rata-rata Margin</span>
+                                <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                                    <i class="fa-solid fa-percent text-sm"></i>
+                                </div>
+                            </div>
+                            <div id="kpi-margin" class="text-xl font-bold text-gray-900 dark:text-white">0%</div>
+                            <span class="text-xs text-gray-400" data-i18n="kpiMarginSub">Target Sehat: &gt; 40%</span>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                            <div class="flex items-center justify-between text-gray-500 dark:text-gray-400 mb-2">
+                                <span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpiActive">Proyek Aktif</span>
+                                <div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                                    <i class="fa-solid fa-list-check text-sm"></i>
+                                </div>
+                            </div>
+                            <div id="kpi-active-count" class="text-xl font-bold text-gray-900 dark:text-white">0</div>
+                            <span class="text-xs text-gray-400" data-i18n="kpiActiveSub">Dalam pengerjaan</span>
+                        </div>
+                    </div>
+
+                    <!-- Charts Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                            <h3 class="text-base font-bold text-gray-800 dark:text-white mb-4" data-i18n="chartRevCost">Omzet vs Beban Sub-Kontraktor</h3>
+                            <div class="h-64">
+                                <canvas id="chart-revenue-expenses"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                            <h3 class="text-base font-bold text-gray-800 dark:text-white mb-4" data-i18n="chartCatDist">Distribusi Layanan</h3>
+                            <div class="h-64 flex items-center justify-center">
+                                <canvas id="chart-categories"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Projects Table Quick View -->
+                    <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-bold text-gray-800 dark:text-white" data-i18n="recentProjects">Proyek Terbaru</h3>
+                            <button onclick="switchTab('projects')" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+                                <span data-i18n="viewAllPipeline">Lihat Semua Pipeline</span> <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+                                <thead class="bg-gray-50 dark:bg-gray-700/50 text-xs uppercase text-gray-400">
+                                    <tr>
+                                        <th class="py-3 px-4 rounded-l-xl" data-i18n="colClientProj">Klien & Proyek</th>
+                                        <th class="py-3 px-4" data-i18n="colCategory">Kategori</th>
+                                        <th class="py-3 px-4" data-i18n="colValue">Nilai Proyek</th>
+                                        <th class="py-3 px-4" data-i18n="colMargin">Margin %</th>
+                                        <th class="py-3 px-4 rounded-r-xl" data-i18n="colStatus">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboard-recent-projects-list" class="divide-y divide-gray-100 dark:divide-gray-700">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </section>
+
+                <section id="tab-projects" class="space-y-6 hidden">
+                    
+                    <!-- Top Control Toolbar -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                        
+                        <div class="flex flex-wrap items-center gap-3 flex-1">
+                            <div class="relative flex-1 min-w-[200px]">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                <input type="text" id="project-search" oninput="renderProjects()" placeholder="Cari nama klien atau proyek..." data-i18n-placeholder="searchProjPlaceholder" class="w-full pl-9 pr-4 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-gray-100">
+                            </div>
+
+                            <select id="project-filter-category" onchange="renderProjects()" class="bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-gray-100">
+                                <option value="ALL" data-i18n="allCategories">Semua Kategori</option>
+                                <option value="Web Dev">Web Dev</option>
+                                <option value="Design">Design</option>
+                                <option value="Video">Video</option>
+                                <option value="Copywriting">Copywriting</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Legal/Admin">Legal/Admin</option>
+                                <option value="Printing & Event">Printing & Event</option>
+                            </select>
+
+                            <select id="project-filter-status" onchange="renderProjects()" class="bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-gray-100">
+                                <option value="ALL" data-i18n="allStatuses">Semua Status</option>
+                                <option value="Lead / Pitching">Lead / Pitching</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="In Review">In Review</option>
+                                <option value="Invoiced">Invoiced</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+
+                        <!-- View Switcher -->
+                        <div class="flex items-center space-x-1 bg-gray-100 dark:bg-gray-700 p-1 rounded-xl">
+                            <button id="view-btn-table" onclick="toggleProjectView('table')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-gray-800 shadow-sm text-gray-800 dark:text-white">
+                                <i class="fa-solid fa-list mr-1"></i> <span data-i18n="tableView">Tabel</span>
+                            </button>
+                            <button id="view-btn-kanban" onclick="toggleProjectView('kanban')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-800 transition">
+                                <i class="fa-solid fa-table-columns mr-1"></i> <span data-i18n="kanbanView">Kanban Board</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TABLE VIEW -->
+                    <div id="project-view-table" class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+                                <thead class="bg-gray-50 dark:bg-gray-700/50 text-xs uppercase text-gray-400 border-b border-gray-100 dark:border-gray-700">
+                                    <tr>
+                                        <th class="py-3 px-4" data-i18n="colClientProj">Klien & Proyek</th>
+                                        <th class="py-3 px-4" data-i18n="colCategory">Kategori</th>
+                                        <th class="py-3 px-4" data-i18n="colValue">Nilai Proyek</th>
+                                        <th class="py-3 px-4" data-i18n="colVendorCost">Biaya Sub-Kontrak</th>
+                                        <th class="py-3 px-4" data-i18n="colNetProfit">Net Profit</th>
+                                        <th class="py-3 px-4" data-i18n="colMargin">Margin %</th>
+                                        <th class="py-3 px-4" data-i18n="colPartner">Partner/Talent</th>
+                                        <th class="py-3 px-4" data-i18n="colStatus">Status</th>
+                                        <th class="py-3 px-4 text-right" data-i18n="colActions">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="project-table-body" class="divide-y divide-gray-100 dark:divide-gray-700">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- KANBAN BOARD VIEW -->
+                    <div id="project-view-kanban" class="grid grid-cols-1 md:grid-cols-5 gap-4 hidden">
+                        <div class="bg-gray-100/70 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-200/50 dark:border-gray-700 flex flex-col space-y-3">
+                            <div class="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-gray-700">
+                                <span class="font-bold text-xs uppercase tracking-wider text-slate-500">Lead / Pitching</span>
+                                <span id="count-kanban-lead" class="text-xs bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full font-bold">0</span>
+                            </div>
+                            <div id="kanban-col-lead" class="space-y-3 min-h-[300px]"></div>
+                        </div>
+
+                        <div class="bg-blue-50/50 dark:bg-blue-950/20 p-4 rounded-2xl border border-blue-100 dark:border-blue-900/30 flex flex-col space-y-3">
+                            <div class="flex items-center justify-between pb-2 border-b border-blue-200 dark:border-blue-900/50">
+                                <span class="font-bold text-xs uppercase tracking-wider text-blue-600 dark:text-blue-400">In Progress</span>
+                                <span id="count-kanban-progress" class="text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full font-bold">0</span>
+                            </div>
+                            <div id="kanban-col-progress" class="space-y-3 min-h-[300px]"></div>
+                        </div>
+
+                        <div class="bg-amber-50/50 dark:bg-amber-950/20 p-4 rounded-2xl border border-amber-100 dark:border-amber-900/30 flex flex-col space-y-3">
+                            <div class="flex items-center justify-between pb-2 border-b border-amber-200 dark:border-amber-900/50">
+                                <span class="font-bold text-xs uppercase tracking-wider text-amber-600 dark:text-amber-400">In Review</span>
+                                <span id="count-kanban-review" class="text-xs bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full font-bold">0</span>
+                            </div>
+                            <div id="kanban-col-review" class="space-y-3 min-h-[300px]"></div>
+                        </div>
+
+                        <div class="bg-purple-50/50 dark:bg-purple-950/20 p-4 rounded-2xl border border-purple-100 dark:border-purple-900/30 flex flex-col space-y-3">
+                            <div class="flex items-center justify-between pb-2 border-b border-purple-200 dark:border-purple-900/50">
+                                <span class="font-bold text-xs uppercase tracking-wider text-purple-600 dark:text-purple-400">Invoiced</span>
+                                <span id="count-kanban-invoiced" class="text-xs bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded-full font-bold">0</span>
+                            </div>
+                            <div id="kanban-col-invoiced" class="space-y-3 min-h-[300px]"></div>
+                        </div>
+
+                        <div class="bg-emerald-50/50 dark:bg-emerald-950/20 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-900/30 flex flex-col space-y-3">
+                            <div class="flex items-center justify-between pb-2 border-b border-emerald-200 dark:border-emerald-900/50">
+                                <span class="font-bold text-xs uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Completed</span>
+                                <span id="count-kanban-completed" class="text-xs bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded-full font-bold">0</span>
+                            </div>
+                            <div id="kanban-col-completed" class="space-y-3 min-h-[300px]"></div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <section id="tab-calculator" class="space-y-6 hidden">
+                    
+                    <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-bold text-gray-800 dark:text-white" data-i18n="calcPresetTitle">Template Paket Layanan Instan</h3>
+                            <span class="text-xs text-gray-400" data-i18n="calcPresetSub">Klik untuk memuat variabel harga default</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="applyPreset('landing-page')" class="px-3 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 rounded-xl text-xs font-medium hover:bg-blue-100 transition">
+                                <i class="fa-solid fa-laptop-code mr-1"></i> Landing Page Web Dev
+                            </button>
+                            <button onclick="applyPreset('social-media')" class="px-3 py-2 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300 rounded-xl text-xs font-medium hover:bg-purple-100 transition">
+                                <i class="fa-solid fa-hashtag mr-1"></i> Social Media Retainer
+                            </button>
+                            <button onclick="applyPreset('video-editing')" class="px-3 py-2 bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-300 rounded-xl text-xs font-medium hover:bg-rose-100 transition">
+                                <i class="fa-solid fa-video mr-1"></i> Video & Motion Package
+                            </button>
+                            <button onclick="applyPreset('brand-identity')" class="px-3 py-2 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300 rounded-xl text-xs font-medium hover:bg-amber-100 transition">
+                                <i class="fa-solid fa-palette mr-1"></i> Brand Identity Design
+                            </button>
+                            <button onclick="applyPreset('pt-legal')" class="px-3 py-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-300 rounded-xl text-xs font-medium hover:bg-emerald-100 transition">
+                                <i class="fa-solid fa-file-signature mr-1"></i> PT Legal Setup
+                            </button>
+                            <button onclick="applyPreset('printing-merch')" class="px-3 py-2 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-300 rounded-xl text-xs font-medium hover:bg-teal-100 transition">
+                                <i class="fa-solid fa-box mr-1"></i> Merchandise & Printing
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        
+                        <!-- Input Parameters -->
+                        <div class="lg:col-span-7 bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-6">
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white border-b pb-3 border-gray-100 dark:border-gray-700" data-i18n="calcStructureTitle">Simulasi Struktur Biaya</h3>
+                            
+                            <div class="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl border border-slate-200 dark:border-slate-600 space-y-2">
+                                <label class="text-xs font-bold uppercase text-slate-500 dark:text-slate-300 flex items-center justify-between">
+                                    <span data-i18n="calcSelectVendorLabel">Pilih Vendor/Freelancer Terdaftar (Opsional)</span>
+                                    <i class="fa-solid fa-link text-blue-500"></i>
+                                </label>
+                                <select id="calc-quick-vendor" onchange="autoFillCalcFromVendor()" class="w-full px-3 py-2 bg-white dark:bg-gray-800 rounded-lg text-sm border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="" data-i18n="calcManualOption">-- Bebas / Input Manual --</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-sm font-semibold text-gray-700 dark:text-gray-300" data-i18n="calcSubcontractCost">
+                                        Biaya Vendor / Sub-Kontrak (IDR)
+                                    </label>
+                                    <span id="calc-vendor-val-display" class="font-bold text-blue-600 dark:text-blue-400">Rp 5.000.000</span>
+                                </div>
+                                <input type="number" id="calc-vendor-cost" value="5000000" step="250000" oninput="updateCalculator()" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-sm font-semibold text-gray-700 dark:text-gray-300" data-i18n="calcBufferLabel">
+                                        Buffer Risiko & Scope Creep (%)
+                                    </label>
+                                    <span id="calc-buffer-val-display" class="font-bold text-amber-600 dark:text-amber-400">10%</span>
+                                </div>
+                                <input type="range" id="calc-buffer-percent" min="0" max="30" value="10" step="1" oninput="updateCalculator()" class="w-full accent-amber-500">
+                                <p class="text-xs text-gray-400" data-i18n="calcBufferHelp">Penyangga jika ada revisi tambahan atau keterlambatan vendor.</p>
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-sm font-semibold text-gray-700 dark:text-gray-300" data-i18n="calcOverheadLabel">
+                                        Overhead Operasional Agency (%)
+                                    </label>
+                                    <span id="calc-overhead-val-display" class="font-bold text-purple-600 dark:text-purple-400">15%</span>
+                                </div>
+                                <input type="range" id="calc-overhead-percent" min="5" max="40" value="15" step="1" oninput="updateCalculator()" class="w-full accent-purple-500">
+                                <p class="text-xs text-gray-400" data-i18n="calcOverheadHelp">Alokasi biaya internet, software subscription, listrik & manajemen.</p>
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-sm font-semibold text-gray-700 dark:text-gray-300" data-i18n="calcTargetMarginLabel">
+                                        Target Net Margin Agency (%)
+                                    </label>
+                                    <span id="calc-margin-val-display" class="font-bold text-emerald-600 dark:text-emerald-400">45%</span>
+                                </div>
+                                <input type="range" id="calc-target-margin" min="15" max="75" value="45" step="1" oninput="updateCalculator()" class="w-full accent-emerald-500">
+                                <p class="text-xs text-gray-400" data-i18n="calcTargetMarginHelp">Persentase keuntungan bersih yang ingin didapatkan agency.</p>
+                            </div>
+
+                        </div>
+
+                        <!-- Result & Convert Action Card -->
+                        <div class="lg:col-span-5 flex flex-col space-y-6">
+                            <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6 rounded-2xl shadow-xl space-y-6">
+                                <div class="flex justify-between items-start border-b border-slate-700 pb-4">
+                                    <div>
+                                        <span class="text-xs text-blue-400 uppercase tracking-widest font-bold" data-i18n="calcRecQuote">Rekomendasi Penawaran Klien</span>
+                                        <h2 id="calc-recommended-quote" class="text-3xl font-extrabold text-white mt-1">Rp 0</h2>
+                                    </div>
+                                    <span class="bg-emerald-500/20 text-emerald-400 text-xs px-3 py-1 rounded-full font-bold border border-emerald-500/30" data-i18n="calcIdealDeal">Ideal Deal</span>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+                                        <span class="text-xs text-slate-400 block" data-i18n="calcNetProfit">Laba Bersih Agency</span>
+                                        <span id="calc-net-profit-val" class="text-lg font-bold text-emerald-400">Rp 0</span>
+                                    </div>
+                                    <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+                                        <span class="text-xs text-slate-400 block" data-i18n="calcBreakeven">Harga Break-Even</span>
+                                        <span id="calc-breakeven-val" class="text-lg font-bold text-amber-400">Rp 0</span>
+                                    </div>
+                                </div>
+
+                                <div class="h-44 flex items-center justify-center">
+                                    <canvas id="calc-breakdown-chart"></canvas>
+                                </div>
+
+                                <button onclick="convertCalcToProjectModal()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-file-circle-plus"></i>
+                                    <span data-i18n="calcConvertToProj">Jadikan Proyek / Pitching</span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section id="tab-freelancers" class="space-y-6 hidden">
+                    
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                        <div class="flex flex-wrap items-center gap-3 flex-1">
+                            <div class="relative flex-1 min-w-[200px]">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                <input type="text" id="freelancer-search" oninput="renderFreelancers()" placeholder="Cari nama atau keahlian freelancer..." data-i18n-placeholder="freeSearchPlaceholder" class="w-full pl-9 pr-4 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-gray-100">
+                            </div>
+
+                            <select id="freelancer-filter-skill" onchange="renderFreelancers()" class="bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-gray-100">
+                                <option value="ALL" data-i18n="freeAllSkills">Semua Keahlian</option>
+                                <option value="Web Dev">Web Dev</option>
+                                <option value="Design">Design</option>
+                                <option value="Video">Video</option>
+                                <option value="Copywriting">Copywriting</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Legal/Admin">Legal/Admin</option>
+                            </select>
+                        </div>
+
+                        <button onclick="openFreelancerModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-md shadow-purple-500/20 transition">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <span data-i18n="freeAddBtn">Tambah Freelancer</span>
+                        </button>
+                    </div>
+
+                    <div id="freelancers-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Dynamic -->
+                    </div>
+
+                </section>
+
+                <section id="tab-vendors" class="space-y-6 hidden">
+                    
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                        <div class="flex flex-wrap items-center gap-3 flex-1">
+                            <div class="relative flex-1 min-w-[200px]">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                <input type="text" id="vendor-search" oninput="renderVendors()" placeholder="Cari nama vendor, PIC, atau kota..." data-i18n-placeholder="vendorSearchPlaceholder" class="w-full pl-9 pr-4 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-800 dark:text-gray-100">
+                            </div>
+
+                            <select id="vendor-filter-category" onchange="renderVendors()" class="bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-800 dark:text-gray-100">
+                                <option value="ALL" data-i18n="vendorAllCategories">Semua Kategori Vendor</option>
+                                <option value="Percetakan / Printing">Percetakan / Printing</option>
+                                <option value="Studio & Production">Studio & Production</option>
+                                <option value="Legal & Notaris">Legal & Notaris</option>
+                                <option value="Event & Venue">Event & Venue</option>
+                                <option value="Merchandising">Merchandising</option>
+                                <option value="Cloud & IT Infrastructure">Cloud & IT Infrastructure</option>
+                                <option value="Equipment Rental">Equipment Rental</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+
+                            <select id="vendor-filter-status" onchange="renderVendors()" class="bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-800 dark:text-gray-100">
+                                <option value="ALL" data-i18n="vendorAllStatuses">Semua Status Kemitraan</option>
+                                <option value="Preferred Partner">Preferred Partner</option>
+                                <option value="Active">Active</option>
+                                <option value="Backup">Backup</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+
+                            <select id="vendor-sort-by" onchange="renderVendors()" class="bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-800 dark:text-gray-100">
+                                <option value="rating-desc" data-i18n="vendorSortRating">Urutkan: Rating Tertinggi</option>
+                                <option value="tier-asc" data-i18n="vendorSortPriceAsc">Urutkan: Harga Terjangkau ($)</option>
+                                <option value="tier-desc" data-i18n="vendorSortPriceDesc">Urutkan: Premium ($$$)</option>
+                                <option value="name-asc" data-i18n="vendorSortName">Urutkan: Nama (A-Z)</option>
+                            </select>
+                        </div>
+
+                        <button onclick="openVendorModal()" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-md shadow-teal-500/20 transition">
+                            <i class="fa-solid fa-plus"></i>
+                            <span data-i18n="vendorAddBtn">Tambah Vendor Baru</span>
+                        </button>
+                    </div>
+
+                    <div id="vendors-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Dynamic -->
+                    </div>
+
+                </section>
+
+                <section id="tab-invoices" class="space-y-6 hidden">
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        
+                        <div class="lg:col-span-5 bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-4 no-print">
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white border-b pb-3 border-gray-100 dark:border-gray-700" data-i18n="invConfigTitle">Pengaturan Faktur / Invoice</h3>
+                            
+                            <div>
+                                <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="invImportProjectLabel">Impor Data dari Proyek</label>
+                                <select id="invoice-project-select" onchange="loadProjectIntoInvoice()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="" data-i18n="invSelectProjectDefault">-- Pilih Proyek Pipeline --</option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="invNumberLabel">Nomor Invoice</label>
+                                    <input type="text" id="inv-number" value="INV/2026/001" oninput="updateInvoicePreview()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="invDateLabel">Tanggal</label>
+                                    <input type="date" id="inv-date" onchange="updateInvoicePreview()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="invClientNameLabel">Nama Klien / Perusahaan</label>
+                                <input type="text" id="inv-client-name" value="PT Digital Nusantara" oninput="updateInvoicePreview()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <div>
+                                <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="invItemDescLabel">Deskripsi Item Layanan</label>
+                                <input type="text" id="inv-item-desc" value="Pengembangan Website Modern & Rebranding Profil Kit" oninput="updateInvoicePreview()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="invTotalAmountLabel">Total Tagihan (IDR)</label>
+                                    <input type="number" id="inv-amount" value="35000000" step="500000" oninput="updateInvoicePreview()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="invDueDateLabel">Jatuh Tempo</label>
+                                    <input type="date" id="inv-due-date" onchange="updateInvoicePreview()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+
+                            <button onclick="window.print()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-print"></i>
+                                <span data-i18n="invPrintBtn">Cetak / Export PDF Invoice</span>
+                            </button>
+                        </div>
+
+                        <!-- Printable Invoice Preview -->
+                        <div class="lg:col-span-7 bg-white text-gray-900 p-8 rounded-2xl border border-gray-200 shadow-xl space-y-8 min-h-[600px] flex flex-col justify-between" id="invoice-paper">
+                            <div class="space-y-6">
+                                <div class="flex justify-between items-start border-b pb-6 border-gray-200">
+                                    <div>
+                                        <h2 class="text-2xl font-black tracking-tight text-slate-900" data-i18n="appName">AGILE AGENCY</h2>
+                                        <p class="text-xs text-gray-500">Solusi Layanan Terpadu & Strategic Partner</p>
+                                        <p class="text-xs text-gray-500 mt-1">Jakarta, Indonesia | halo@agileagency.id</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-2xl font-bold uppercase tracking-widest text-blue-600" data-i18n="invHeading">FAKTUR</span>
+                                        <p id="prev-inv-number" class="text-sm font-semibold text-gray-700 mt-1">INV/2026/001</p>
+                                        <p id="prev-inv-date" class="text-xs text-gray-500">Tanggal: -</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 flex justify-between">
+                                    <div>
+                                        <span class="text-xs text-gray-400 font-bold uppercase block" data-i18n="invBilledTo">Ditagihkan Kepada:</span>
+                                        <h4 id="prev-inv-client" class="text-base font-bold text-gray-900 mt-0.5">PT Digital Nusantara</h4>
+                                        <p class="text-xs text-gray-500" data-i18n="invClientTitle">Klien Terhormat Agency</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-xs text-gray-400 font-bold uppercase block" data-i18n="invDueDateHeader">Jatuh Tempo Pembayaran:</span>
+                                        <span id="prev-inv-due" class="text-sm font-bold text-rose-600">-</span>
+                                    </div>
+                                </div>
+
+                                <table class="w-full text-left text-sm border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-gray-200 text-xs font-bold uppercase text-gray-400">
+                                            <th class="py-3" data-i18n="invTableDesc">Deskripsi Layanan & Rincian</th>
+                                            <th class="py-3 text-right" data-i18n="invTableTotal">Jumlah Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-gray-100">
+                                            <td class="py-4 font-medium text-gray-800" id="prev-inv-item">Pengembangan Website Modern & Rebranding Profil Kit</td>
+                                            <td class="py-4 text-right font-bold text-gray-900" id="prev-inv-amount">Rp 35.000.000</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="flex justify-end pt-4">
+                                    <div class="w-64 space-y-2">
+                                        <div class="flex justify-between text-xs text-gray-500">
+                                            <span data-i18n="invSubtotal">Subtotal</span>
+                                            <span id="prev-inv-subtotal">Rp 35.000.000</span>
+                                        </div>
+                                        <div class="flex justify-between text-xs text-gray-500">
+                                            <span data-i18n="invTax">Pajak / Potongan</span>
+                                            <span>Rp 0</span>
+                                        </div>
+                                        <div class="flex justify-between text-base font-black text-gray-900 border-t pt-2 border-gray-200">
+                                            <span data-i18n="invTotalPayment">Total Pembayaran</span>
+                                            <span id="prev-inv-total" class="text-blue-600">Rp 35.000.000</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-t pt-6 border-gray-200 text-xs text-gray-500 space-y-1">
+                                <p class="font-bold text-gray-700" data-i18n="invPaymentInstruction">Petunjuk Pembayaran Transfer Bank:</p>
+                                <p data-i18n="invBankDetails">Bank BCA - 8830-1928-11 a.n PT Agile Strategi Mandiri</p>
+                                <p class="italic text-gray-400 mt-2" data-i18n="invThankYou">Terima kasih atas kepercayaan Anda bermitra bersama agency kami.</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL 1: ADD / EDIT PROJECT -->
+    <div id="modal-project" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-700">
+            <div class="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                <h3 id="modal-project-title" class="text-lg font-bold text-gray-800 dark:text-white" data-i18n="modalProjAddTitle">Tambah Proyek Baru</h3>
+                <button onclick="closeProjectModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <form id="form-project" onsubmit="saveProject(event)" class="p-5 space-y-4">
+                <input type="hidden" id="proj-id">
+
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblClientName">Nama Klien / Instansi</label>
+                    <input type="text" id="proj-client" required placeholder="Contoh: PT Nusantara Baru" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblProjTitle">Judul / Ruang Lingkup Proyek</label>
+                    <input type="text" id="proj-title" required placeholder="Contoh: Redesain Landing Page & Logo" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblCategory">Kategori Layanan</label>
+                        <select id="proj-category" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Web Dev">Web Dev</option>
+                            <option value="Design">Design</option>
+                            <option value="Video">Video</option>
+                            <option value="Copywriting">Copywriting</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Legal/Admin">Legal/Admin</option>
+                            <option value="Printing & Event">Printing & Event</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblPipelineStatus">Status Pipeline</label>
+                        <select id="proj-status" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Lead / Pitching">Lead / Pitching</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="In Review">In Review</option>
+                            <option value="Invoiced">Invoiced</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblQuoteRevenue">Nilai Penawaran / Omzet (IDR)</label>
+                        <input type="number" id="proj-revenue" required min="0" step="100000" placeholder="15000000" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblCostCost">Biaya Sub-Kontrak (IDR)</label>
+                        <input type="number" id="proj-cost" required min="0" step="100000" placeholder="7500000" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblFreelancerPartner">Freelancer / Partner Eksternal</label>
+                        <input type="text" id="proj-freelancer" placeholder="Budi Santoso / PT Prima Printing" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblDeadline">Tenggat Waktu / Deadline</label>
+                        <input type="date" id="proj-deadline" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <div class="pt-3 flex justify-end space-x-3 border-t border-gray-100 dark:border-gray-700">
+                    <button type="button" onclick="closeProjectModal()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition" data-i18n="btnCancel">Batal</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md transition" data-i18n="btnSaveProj">Simpan Proyek</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ADD / EDIT FREELANCER -->
+    <div id="modal-freelancer" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-700">
+            <div class="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                <h3 id="modal-freelancer-title" class="text-lg font-bold text-gray-800 dark:text-white" data-i18n="modalFreeAddTitle">Tambah Freelancer Baru</h3>
+                <button onclick="closeFreelancerModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="form-freelancer" onsubmit="saveFreelancer(event)" class="p-5 space-y-4">
+                <input type="hidden" id="free-id">
+
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblFullName">Nama Lengkap</label>
+                    <input type="text" id="free-name" required placeholder="Budi Santoso" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblMainSkill">Keahlian Utama</label>
+                        <select id="free-skill" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Web Dev">Web Dev</option>
+                            <option value="Design">Design</option>
+                            <option value="Video">Video</option>
+                            <option value="Copywriting">Copywriting</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Legal/Admin">Legal/Admin</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblAvailabilityStatus">Status Ketersediaan</label>
+                        <select id="free-status" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Available">Available</option>
+                            <option value="Busy">Busy</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblStandardRate">Rate Standar</label>
+                    <input type="text" id="free-rate" required placeholder="Rp 500.000 / jam atau Rp 4.000.000 / proyek" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblWhatsAppNum">Nomor WhatsApp (dengan 62...)</label>
+                    <input type="text" id="free-phone" required placeholder="6281234567890" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="pt-3 flex justify-end space-x-3 border-t border-gray-100 dark:border-gray-700">
+                    <button type="button" onclick="closeFreelancerModal()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition" data-i18n="btnCancel">Batal</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-bold bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-md transition" data-i18n="btnSaveFree">Simpan Freelancer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: ADD / EDIT VENDOR -->
+    <div id="modal-vendor" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-700">
+            <div class="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                <h3 id="modal-vendor-title" class="text-lg font-bold text-gray-800 dark:text-white" data-i18n="modalVendorAddTitle">Tambah Vendor / Partner Baru</h3>
+                <button onclick="closeVendorModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="form-vendor" onsubmit="saveVendor(event)" class="p-5 space-y-4">
+                <input type="hidden" id="vendor-id">
+
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblVendorName">Nama Vendor / Perusahaan</label>
+                    <input type="text" id="vendor-name" required placeholder="PT Prima Cetak Grafika" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblCategory">Kategori Layanan</label>
+                        <select id="vendor-category" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            <option value="Percetakan / Printing">Percetakan / Printing</option>
+                            <option value="Studio & Production">Studio & Production</option>
+                            <option value="Legal & Notaris">Legal & Notaris</option>
+                            <option value="Event & Venue">Event & Venue</option>
+                            <option value="Merchandising">Merchandising</option>
+                            <option value="Cloud & IT Infrastructure">Cloud & IT Infrastructure</option>
+                            <option value="Equipment Rental">Equipment Rental</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblPartnerStatus">Status Kemitraan</label>
+                        <select id="vendor-status" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            <option value="Preferred Partner">Preferred Partner</option>
+                            <option value="Active">Active</option>
+                            <option value="Backup">Backup</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblPicName">Nama Kontak PIC</label>
+                        <input type="text" id="vendor-pic" required placeholder="Agus Raharjo" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblWhatsAppNum">Nomor WhatsApp (kode 62...)</label>
+                        <input type="text" id="vendor-phone" required placeholder="6281299887766" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblVendorEmail">Email Vendor</label>
+                        <input type="email" id="vendor-email" placeholder="order@primacetak.co.id" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblCityLocation">Lokasi / Kota</label>
+                        <input type="text" id="vendor-location" placeholder="Jakarta Selatan" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblPriceTier">Tier Harga</label>
+                        <select id="vendor-tier" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            <option value="$">$ - Ekonomis / Terjangkau</option>
+                            <option value="$$">$$ - Standar / Menengah</option>
+                            <option value="$$$">$$$ - Premium / High End</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblReliabilityRating">Rating Keandalan (1-5)</label>
+                        <input type="number" id="vendor-rating" min="1" max="5" step="0.1" value="4.8" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblEstVendorCost">Estimasi Biaya Standar / Rate Card (IDR)</label>
+                    <input type="number" id="vendor-cost" placeholder="4000000" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-teal-500">
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="lblVendorNotes">Catatan Khusus & Minimum Order</label>
+                    <textarea id="vendor-notes" rows="2" placeholder="Min. order 500 pcs. Waktu pengerjaan 3 hari kerja." class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
+                </div>
+
+                <div class="pt-3 flex justify-end space-x-3 border-t border-gray-100 dark:border-gray-700">
+                    <button type="button" onclick="closeVendorModal()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition" data-i18n="btnCancel">Batal</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-bold bg-teal-600 hover:bg-teal-700 text-white rounded-xl shadow-md transition" data-i18n="btnSaveVendor">Simpan Vendor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 4: CONFIRMATION MODAL -->
+    <div id="modal-confirm" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-700 p-6 space-y-4 text-center">
+            <div id="confirm-icon-container" class="w-14 h-14 rounded-full flex items-center justify-center mx-auto text-2xl">
+                <!-- Dynamic via JS -->
+            </div>
+            <h3 id="confirm-title" class="text-lg font-bold text-gray-900 dark:text-white">Judul Konfirmasi</h3>
+            <p id="confirm-message" class="text-sm text-gray-500 dark:text-gray-300">Pesan konfirmasi detail.</p>
+            <div class="pt-4 flex justify-center space-x-3">
+                <button onclick="closeConfirmModal()" class="px-5 py-2.5 text-sm font-semibold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition" data-i18n="btnCancel">Batal</button>
+                <button id="confirm-action-btn" onclick="executeConfirmedAction()" class="px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-md transition">Eksekusi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. FIREBASE CONFIGURATION
+        // Tempel milikmu dari Firebase Console di bawah ini:
+        // ==========================================
+        const firebaseConfig = {
+			apiKey: "AIzaSyAbX0SCn1tzPJ0hfHNlpCZE5FOMN-pU5hA",
+			authDomain: "agency-wannabe.firebaseapp.com",
+			projectId: "agency-wannabe",
+			storageBucket: "agency-wannabe.firebasestorage.app",
+			messagingSenderId: "611725240009",
+			appId: "1:611725240009:web:36a1191e4a8d750e654f18",
+			measurementId: "G-HF55GHW5BZ"
+		};
+
+        // Full Dual Language Translation Dictionary
+        const translations = {
+            id: {
+                appName: "AGILE AGENCY",
+                appSub: "OS & Margin Calculator",
+                navDashboard: "Dashboard Utama",
+                navProjects: "Projects & Pipeline",
+                navCalculator: "Margin Calculator",
+                navFreelancers: "Talent Pool (Freelancer)",
+                navVendors: "Vendor & Partner Directory",
+                navInvoices: "Invoice Generator",
+                sidebarDataHeader: "Kelola Data Workspace",
+                btnGenerateDemo: "Generate Data Demo",
+                btnClearDemo: "Hapus Data Demo Saja",
+                btnResetAll: "Reset Total Workspace",
+                exportBtn: "Export",
+                importBtn: "Import",
+                newProject: "Proyek Baru",
+
+                syncConnecting: "Koneksi Cloud...",
+                syncSynced: "Cloud Synced - Live Team",
+                syncOffline: "Local Storage Mode",
+
+                kpiRevenue: "Total Omzet",
+                kpiRevenueSub: "Total nilai semua proyek",
+                kpiExpenses: "Beban Sub-Kontrak",
+                kpiExpensesSub: "Freelancer & Vendor",
+                kpiProfit: "Laba Bersih Agency",
+                kpiProfitSub: "Omzet - Sub-Kontrak",
+                kpiMargin: "Rata-rata Margin",
+                kpiMarginSub: "Target Sehat: > 40%",
+                kpiActive: "Proyek Aktif",
+                kpiActiveSub: "Dalam pengerjaan",
+
+                healthGreatTitle: "Kesehatan Finansial Agency: Sangat Sehat (Margin {margin}%)",
+                healthGreatSub: "Rata-rata margin profit agency Anda berada di atas standar ideal (40%).",
+                healthGreatBadge: "Zona Aman",
+                healthWarningTitle: "Kesehatan Finansial Agency: Perlu Perhatian (Margin {margin}%)",
+                healthWarningSub: "Margin berada di batas sedang. Coba efisiensikan biaya vendor atau tingkatkan quote harga.",
+                healthWarningBadge: "Moderat",
+                healthDangerTitle: "Peringatan Risiko Margin Rendah ({margin}%)",
+                healthDangerSub: "Margin profit agency Anda berada di bawah batas aman (30%). Risiko rugi jika terjadi scope creep!",
+                healthDangerBadge: "Risiko Tinggi",
+
+                chartRevCost: "Omzet vs Beban Sub-Kontraktor",
+                chartCatDist: "Distribusi Layanan",
+                recentProjects: "Proyek Terbaru",
+                viewAllPipeline: "Lihat Semua Pipeline",
+                colClientProj: "Klien & Proyek",
+                colCategory: "Kategori",
+                colValue: "Nilai Proyek",
+                colMargin: "Margin %",
+                colStatus: "Status",
+                colActions: "Aksi",
+                colNetProfit: "Net Profit",
+                colVendorCost: "Biaya Sub-Kontrak",
+                colPartner: "Partner/Talent",
+
+                searchProjPlaceholder: "Cari nama klien atau proyek...",
+                allCategories: "Semua Kategori",
+                allStatuses: "Semua Status",
+                tableView: "Tabel",
+                kanbanView: "Kanban Board",
+                noProjectsFound: "Tidak ada proyek tersimpan.",
+
+                calcPresetTitle: "Template Paket Layanan Instan",
+                calcPresetSub: "Klik untuk memuat variabel harga default",
+                calcStructureTitle: "Simulasi Struktur Biaya",
+                calcSelectVendorLabel: "Pilih Vendor/Freelancer Terdaftar (Opsional)",
+                calcManualOption: "-- Bebas / Input Manual --",
+                calcSubcontractCost: "Biaya Vendor / Sub-Kontrak (IDR)",
+                calcBufferLabel: "Buffer Risiko & Scope Creep (%)",
+                calcBufferHelp: "Penyangga jika ada revisi tambahan atau keterlambatan vendor.",
+                calcOverheadLabel: "Overhead Operasional Agency (%)",
+                calcOverheadHelp: "Alokasi biaya internet, software subscription, listrik & manajemen.",
+                calcTargetMarginLabel: "Target Net Margin Agency (%)",
+                calcTargetMarginHelp: "Persentase keuntungan bersih yang ingin didapatkan agency.",
+                calcRecQuote: "Rekomendasi Penawaran Klien",
+                calcIdealDeal: "Ideal Deal",
+                calcNetProfit: "Laba Bersih Agency",
+                calcBreakeven: "Harga Break-Even",
+                calcConvertToProj: "Jadikan Proyek / Pitching",
+
+                freeSearchPlaceholder: "Cari nama atau keahlian freelancer...",
+                freeAddBtn: "Tambah Freelancer",
+                freeAllSkills: "Semua Keahlian",
+                freeStandardRate: "Rate Standar:",
+                freeRating: "Rating Kinerja:",
+                freeContactWA: "Hubungi WA",
+                freeNoData: "Tidak ada freelancer tersimpan.",
+
+                vendorSearchPlaceholder: "Cari nama vendor, PIC, atau kota...",
+                vendorAddBtn: "Tambah Vendor Baru",
+                vendorAllCategories: "Semua Kategori Vendor",
+                vendorAllStatuses: "Semua Status Kemitraan",
+                vendorSortRating: "Urutkan: Rating Tertinggi",
+                vendorSortPriceAsc: "Urutkan: Harga Terjangkau ($)",
+                vendorSortPriceDesc: "Urutkan: Premium ($$$)",
+                vendorSortName: "Urutkan: Nama (A-Z)",
+                vendorPicLabel: "PIC Kontak:",
+                vendorLocLabel: "Lokasi:",
+                vendorTierLabel: "Tier Harga / Base:",
+                vendorReliabilityLabel: "Keandalan:",
+                vendorWAPic: "WA PIC",
+                vendorUseCalc: "Gunakan di Calculator",
+                vendorNoData: "Tidak ada vendor/partner tersimpan.",
+
+                invConfigTitle: "Pengaturan Faktur / Invoice",
+                invImportProjectLabel: "Impor Data dari Proyek",
+                invSelectProjectDefault: "-- Pilih Proyek Pipeline --",
+                invNumberLabel: "Nomor Invoice",
+                invDateLabel: "Tanggal",
+                invClientNameLabel: "Nama Klien / Perusahaan",
+                invItemDescLabel: "Deskripsi Item Layanan",
+                invTotalAmountLabel: "Total Tagihan (IDR)",
+                invDueDateLabel: "Jatuh Tempo",
+                invPrintBtn: "Cetak / Export PDF Invoice",
+                invHeading: "FAKTUR",
+                invBilledTo: "Ditagihkan Kepada:",
+                invClientTitle: "Klien Terhormat Agency",
+                invDueDateHeader: "Jatuh Tempo Pembayaran:",
+                invTableDesc: "Deskripsi Layanan & Rincian",
+                invTableTotal: "Jumlah Total",
+                invSubtotal: "Subtotal",
+                invTax: "Pajak / Potongan",
+                invTotalPayment: "Total Pembayaran",
+                invPaymentInstruction: "Petunjuk Pembayaran Transfer Bank:",
+                invBankDetails: "Bank BCA - 8830-1928-11 a.n PT Agile Strategi Mandiri",
+                invThankYou: "Terima kasih atas kepercayaan Anda bermitra bersama agency kami.",
+
+                modalProjAddTitle: "Tambah Proyek Baru",
+                modalProjEditTitle: "Edit Proyek",
+                lblClientName: "Nama Klien / Instansi",
+                lblProjTitle: "Judul / Ruang Lingkup Proyek",
+                lblCategory: "Kategori Layanan",
+                lblPipelineStatus: "Status Pipeline",
+                lblQuoteRevenue: "Nilai Penawaran / Omzet (IDR)",
+                lblCostCost: "Biaya Sub-Kontrak (IDR)",
+                lblFreelancerPartner: "Freelancer / Partner Eksternal",
+                lblDeadline: "Tenggat Waktu / Deadline",
+                btnCancel: "Batal",
+                btnSaveProj: "Simpan Proyek",
+
+                modalFreeAddTitle: "Tambah Freelancer Baru",
+                modalFreeEditTitle: "Edit Freelancer",
+                lblFullName: "Nama Lengkap",
+                lblMainSkill: "Keahlian Utama",
+                lblAvailabilityStatus: "Status Ketersediaan",
+                lblStandardRate: "Rate Standar",
+                lblWhatsAppNum: "Nomor WhatsApp (dengan 62...)",
+                btnSaveFree: "Simpan Freelancer",
+
+                modalVendorAddTitle: "Tambah Vendor / Partner Baru",
+                modalVendorEditTitle: "Edit Vendor / Partner",
+                lblVendorName: "Nama Vendor / Perusahaan",
+                lblPartnerStatus: "Status Kemitraan",
+                lblPicName: "Nama Kontak PIC",
+                lblVendorEmail: "Email Vendor",
+                lblCityLocation: "Lokasi / Kota",
+                lblPriceTier: "Tier Harga",
+                lblReliabilityRating: "Rating Keandalan (1-5)",
+                lblEstVendorCost: "Estimasi Biaya Standar / Rate Card (IDR)",
+                lblVendorNotes: "Catatan Khusus & Minimum Order",
+                btnSaveVendor: "Simpan Vendor",
+
+                toastProjSaved: "Data proyek berhasil disimpan!",
+                toastProjDeleted: "Proyek berhasil dihapus",
+                toastPresetLoaded: "Preset paket layanan berhasil dimuat",
+                toastFreeSaved: "Data freelancer tersimpan!",
+                toastFreeDeleted: "Freelancer dihapus",
+                toastVendorSaved: "Data vendor partner tersimpan!",
+                toastVendorDeleted: "Vendor berhasil dihapus",
+                toastBackupDownloaded: "Backup JSON berhasil diunduh",
+                toastImportSuccess: "Data sistem berhasil diimpor!",
+
+                toastDemoGenerated: "Data demo ditambahkan (bertanda [DEMO])!",
+                toastDemoCleared: "Semua data bertanda [DEMO] dibersihkan!",
+                toastDataReset: "Seluruh workspace di-reset bersih!",
+
+                confirmResetTitle: "Konfirmasi Reset Total Workspace",
+                confirmResetMsg: "Apakah Anda yakin ingin MENGHAPUS SELURUH DATA WORKSPACE? Data asli dan demo akan hilang.",
+                confirmClearDemoTitle: "Bersihkan Data Demo Saja?",
+                confirmClearDemoMsg: "Hanya item bertanda [DEMO] yang akan dihapus. Seluruh data asli ciptaan Anda dan tim AKAN TETAP AMAN.",
+                btnConfirmExecute: "Ya, Eksekusi",
+                demoBadge: "DEMO"
+            },
+            en: {
+                appName: "AGILE AGENCY",
+                appSub: "OS & Margin Calculator",
+                navDashboard: "Main Dashboard",
+                navProjects: "Projects & Pipeline",
+                navCalculator: "Margin Calculator",
+                navFreelancers: "Talent Pool (Freelancers)",
+                navVendors: "Vendor & Partner Directory",
+                navInvoices: "Invoice Generator",
+                sidebarDataHeader: "Workspace Data Tools",
+                btnGenerateDemo: "Generate Demo Data",
+                btnClearDemo: "Clear Demo Data Only",
+                btnResetAll: "Reset Total Workspace",
+                exportBtn: "Export",
+                importBtn: "Import",
+                newProject: "New Project",
+
+                syncConnecting: "Connecting Cloud...",
+                syncSynced: "Cloud Synced - Live Team",
+                syncOffline: "Local Storage Mode",
+
+                kpiRevenue: "Total Revenue",
+                kpiRevenueSub: "Total value of all projects",
+                kpiExpenses: "Subcontractor Expense",
+                kpiExpensesSub: "Freelancers & Vendors",
+                kpiProfit: "Agency Net Profit",
+                kpiProfitSub: "Revenue - Subcontractors",
+                kpiMargin: "Average Margin",
+                kpiMarginSub: "Healthy Target: > 40%",
+                kpiActive: "Active Projects",
+                kpiActiveSub: "Currently in progress",
+
+                healthGreatTitle: "Financial Health Status: Excellent (Margin {margin}%)",
+                healthGreatSub: "Your agency average profit margin exceeds standard ideal target (40%).",
+                healthGreatBadge: "Safe Zone",
+                healthWarningTitle: "Financial Health Status: Attention Needed (Margin {margin}%)",
+                healthWarningSub: "Margin is moderate. Consider optimizing vendor costs or increasing quotes.",
+                healthWarningBadge: "Moderate",
+                healthDangerTitle: "Low Profit Margin Warning ({margin}%)",
+                healthDangerSub: "Your agency margin is below safe threshold (30%). Risk of loss if scope creep happens!",
+                healthDangerBadge: "High Risk",
+
+                chartRevCost: "Revenue vs Subcontractor Expense",
+                chartCatDist: "Services Distribution",
+                recentProjects: "Recent Projects",
+                viewAllPipeline: "View Full Pipeline",
+                colClientProj: "Client & Project",
+                colCategory: "Category",
+                colValue: "Project Value",
+                colMargin: "Margin %",
+                colStatus: "Status",
+                colActions: "Actions",
+                colNetProfit: "Net Profit",
+                colVendorCost: "Sub-Contract Cost",
+                colPartner: "Partner/Talent",
+
+                searchProjPlaceholder: "Search client or project name...",
+                allCategories: "All Categories",
+                allStatuses: "All Statuses",
+                tableView: "Table",
+                kanbanView: "Kanban Board",
+                noProjectsFound: "No projects saved.",
+
+                calcPresetTitle: "Instant Service Package Presets",
+                calcPresetSub: "Click to load default pricing variables",
+                calcStructureTitle: "Cost Structure Simulation",
+                calcSelectVendorLabel: "Select Registered Vendor/Freelancer (Optional)",
+                calcManualOption: "-- Custom / Manual Entry --",
+                calcSubcontractCost: "Vendor / Sub-Contract Cost (IDR)",
+                calcBufferLabel: "Risk & Scope Creep Buffer (%)",
+                calcBufferHelp: "Safety cushion for extra revisions or vendor delays.",
+                calcOverheadLabel: "Agency Operational Overhead (%)",
+                calcOverheadHelp: "Allocation for internet, software, electricity & management.",
+                calcTargetMarginLabel: "Target Net Agency Margin (%)",
+                calcTargetMarginHelp: "Desired net profit percentage for the agency.",
+                calcRecQuote: "Recommended Client Quote",
+                calcIdealDeal: "Ideal Deal",
+                calcNetProfit: "Agency Net Profit",
+                calcBreakeven: "Break-Even Price",
+                calcConvertToProj: "Convert to Project / Pitching",
+
+                freeSearchPlaceholder: "Search freelancer name or skills...",
+                freeAddBtn: "Add Freelancer",
+                freeAllSkills: "All Skills",
+                freeStandardRate: "Standard Rate:",
+                freeRating: "Performance Rating:",
+                freeContactWA: "Contact WA",
+                freeNoData: "No freelancers saved.",
+
+                vendorSearchPlaceholder: "Search vendor name, PIC, or city...",
+                vendorAddBtn: "Add New Vendor",
+                vendorAllCategories: "All Vendor Categories",
+                vendorAllStatuses: "All Partnership Statuses",
+                vendorSortRating: "Sort by: Highest Rating",
+                vendorSortPriceAsc: "Sort by: Affordable ($)",
+                vendorSortPriceDesc: "Sort by: Premium ($$$)",
+                vendorSortName: "Sort by: Name (A-Z)",
+                vendorPicLabel: "PIC Contact:",
+                vendorLocLabel: "Location:",
+                vendorTierLabel: "Price Tier / Base:",
+                vendorReliabilityLabel: "Reliability:",
+                vendorWAPic: "WA PIC",
+                vendorUseCalc: "Use in Calculator",
+                vendorNoData: "No vendors or partners saved.",
+
+                invConfigTitle: "Invoice & Proposal Settings",
+                invImportProjectLabel: "Import Data from Pipeline Project",
+                invSelectProjectDefault: "-- Select Pipeline Project --",
+                invNumberLabel: "Invoice Number",
+                invDateLabel: "Invoice Date",
+                invClientNameLabel: "Client / Company Name",
+                invItemDescLabel: "Service Item Description",
+                invTotalAmountLabel: "Total Amount Billed (IDR)",
+                invDueDateLabel: "Payment Due Date",
+                invPrintBtn: "Print / Export PDF Invoice",
+                invHeading: "INVOICE",
+                invBilledTo: "Billed To:",
+                invClientTitle: "Valued Agency Client",
+                invDueDateHeader: "Payment Due Date:",
+                invTableDesc: "Service Description & Items",
+                invTableTotal: "Total Amount",
+                invSubtotal: "Subtotal",
+                invTax: "Tax / Discount",
+                invTotalPayment: "Total Payment Due",
+                invPaymentInstruction: "Bank Transfer Payment Instructions:",
+                invBankDetails: "Bank BCA - 8830-1928-11 a.n PT Agile Strategi Mandiri",
+                invThankYou: "Thank you for partnering with our agency.",
+
+                modalProjAddTitle: "Add New Project",
+                modalProjEditTitle: "Edit Project",
+                lblClientName: "Client Name / Company",
+                lblProjTitle: "Project Scope / Title",
+                lblCategory: "Service Category",
+                lblPipelineStatus: "Pipeline Status",
+                lblQuoteRevenue: "Quoted Price / Revenue (IDR)",
+                lblCostCost: "Sub-Contract Cost (IDR)",
+                lblFreelancerPartner: "Freelancer / External Partner",
+                lblDeadline: "Project Deadline",
+                btnCancel: "Cancel",
+                btnSaveProj: "Save Project",
+
+                modalFreeAddTitle: "Add New Freelancer",
+                modalFreeEditTitle: "Edit Freelancer",
+                lblFullName: "Full Name",
+                lblMainSkill: "Primary Skill",
+                lblAvailabilityStatus: "Availability Status",
+                lblStandardRate: "Standard Rate",
+                lblWhatsAppNum: "WhatsApp Number (with 62...)",
+                btnSaveFree: "Save Freelancer",
+
+                modalVendorAddTitle: "Add New Vendor / Partner",
+                modalVendorEditTitle: "Edit Vendor / Partner",
+                lblVendorName: "Vendor / Company Name",
+                lblPartnerStatus: "Partnership Status",
+                lblPicName: "PIC Contact Name",
+                lblVendorEmail: "Vendor Email",
+                lblCityLocation: "Location / City",
+                lblPriceTier: "Price Tier",
+                lblReliabilityRating: "Reliability Rating (1-5)",
+                lblEstVendorCost: "Est. Standard Cost / Rate Card (IDR)",
+                lblVendorNotes: "Notes & Minimum Order",
+                btnSaveVendor: "Save Vendor",
+
+                toastProjSaved: "Project saved successfully!",
+                toastProjDeleted: "Project deleted successfully",
+                toastPresetLoaded: "Service package preset loaded",
+                toastFreeSaved: "Freelancer saved!",
+                toastFreeDeleted: "Freelancer deleted",
+                toastVendorSaved: "Vendor partner saved!",
+                toastVendorDeleted: "Vendor deleted",
+                toastBackupDownloaded: "JSON backup downloaded",
+                toastImportSuccess: "Data imported successfully!",
+
+                toastDemoGenerated: "Demo data appended (tagged [DEMO])!",
+                toastDemoCleared: "All items tagged [DEMO] cleared!",
+                toastDataReset: "Workspace reset clean!",
+
+                confirmResetTitle: "Confirm Total Workspace Reset",
+                confirmResetMsg: "Are you sure you want to DELETE ALL WORKSPACE DATA? Real and demo data will be lost.",
+                confirmClearDemoTitle: "Clear Demo Data Only?",
+                confirmClearDemoMsg: "Only items tagged with [DEMO] will be deleted. Real data WILL REMAIN UNTOUCHED.",
+                btnConfirmExecute: "Yes, Execute",
+                demoBadge: "DEMO"
+            }
+        };
+
+        // Standard Demo Datasets for Generator (Appended with isDummy: true)
+        const SAMPLE_DEMO_PROJECTS = [
+            { id: 'demo_p1', client: 'PT Digital Nusantara', title: 'Rebrand & Modern Web Development', category: 'Web Dev', revenue: 35000000, cost: 18000000, freelancer: 'Budi Santoso', deadline: '2026-10-25', status: 'In Progress', isDummy: true },
+            { id: 'demo_p2', client: 'Warung Kopi Maju', title: 'Social Media Retainer Q4', category: 'Marketing', revenue: 12000000, cost: 6500000, freelancer: 'Rina Melati', deadline: '2026-11-01', status: 'In Progress', isDummy: true },
+            { id: 'demo_p3', client: 'CV Creative Studio', title: 'Company Video Teaser', category: 'Video', revenue: 18000000, cost: 11000000, freelancer: 'Dimas Prasetyo', deadline: '2026-10-15', status: 'In Review', isDummy: true },
+            { id: 'demo_p4', client: 'Solusi Utama Tech', title: 'Copywriting & Press Release', category: 'Copywriting', revenue: 7500000, cost: 3000000, freelancer: 'Anisa Rahma', deadline: '2026-10-05', status: 'Invoiced', isDummy: true },
+            { id: 'demo_p5', client: 'PT Finansial Sejahtera', title: 'PT Legal & NIB Setup', category: 'Legal/Admin', revenue: 8500000, cost: 4500000, freelancer: 'Notaris & Rekan', deadline: '2026-10-30', status: 'Lead / Pitching', isDummy: true }
+        ];
+
+        const SAMPLE_DEMO_FREELANCERS = [
+            { id: 'demo_f1', name: 'Budi Santoso', skill: 'Web Dev', rate: 'Rp 5.000.000 / Proyek', phone: '6281234567891', rating: 4.9, status: 'Available', isDummy: true },
+            { id: 'demo_f2', name: 'Rina Melati', skill: 'Marketing', rate: 'Rp 300.000 / Jam', phone: '6281234567892', rating: 4.8, status: 'Busy', isDummy: true },
+            { id: 'demo_f3', name: 'Dimas Prasetyo', skill: 'Video', rate: 'Rp 4.000.000 / Proyek', phone: '6281234567893', rating: 4.7, status: 'Available', isDummy: true }
+        ];
+
+        const SAMPLE_DEMO_VENDORS = [
+            { id: 'demo_v1', name: 'PT Prima Cetak Grafika', category: 'Percetakan / Printing', pic: 'Agus Raharjo', phone: '6281299887711', email: 'order@primacetak.co.id', location: 'Jakarta Selatan', tier: '$$', rating: 4.9, cost: 4000000, notes: 'Spesialis offset print, packaging box, & booklet high resolution.', status: 'Preferred Partner', isDummy: true },
+            { id: 'demo_v2', name: 'Lensa Sinema Production', category: 'Studio & Production', pic: 'Fikri Haikal', phone: '6281388776622', email: 'halo@lensasinema.com', location: 'Bandung', tier: '$$$', rating: 4.8, cost: 8500000, notes: 'Studio TVC & sewa kamera cinema RED/Sony FX6 + lighting crew.', status: 'Preferred Partner', isDummy: true }
+        ];
+
+        // Global App State
+        window.projects = [];
+        window.freelancers = [];
+        window.vendors = [];
+        window.currentTab = 'dashboard';
+        window.currentLang = 'id';
+        window.projectViewMode = 'table';
+        window.isCloudMode = false;
+        window.db = null;
+        window.pendingAction = null;
+        
+        let chartRevExp = null;
+        let chartCategory = null;
+        let chartCalc = null;
+    </script>
+
+    <script>
+        window.onload = function () {
+            loadLocalData();
+            initFirebaseOrFallback();
+            setupCurrentDate();
+            applyLanguage();
+            refreshActiveUI();
+            populateCalculatorVendorDropdown();
+            setupInvoiceSelectOptions();
+            updateCalculator();
+        };
+
+        function initFirebaseOrFallback() {
+			const syncBadge = document.getElementById('sync-status');
+			const syncText = document.getElementById('sync-text');
+
+			// 1. Cek ketersediaan SDK & Config
+			if (typeof firebase === 'undefined' || !firebaseConfig.apiKey || firebaseConfig.apiKey.includes("YOUR_")) {
+				enableLocalMode("Local Storage Mode");
+				return;
+			}
+
+			try {
+				if (!firebase.apps.length) {
+					firebase.initializeApp(firebaseConfig);
+				}
+				db = firebase.firestore();
+
+				// 2. Langsung set status hijau setelah SDK Firestore siap
+				isCloudMode = true;
+				syncBadge.className = "flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300";
+				syncText.innerText = "Cloud Synced - Live Team";
+
+				// 3. Sync Data Real-Time
+				db.collection('projects').onSnapshot((snapshot) => {
+					if (!snapshot.empty) {
+						projects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+					}
+					renderAll();
+				}, (error) => {
+					console.warn("Firestore listener fallback:", error);
+					enableLocalMode("Local Mode");
+				});
+			} catch (err) {
+				console.error("Firebase init error:", err);
+				enableLocalMode("Local Storage Mode");
+			}
+		}
+
+        function enableLocalMode() {
+            window.isCloudMode = false;
+            const badge = document.getElementById('sync-badge');
+            const syncText = document.getElementById('sync-text');
+            badge.className = 'flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800';
+            syncText.innerText = t('syncOffline');
+            refreshActiveUI();
+        }
+
+        function saveItem(colName, item) {
+            localStorage.setItem(`agile_agency_${colName}`, JSON.stringify(window[colName]));
+            refreshActiveUI();
+
+            if (window.isCloudMode && window.db) {
+                db.collection(colName).doc(item.id).set(item, { merge: true });
+            }
+        }
+
+        function deleteItem(colName, itemId) {
+            localStorage.setItem(`agile_agency_${colName}`, JSON.stringify(window[colName]));
+            refreshActiveUI();
+
+            if (window.isCloudMode && window.db) {
+                db.collection(colName).doc(itemId).delete();
+            }
+        }
+
+        function refreshActiveUI() {
+            renderDashboard();
+            renderProjects();
+            renderFreelancers();
+            renderVendors();
+            populateCalculatorVendorDropdown();
+            setupInvoiceSelectOptions();
+        }
+
+        function loadLocalData() {
+            const sp = localStorage.getItem('agile_agency_projects');
+            const sf = localStorage.getItem('agile_agency_freelancers');
+            const sv = localStorage.getItem('agile_agency_vendors');
+            const sl = localStorage.getItem('agile_agency_lang');
+
+            if (sp) window.projects = JSON.parse(sp);
+            if (sf) window.freelancers = JSON.parse(sf);
+            if (sv) window.vendors = JSON.parse(sv);
+            if (sl) window.currentLang = sl;
+        }
+
+        function t(key, replacements = {}) {
+            let str = (translations[currentLang] && translations[currentLang][key]) || (translations['id'] && translations['id'][key]) || key;
+            Object.keys(replacements).forEach(r => {
+                str = str.replace(`{${r}}`, replacements[r]);
+            });
+            return str;
+        }
+
+        function setLanguage(lang) {
+            window.currentLang = lang;
+            localStorage.setItem('agile_agency_lang', lang);
+            applyLanguage();
+            refreshActiveUI();
+            updateCalculator();
+            updateInvoicePreview();
+        }
+
+        function applyLanguage() {
+            const btnId = document.getElementById('lang-btn-id');
+            const btnEn = document.getElementById('lang-btn-en');
+            if (currentLang === 'id') {
+                btnId.className = 'px-2.5 py-1 rounded-lg transition-all bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm font-bold';
+                btnEn.className = 'px-2.5 py-1 rounded-lg transition-all hover:text-gray-900 dark:hover:text-white font-medium';
+            } else {
+                btnEn.className = 'px-2.5 py-1 rounded-lg transition-all bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm font-bold';
+                btnId.className = 'px-2.5 py-1 rounded-lg transition-all hover:text-gray-900 dark:hover:text-white font-medium';
+            }
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (key) el.innerText = t(key);
+            });
+
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (key) el.setAttribute('placeholder', t(key));
+            });
+
+            const titles = {
+                dashboard: t('navDashboard'),
+                projects: t('navProjects'),
+                calculator: t('navCalculator'),
+                freelancers: t('navFreelancers'),
+                vendors: t('navVendors'),
+                invoices: t('navInvoices')
+            };
+            document.getElementById('page-title').innerText = titles[currentTab] || 'Agency OS';
+        }
+
+        function setupCurrentDate() {
+            const now = new Date();
+            document.getElementById('inv-date').valueAsDate = now;
+            const dueDate = new Date();
+            dueDate.setDate(now.getDate() + 14);
+            document.getElementById('inv-due-date').valueAsDate = dueDate;
+            updateInvoicePreview();
+        }
+
+        function switchTab(tabId) {
+            window.currentTab = tabId;
+            const tabs = ['dashboard', 'projects', 'calculator', 'freelancers', 'vendors', 'invoices'];
+            tabs.forEach(tName => {
+                const el = document.getElementById(`tab-${tName}`);
+                const nav = document.getElementById(`nav-${tName}`);
+                if (tName === tabId) {
+                    el.classList.remove('hidden');
+                    nav.classList.add('bg-slate-800', 'text-white');
+                    nav.classList.remove('text-slate-300');
+                } else {
+                    el.classList.add('hidden');
+                    nav.classList.remove('bg-slate-800', 'text-white');
+                    nav.classList.add('text-slate-300');
+                }
+            });
+
+            applyLanguage();
+            refreshActiveUI();
+        }
+
+        function formatIDR(amount) {
+            return new Intl.NumberFormat(currentLang === 'en' ? 'en-US' : 'id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(amount);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('translate-x-full');
+            setTimeout(() => { toast.classList.add('translate-x-full'); }, 3000);
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            const icon = document.getElementById('theme-toggle-icon');
+            icon.className = isDark ? 'fa-solid fa-sun text-lg text-amber-400' : 'fa-solid fa-moon text-lg';
+        }
+
+        // --- DEMO DATA MANAGEMENT ---
+        function generateDemoData() {
+            const timestamp = Date.now();
+            const newProjects = SAMPLE_DEMO_PROJECTS.map(p => ({ ...p, id: `demo_${timestamp}_${Math.random().toString(36).substring(2, 6)}`, isDummy: true }));
+            const newFreelancers = SAMPLE_DEMO_FREELANCERS.map(f => ({ ...f, id: `demo_${timestamp}_${Math.random().toString(36).substring(2, 6)}`, isDummy: true }));
+            const newVendors = SAMPLE_DEMO_VENDORS.map(v => ({ ...v, id: `demo_${timestamp}_${Math.random().toString(36).substring(2, 6)}`, isDummy: true }));
+
+            window.projects = [...window.projects, ...newProjects];
+            window.freelancers = [...window.freelancers, ...newFreelancers];
+            window.vendors = [...window.vendors, ...newVendors];
+
+            newProjects.forEach(p => saveItem('projects', p));
+            newFreelancers.forEach(f => saveItem('freelancers', f));
+            newVendors.forEach(v => saveItem('vendors', v));
+
+            showToast(t('toastDemoGenerated'));
+        }
+
+        function askClearDemoData() {
+            window.pendingAction = 'clearDemo';
+            const iconBox = document.getElementById('confirm-icon-container');
+            iconBox.className = 'w-14 h-14 rounded-full flex items-center justify-center mx-auto text-2xl bg-amber-100 text-amber-600 dark:bg-amber-950/60 dark:text-amber-300';
+            iconBox.innerHTML = `<i class="fa-solid fa-broom"></i>`;
+
+            document.getElementById('confirm-title').innerText = t('confirmClearDemoTitle');
+            document.getElementById('confirm-message').innerText = t('confirmClearDemoMsg');
+
+            const btn = document.getElementById('confirm-action-btn');
+            btn.className = 'px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-md transition bg-amber-600 hover:bg-amber-500';
+            btn.innerText = t('btnConfirmExecute');
+
+            document.getElementById('modal-confirm').classList.remove('hidden');
+        }
+
+        function askResetAllData() {
+            window.pendingAction = 'resetAll';
+            const iconBox = document.getElementById('confirm-icon-container');
+            iconBox.className = 'w-14 h-14 rounded-full flex items-center justify-center mx-auto text-2xl bg-rose-100 text-rose-600 dark:bg-rose-950/60 dark:text-rose-300';
+            iconBox.innerHTML = `<i class="fa-solid fa-trash-can"></i>`;
+
+            document.getElementById('confirm-title').innerText = t('confirmResetTitle');
+            document.getElementById('confirm-message').innerText = t('confirmResetMsg');
+
+            const btn = document.getElementById('confirm-action-btn');
+            btn.className = 'px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-md transition bg-rose-600 hover:bg-rose-500';
+            btn.innerText = t('btnConfirmExecute');
+
+            document.getElementById('modal-confirm').classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('modal-confirm').classList.add('hidden');
+            window.pendingAction = null;
+        }
+
+        function executeConfirmedAction() {
+            if (window.pendingAction === 'clearDemo') {
+                const demoProjIds = projects.filter(p => p.isDummy).map(p => p.id);
+                const demoFreeIds = freelancers.filter(f => f.isDummy).map(f => f.id);
+                const demoVendIds = vendors.filter(v => v.isDummy).map(v => v.id);
+
+                window.projects = projects.filter(p => !p.isDummy);
+                window.freelancers = freelancers.filter(f => !f.isDummy);
+                window.vendors = vendors.filter(v => !v.isDummy);
+
+                demoProjIds.forEach(id => deleteItem('projects', id));
+                demoFreeIds.forEach(id => deleteItem('freelancers', id));
+                demoVendIds.forEach(id => deleteItem('vendors', id));
+
+                showToast(t('toastDemoCleared'));
+
+            } else if (window.pendingAction === 'resetAll') {
+                const allProjIds = projects.map(p => p.id);
+                const allFreeIds = freelancers.map(f => f.id);
+                const allVendIds = vendors.map(v => v.id);
+
+                window.projects = [];
+                window.freelancers = [];
+                window.vendors = [];
+
+                allProjIds.forEach(id => deleteItem('projects', id));
+                allFreeIds.forEach(id => deleteItem('freelancers', id));
+                allVendIds.forEach(id => deleteItem('vendors', id));
+
+                showToast(t('toastDataReset'));
+            }
+
+            closeConfirmModal();
+        }
+
+        function getDemoBadgeHTML(isDummy) {
+            if (!isDummy) return '';
+            return `<span class="bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[10px] font-black px-1.5 py-0.5 rounded border border-amber-500/30 mr-1.5 uppercase">${t('demoBadge')}</span>`;
+        }
+
+        // --- DASHBOARD RENDERING ---
+        function renderDashboard() {
+            let totalRevenue = 0;
+            let totalExpenses = 0;
+            let activeCount = 0;
+
+            projects.forEach(p => {
+                totalRevenue += Number(p.revenue || 0);
+                totalExpenses += Number(p.cost || 0);
+                if (p.status === 'In Progress' || p.status === 'In Review') activeCount++;
+            });
+
+            const netProfit = totalRevenue - totalExpenses;
+            const avgMargin = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : 0;
+
+            document.getElementById('kpi-revenue').innerText = formatIDR(totalRevenue);
+            document.getElementById('kpi-expenses').innerText = formatIDR(totalExpenses);
+            document.getElementById('kpi-profit').innerText = formatIDR(netProfit);
+            document.getElementById('kpi-margin').innerText = `${avgMargin}%`;
+            document.getElementById('kpi-active-count').innerText = activeCount;
+
+            const banner = document.getElementById('financial-health-banner');
+            if (avgMargin >= 40) {
+                banner.className = 'p-4 rounded-2xl flex items-center justify-between shadow-sm bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 dark:text-emerald-300';
+                banner.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-shield-heart text-2xl text-emerald-500"></i>
+                        <div>
+                            <h4 class="font-bold text-sm">${t('healthGreatTitle', { margin: avgMargin })}</h4>
+                            <p class="text-xs opacity-80">${t('healthGreatSub')}</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold bg-emerald-500 text-white px-3 py-1 rounded-full">${t('healthGreatBadge')}</span>
+                `;
+            } else if (avgMargin >= 25) {
+                banner.className = 'p-4 rounded-2xl flex items-center justify-between shadow-sm bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-300';
+                banner.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl text-amber-500"></i>
+                        <div>
+                            <h4 class="font-bold text-sm">${t('healthWarningTitle', { margin: avgMargin })}</h4>
+                            <p class="text-xs opacity-80">${t('healthWarningSub')}</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold bg-amber-500 text-white px-3 py-1 rounded-full">${t('healthWarningBadge')}</span>
+                `;
+            } else {
+                banner.className = 'p-4 rounded-2xl flex items-center justify-between shadow-sm bg-rose-500/10 border border-rose-500/20 text-rose-800 dark:text-rose-300';
+                banner.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-circle-exclamation text-2xl text-rose-500"></i>
+                        <div>
+                            <h4 class="font-bold text-sm">${t('healthDangerTitle', { margin: avgMargin })}</h4>
+                            <p class="text-xs opacity-80">${t('healthDangerSub')}</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold bg-rose-500 text-white px-3 py-1 rounded-full">${t('healthDangerBadge')}</span>
+                `;
+            }
+
+            const recentList = document.getElementById('dashboard-recent-projects-list');
+            recentList.innerHTML = '';
+
+            if (projects.length === 0) {
+                recentList.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-xs text-gray-400">${t('noProjectsFound')}</td></tr>`;
+            } else {
+                projects.slice(0, 5).forEach(p => {
+                    const profit = p.revenue - p.cost;
+                    const margin = p.revenue > 0 ? ((profit / p.revenue) * 100).toFixed(0) : 0;
+                    let badgeClass = margin < 30 ? 'bg-rose-100 text-rose-700' : (margin < 45 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700');
+
+                    recentList.innerHTML += `
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
+                            <td class="py-3 px-4 font-semibold text-gray-800 dark:text-white">
+                                <div class="flex items-center">${getDemoBadgeHTML(p.isDummy)}<span>${p.client}</span></div>
+                                <div class="text-xs text-gray-400 font-normal">${p.title}</div>
+                            </td>
+                            <td class="py-3 px-4"><span class="text-xs px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-700 font-medium">${p.category}</span></td>
+                            <td class="py-3 px-4 font-bold">${formatIDR(p.revenue)}</td>
+                            <td class="py-3 px-4"><span class="text-xs px-2 py-0.5 rounded-full font-bold ${badgeClass}">${margin}%</span></td>
+                            <td class="py-3 px-4">${getStatusBadgeHTML(p.status)}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            renderDashboardCharts();
+        }
+
+        function renderDashboardCharts() {
+            const ctx1 = document.getElementById('chart-revenue-expenses').getContext('2d');
+            const labels = projects.map(p => p.client.length > 10 ? p.client.substring(0, 10) + '...' : p.client);
+            const revenues = projects.map(p => p.revenue);
+            const costs = projects.map(p => p.cost);
+
+            if (chartRevExp) chartRevExp.destroy();
+            chartRevExp = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: labels.length ? labels : ['Workspace Empty'],
+                    datasets: [
+                        { label: t('kpiRevenue'), data: revenues.length ? revenues : [0], backgroundColor: '#0284c7', borderRadius: 6 },
+                        { label: t('kpiExpenses'), data: costs.length ? costs : [0], backgroundColor: '#f43f5e', borderRadius: 6 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } }
+            });
+
+            const ctx2 = document.getElementById('chart-categories').getContext('2d');
+            const catCounts = {};
+            projects.forEach(p => { catCounts[p.category] = (catCounts[p.category] || 0) + p.revenue; });
+
+            if (chartCategory) chartCategory.destroy();
+            chartCategory = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(catCounts).length ? Object.keys(catCounts) : ['No Data'],
+                    datasets: [{
+                        data: Object.values(catCounts).length ? Object.values(catCounts) : [1],
+                        backgroundColor: ['#0284c7', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#64748b']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+
+        // --- PROJECTS PIPELINE RENDERING ---
+        function toggleProjectView(mode) {
+            window.projectViewMode = mode;
+            const btnTable = document.getElementById('view-btn-table');
+            const btnKanban = document.getElementById('view-btn-kanban');
+            const viewTable = document.getElementById('project-view-table');
+            const viewKanban = document.getElementById('project-view-kanban');
+
+            if (mode === 'table') {
+                viewTable.classList.remove('hidden');
+                viewKanban.classList.add('hidden');
+                btnTable.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-gray-800 shadow-sm text-gray-800 dark:text-white';
+                btnKanban.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-800 transition';
+            } else {
+                viewTable.classList.add('hidden');
+                viewKanban.classList.remove('hidden');
+                btnKanban.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-gray-800 shadow-sm text-gray-800 dark:text-white';
+                btnTable.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-800 transition';
+            }
+            renderProjects();
+        }
+
+        function getStatusBadgeHTML(status) {
+            switch(status) {
+                case 'Lead / Pitching': return `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300">Lead</span>`;
+                case 'In Progress': return `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">In Progress</span>`;
+                case 'In Review': return `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">In Review</span>`;
+                case 'Invoiced': return `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300">Invoiced</span>`;
+                case 'Completed': return `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">Completed</span>`;
+                default: return `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700">${status}</span>`;
+            }
+        }
+
+        function renderProjects() {
+            const searchQuery = document.getElementById('project-search').value.toLowerCase();
+            const catFilter = document.getElementById('project-filter-category').value;
+            const statusFilter = document.getElementById('project-filter-status').value;
+
+            const filtered = projects.filter(p => {
+                const matchesSearch = p.client.toLowerCase().includes(searchQuery) || p.title.toLowerCase().includes(searchQuery);
+                const matchesCat = catFilter === 'ALL' || p.category === catFilter;
+                const matchesStatus = statusFilter === 'ALL' || p.status === statusFilter;
+                return matchesSearch && matchesCat && matchesStatus;
+            });
+
+            if (projectViewMode === 'table') {
+                renderProjectsTable(filtered);
+            } else {
+                renderProjectsKanban(filtered);
+            }
+        }
+
+        function renderProjectsTable(data) {
+            const tbody = document.getElementById('project-table-body');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="py-8 text-center text-gray-400">${t('noProjectsFound')}</td></tr>`;
+                return;
+            }
+
+            data.forEach(p => {
+                const profit = p.revenue - p.cost;
+                const margin = p.revenue > 0 ? ((profit / p.revenue) * 100).toFixed(1) : 0;
+                let badgeClass = margin < 30 ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' : (margin < 45 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400');
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
+                        <td class="py-3 px-4 font-semibold text-gray-800 dark:text-white">
+                            <div class="flex items-center">${getDemoBadgeHTML(p.isDummy)}<span>${p.client}</span></div>
+                            <div class="text-xs text-gray-400 font-normal">${p.title}</div>
+                        </td>
+                        <td class="py-3 px-4"><span class="text-xs px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-700 font-medium">${p.category}</span></td>
+                        <td class="py-3 px-4 font-bold text-gray-900 dark:text-white">${formatIDR(p.revenue)}</td>
+                        <td class="py-3 px-4 text-gray-500">${formatIDR(p.cost)}</td>
+                        <td class="py-3 px-4 font-semibold text-emerald-600 dark:text-emerald-400">${formatIDR(profit)}</td>
+                        <td class="py-3 px-4"><span class="text-xs px-2.5 py-1 rounded-full font-bold ${badgeClass}">${margin}%</span></td>
+                        <td class="py-3 px-4 text-xs font-medium">${p.freelancer || '-'}</td>
+                        <td class="py-3 px-4">${getStatusBadgeHTML(p.status)}</td>
+                        <td class="py-3 px-4 text-right space-x-1">
+                            <button onclick="editProject('${p.id}')" class="p-1.5 text-gray-400 hover:text-blue-600 rounded-lg transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deleteProject('${p.id}')" class="p-1.5 text-gray-400 hover:text-rose-600 rounded-lg transition"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderProjectsKanban(data) {
+            const cols = {
+                'Lead / Pitching': { el: document.getElementById('kanban-col-lead'), countEl: document.getElementById('count-kanban-lead'), items: [] },
+                'In Progress': { el: document.getElementById('kanban-col-progress'), countEl: document.getElementById('count-kanban-progress'), items: [] },
+                'In Review': { el: document.getElementById('kanban-col-review'), countEl: document.getElementById('count-kanban-review'), items: [] },
+                'Invoiced': { el: document.getElementById('kanban-col-invoiced'), countEl: document.getElementById('count-kanban-invoiced'), items: [] },
+                'Completed': { el: document.getElementById('kanban-col-completed'), countEl: document.getElementById('count-kanban-completed'), items: [] }
+            };
+
+            Object.keys(cols).forEach(k => { cols[k].el.innerHTML = ''; cols[k].items = []; });
+            data.forEach(p => { if (cols[p.status]) cols[p.status].items.push(p); });
+
+            Object.keys(cols).forEach(k => {
+                const col = cols[k];
+                col.countEl.innerText = col.items.length;
+                if (col.items.length === 0) {
+                    col.el.innerHTML = `<div class="text-center py-6 text-xs text-gray-400 italic">- Kosong -</div>`;
+                    return;
+                }
+                col.items.forEach(p => {
+                    const profit = p.revenue - p.cost;
+                    const margin = p.revenue > 0 ? ((profit / p.revenue) * 100).toFixed(0) : 0;
+                    col.el.innerHTML += `
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-3">
+                            <div class="flex justify-between items-start">
+                                <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">${p.category}</span>
+                                <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">Margin ${margin}%</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-gray-900 dark:text-white leading-snug flex items-center">${getDemoBadgeHTML(p.isDummy)}<span>${p.client}</span></h4>
+                                <p class="text-xs text-gray-500 line-clamp-1">${p.title}</p>
+                            </div>
+                            <div class="flex justify-between items-center text-xs border-t pt-2 border-gray-100 dark:border-gray-700">
+                                <span class="font-bold text-gray-800 dark:text-gray-200">${formatIDR(p.revenue)}</span>
+                                <button onclick="editProject('${p.id}')" class="p-1 text-gray-400 hover:text-blue-500"><i class="fa-solid fa-pen text-xs"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function openProjectModal() {
+            document.getElementById('modal-project-title').innerText = t('modalProjAddTitle');
+            document.getElementById('form-project').reset();
+            document.getElementById('proj-id').value = '';
+            document.getElementById('modal-project').classList.remove('hidden');
+        }
+
+        function closeProjectModal() {
+            document.getElementById('modal-project').classList.add('hidden');
+        }
+
+        function editProject(id) {
+            const p = projects.find(item => item.id === id);
+            if (!p) return;
+            document.getElementById('modal-project-title').innerText = t('modalProjEditTitle');
+            document.getElementById('proj-id').value = p.id;
+            document.getElementById('proj-client').value = p.client;
+            document.getElementById('proj-title').value = p.title;
+            document.getElementById('proj-category').value = p.category;
+            document.getElementById('proj-status').value = p.status;
+            document.getElementById('proj-revenue').value = p.revenue;
+            document.getElementById('proj-cost').value = p.cost;
+            document.getElementById('proj-freelancer').value = p.freelancer || '';
+            document.getElementById('proj-deadline').value = p.deadline || '';
+            document.getElementById('modal-project').classList.remove('hidden');
+        }
+
+        function saveProject(e) {
+            e.preventDefault();
+            const id = document.getElementById('proj-id').value || `real_${Date.now()}`;
+            const existing = projects.find(p => p.id === id);
+            const newProj = {
+                id: id,
+                client: document.getElementById('proj-client').value,
+                title: document.getElementById('proj-title').value,
+                category: document.getElementById('proj-category').value,
+                status: document.getElementById('proj-status').value,
+                revenue: Number(document.getElementById('proj-revenue').value),
+                cost: Number(document.getElementById('proj-cost').value),
+                freelancer: document.getElementById('proj-freelancer').value,
+                deadline: document.getElementById('proj-deadline').value,
+                isDummy: existing ? existing.isDummy : false
+            };
+
+            const idx = projects.findIndex(p => p.id === id);
+            if (idx !== -1) projects[idx] = newProj;
+            else projects.unshift(newProj);
+
+            closeProjectModal();
+            saveItem('projects', newProj);
+            showToast(t('toastProjSaved'));
+        }
+
+        function deleteProject(id) {
+            projects = projects.filter(p => p.id !== id);
+            deleteItem('projects', id);
+            showToast(t('toastProjDeleted'));
+        }
+
+        // --- MARGIN CALCULATOR ---
+        function populateCalculatorVendorDropdown() {
+            const select = document.getElementById('calc-quick-vendor');
+            select.innerHTML = `<option value="">${t('calcManualOption')}</option>`;
+            
+            select.innerHTML += `<optgroup label="Vendor & Partner">`;
+            vendors.forEach(v => {
+                select.innerHTML += `<option value="vendor_${v.id}">Vendor: ${v.name} (${v.category}) - ${formatIDR(v.cost)}</option>`;
+            });
+            select.innerHTML += `</optgroup>`;
+
+            select.innerHTML += `<optgroup label="Freelancers">`;
+            freelancers.forEach(f => {
+                select.innerHTML += `<option value="free_${f.id}">Freelancer: ${f.name} (${f.skill}) - ${f.rate}</option>`;
+            });
+            select.innerHTML += `</optgroup>`;
+        }
+
+        function autoFillCalcFromVendor() {
+            const val = document.getElementById('calc-quick-vendor').value;
+            if (!val) return;
+
+            if (val.startsWith('vendor_')) {
+                const v = vendors.find(item => item.id === val.replace('vendor_', ''));
+                if (v && v.cost) {
+                    document.getElementById('calc-vendor-cost').value = v.cost;
+                    updateCalculator();
+                }
+            } else if (val.startsWith('free_')) {
+                const f = freelancers.find(item => item.id === val.replace('free_', ''));
+                if (f) {
+                    const numMatch = f.rate.replace(/[^0-9]/g, '');
+                    if (numMatch && Number(numMatch) > 10000) {
+                        document.getElementById('calc-vendor-cost').value = Number(numMatch);
+                        updateCalculator();
+                    }
+                }
+            }
+        }
+
+        function updateCalculator() {
+            const vendorCost = Number(document.getElementById('calc-vendor-cost').value) || 0;
+            const bufferPercent = Number(document.getElementById('calc-buffer-percent').value) || 0;
+            const overheadPercent = Number(document.getElementById('calc-overhead-percent').value) || 0;
+            const targetMarginPercent = Number(document.getElementById('calc-target-margin').value) || 0;
+
+            document.getElementById('calc-vendor-val-display').innerText = formatIDR(vendorCost);
+            document.getElementById('calc-buffer-val-display').innerText = `${bufferPercent}%`;
+            document.getElementById('calc-overhead-val-display').innerText = `${overheadPercent}%`;
+            document.getElementById('calc-margin-val-display').innerText = `${targetMarginPercent}%`;
+
+            const bufferCost = vendorCost * (bufferPercent / 100);
+            const vendorCostWithBuffer = vendorCost + bufferCost;
+            const overheadCost = vendorCostWithBuffer * (overheadPercent / 100);
+            const breakevenPrice = vendorCostWithBuffer + overheadCost;
+
+            const recommendedQuote = targetMarginPercent < 100 ? breakevenPrice / (1 - (targetMarginPercent / 100)) : breakevenPrice * 2;
+            const netProfit = recommendedQuote - breakevenPrice;
+
+            document.getElementById('calc-recommended-quote').innerText = formatIDR(recommendedQuote);
+            document.getElementById('calc-net-profit-val').innerText = formatIDR(netProfit);
+            document.getElementById('calc-breakeven-val').innerText = formatIDR(breakevenPrice);
+
+            const ctx = document.getElementById('calc-breakdown-chart').getContext('2d');
+            if (chartCalc) chartCalc.destroy();
+
+            chartCalc = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Vendor Cost', 'Risk Buffer', 'Overhead', 'Agency Net Profit'],
+                    datasets: [{
+                        data: [vendorCost, bufferCost, overheadCost, netProfit],
+                        backgroundColor: ['#0284c7', '#f59e0b', '#8b5cf6', '#10b981']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        }
+
+        function applyPreset(type) {
+            if (type === 'landing-page') {
+                document.getElementById('calc-vendor-cost').value = 4500000;
+                document.getElementById('calc-buffer-percent').value = 10;
+                document.getElementById('calc-overhead-percent').value = 15;
+                document.getElementById('calc-target-margin').value = 45;
+            } else if (type === 'social-media') {
+                document.getElementById('calc-vendor-cost').value = 6000000;
+                document.getElementById('calc-buffer-percent').value = 5;
+                document.getElementById('calc-overhead-percent').value = 15;
+                document.getElementById('calc-target-margin').value = 40;
+            } else if (type === 'video-editing') {
+                document.getElementById('calc-vendor-cost').value = 3000000;
+                document.getElementById('calc-buffer-percent').value = 10;
+                document.getElementById('calc-overhead-percent').value = 10;
+                document.getElementById('calc-target-margin').value = 50;
+            } else if (type === 'brand-identity') {
+                document.getElementById('calc-vendor-cost').value = 5000000;
+                document.getElementById('calc-buffer-percent').value = 15;
+                document.getElementById('calc-overhead-percent').value = 15;
+                document.getElementById('calc-target-margin').value = 50;
+            } else if (type === 'pt-legal') {
+                document.getElementById('calc-vendor-cost').value = 4000000;
+                document.getElementById('calc-buffer-percent').value = 5;
+                document.getElementById('calc-overhead-percent').value = 20;
+                document.getElementById('calc-target-margin').value = 35;
+            } else if (type === 'printing-merch') {
+                document.getElementById('calc-vendor-cost').value = 7500000;
+                document.getElementById('calc-buffer-percent').value = 15;
+                document.getElementById('calc-overhead-percent').value = 15;
+                document.getElementById('calc-target-margin').value = 40;
+            }
+            updateCalculator();
+            showToast(t('toastPresetLoaded'));
+        }
+
+        function convertCalcToProjectModal() {
+            const quoteText = document.getElementById('calc-recommended-quote').innerText;
+            const vendorCost = Number(document.getElementById('calc-vendor-cost').value);
+            const rawQuote = Number(quoteText.replace(/[^0-9]/g, ''));
+
+            openProjectModal();
+            document.getElementById('proj-revenue').value = rawQuote;
+            document.getElementById('proj-cost').value = vendorCost;
+            document.getElementById('proj-title').value = 'New Proposal Pitching';
+            document.getElementById('proj-status').value = 'Lead / Pitching';
+        }
+
+        // --- FREELANCERS RENDERING ---
+        function renderFreelancers() {
+            const grid = document.getElementById('freelancers-grid');
+            const search = document.getElementById('freelancer-search').value.toLowerCase();
+            const skillFilter = document.getElementById('freelancer-filter-skill').value;
+
+            const filtered = freelancers.filter(f => {
+                const matchesSearch = f.name.toLowerCase().includes(search) || f.skill.toLowerCase().includes(search);
+                const matchesSkill = skillFilter === 'ALL' || f.skill === skillFilter;
+                return matchesSearch && matchesSkill;
+            });
+
+            grid.innerHTML = '';
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">${t('freeNoData')}</div>`;
+                return;
+            }
+
+            filtered.forEach(f => {
+                const statusBadge = f.status === 'Available' 
+                    ? `<span class="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 text-xs px-2.5 py-0.5 rounded-full font-bold">Available</span>`
+                    : `<span class="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 text-xs px-2.5 py-0.5 rounded-full font-bold">Busy</span>`;
+
+                grid.innerHTML += `
+                    <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-4">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center text-lg">
+                                    ${f.name.charAt(0)}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-base text-gray-900 dark:text-white flex items-center">${getDemoBadgeHTML(f.isDummy)}<span>${f.name}</span></h4>
+                                    <span class="text-xs text-blue-600 dark:text-blue-400 font-semibold">${f.skill}</span>
+                                </div>
+                            </div>
+                            ${statusBadge}
+                        </div>
+
+                        <div class="space-y-1 text-xs text-gray-500 dark:text-gray-400 border-t border-b py-3 border-gray-100 dark:border-gray-700">
+                            <div class="flex justify-between">
+                                <span>${t('freeStandardRate')}</span>
+                                <span class="font-bold text-gray-800 dark:text-gray-200">${f.rate}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>${t('freeRating')}</span>
+                                <span class="font-bold text-amber-500"><i class="fa-solid fa-star mr-1"></i>${f.rating || '5.0'}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <a href="https://wa.me/${f.phone}" target="_blank" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center space-x-2 transition">
+                                <i class="fa-brands fa-whatsapp text-sm"></i>
+                                <span>${t('freeContactWA')}</span>
+                            </a>
+                            <div class="flex space-x-1">
+                                <button onclick="editFreelancer('${f.id}')" class="p-2 text-gray-400 hover:text-blue-500"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="deleteFreelancer('${f.id}')" class="p-2 text-gray-400 hover:text-rose-500"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openFreelancerModal() {
+            document.getElementById('modal-freelancer-title').innerText = t('modalFreeAddTitle');
+            document.getElementById('form-freelancer').reset();
+            document.getElementById('free-id').value = '';
+            document.getElementById('modal-freelancer').classList.remove('hidden');
+        }
+
+        function closeFreelancerModal() {
+            document.getElementById('modal-freelancer').classList.add('hidden');
+        }
+
+        function editFreelancer(id) {
+            const f = freelancers.find(item => item.id === id);
+            if (!f) return;
+            document.getElementById('modal-freelancer-title').innerText = t('modalFreeEditTitle');
+            document.getElementById('free-id').value = f.id;
+            document.getElementById('free-name').value = f.name;
+            document.getElementById('free-skill').value = f.skill;
+            document.getElementById('free-status').value = f.status;
+            document.getElementById('free-rate').value = f.rate;
+            document.getElementById('free-phone').value = f.phone;
+            document.getElementById('modal-freelancer').classList.remove('hidden');
+        }
+
+        function saveFreelancer(e) {
+            e.preventDefault();
+            const id = document.getElementById('free-id').value || `real_${Date.now()}`;
+            const existing = freelancers.find(f => f.id === id);
+            const newFree = {
+                id: id,
+                name: document.getElementById('free-name').value,
+                skill: document.getElementById('free-skill').value,
+                status: document.getElementById('free-status').value,
+                rate: document.getElementById('free-rate').value,
+                phone: document.getElementById('free-phone').value,
+                rating: 4.9,
+                isDummy: existing ? existing.isDummy : false
+            };
+
+            const idx = freelancers.findIndex(f => f.id === id);
+            if (idx !== -1) freelancers[idx] = newFree;
+            else freelancers.unshift(newFree);
+
+            closeFreelancerModal();
+            saveItem('freelancers', newFree);
+            showToast(t('toastFreeSaved'));
+        }
+
+        function deleteFreelancer(id) {
+            freelancers = freelancers.filter(f => f.id !== id);
+            deleteItem('freelancers', id);
+            showToast(t('toastFreeDeleted'));
+        }
+
+        // --- VENDORS RENDERING ---
+        function renderVendors() {
+            const grid = document.getElementById('vendors-grid');
+            const search = document.getElementById('vendor-search').value.toLowerCase();
+            const catFilter = document.getElementById('vendor-filter-category').value;
+            const statusFilter = document.getElementById('vendor-filter-status').value;
+            const sortBy = document.getElementById('vendor-sort-by').value;
+
+            let filtered = vendors.filter(v => {
+                const matchesSearch = v.name.toLowerCase().includes(search) || v.pic.toLowerCase().includes(search) || (v.location && v.location.toLowerCase().includes(search));
+                const matchesCat = catFilter === 'ALL' || v.category === catFilter;
+                const matchesStatus = statusFilter === 'ALL' || v.status === statusFilter;
+                return matchesSearch && matchesCat && matchesStatus;
+            });
+
+            filtered.sort((a, b) => {
+                if (sortBy === 'rating-desc') return (b.rating || 0) - (a.rating || 0);
+                if (sortBy === 'tier-asc') return (a.tier || '$').length - (b.tier || '$').length;
+                if (sortBy === 'tier-desc') return (b.tier || '$').length - (a.tier || '$').length;
+                if (sortBy === 'name-asc') return a.name.localeCompare(b.name);
+                return 0;
+            });
+
+            grid.innerHTML = '';
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">${t('vendorNoData')}</div>`;
+                return;
+            }
+
+            filtered.forEach(v => {
+                let statusBadgeClass = v.status === 'Preferred Partner' ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300 font-bold' : (v.status === 'Inactive' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400' : 'bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-300');
+
+                grid.innerHTML += `
+                    <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-4 hover:shadow-md transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-0.5 rounded-md bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300 border border-teal-200/50">${v.category}</span>
+                                <h4 class="font-bold text-base text-gray-900 dark:text-white mt-1.5 flex items-center">${getDemoBadgeHTML(v.isDummy)}<span>${v.name}</span></h4>
+                            </div>
+                            <span class="text-xs px-2.5 py-1 rounded-full font-semibold ${statusBadgeClass}">${v.status}</span>
+                        </div>
+
+                        <div class="space-y-2 text-xs text-gray-600 dark:text-gray-300 border-t border-b py-3 border-gray-100 dark:border-gray-700">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400"><i class="fa-solid fa-user-tie mr-1.5 w-4"></i>${t('vendorPicLabel')}</span>
+                                <span class="font-semibold text-gray-800 dark:text-white">${v.pic}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400"><i class="fa-solid fa-location-dot mr-1.5 w-4"></i>${t('vendorLocLabel')}</span>
+                                <span>${v.location || '-'}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400"><i class="fa-solid fa-tags mr-1.5 w-4"></i>${t('vendorTierLabel')}</span>
+                                <div class="space-x-1">
+                                    <span class="font-bold text-emerald-600 dark:text-emerald-400">${v.tier || '$'}</span>
+                                    <span class="text-gray-400">(${v.cost ? formatIDR(v.cost) : '-'})</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400"><i class="fa-solid fa-star mr-1.5 w-4 text-amber-400"></i>${t('vendorReliabilityLabel')}</span>
+                                <span class="font-bold text-amber-500">${v.rating || '5.0'} / 5.0</span>
+                            </div>
+                            ${v.notes ? `<div class="pt-2 text-[11px] text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 p-2 rounded-lg italic">"${v.notes}"</div>` : ''}
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <div class="flex space-x-2">
+                                <a href="https://wa.me/${v.phone}" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition">
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                    <span>${t('vendorWAPic')}</span>
+                                </a>
+                                <button onclick="useVendorInCalc('${v.id}')" class="px-2.5 py-1.5 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 text-blue-600 dark:text-blue-300 rounded-xl text-xs font-semibold transition">
+                                    <i class="fa-solid fa-calculator"></i>
+                                </button>
+                            </div>
+                            <div class="flex space-x-1">
+                                <button onclick="editVendor('${v.id}')" class="p-1.5 text-gray-400 hover:text-blue-500"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="deleteVendor('${v.id}')" class="p-1.5 text-gray-400 hover:text-rose-500"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openVendorModal() {
+            document.getElementById('modal-vendor-title').innerText = t('modalVendorAddTitle');
+            document.getElementById('form-vendor').reset();
+            document.getElementById('vendor-id').value = '';
+            document.getElementById('modal-vendor').classList.remove('hidden');
+        }
+
+        function closeVendorModal() {
+            document.getElementById('modal-vendor').classList.add('hidden');
+        }
+
+        function editVendor(id) {
+            const v = vendors.find(item => item.id === id);
+            if (!v) return;
+            document.getElementById('modal-vendor-title').innerText = t('modalVendorEditTitle');
+            document.getElementById('vendor-id').value = v.id;
+            document.getElementById('vendor-name').value = v.name;
+            document.getElementById('vendor-category').value = v.category;
+            document.getElementById('vendor-status').value = v.status;
+            document.getElementById('vendor-pic').value = v.pic;
+            document.getElementById('vendor-phone').value = v.phone;
+            document.getElementById('vendor-email').value = v.email || '';
+            document.getElementById('vendor-location').value = v.location || '';
+            document.getElementById('vendor-tier').value = v.tier || '$$';
+            document.getElementById('vendor-rating').value = v.rating || 4.8;
+            document.getElementById('vendor-cost').value = v.cost || '';
+            document.getElementById('vendor-notes').value = v.notes || '';
+            document.getElementById('modal-vendor').classList.remove('hidden');
+        }
+
+        function saveVendor(e) {
+            e.preventDefault();
+            const id = document.getElementById('vendor-id').value || `real_${Date.now()}`;
+            const existing = vendors.find(v => v.id === id);
+            const newVendor = {
+                id: id,
+                name: document.getElementById('vendor-name').value,
+                category: document.getElementById('vendor-category').value,
+                status: document.getElementById('vendor-status').value,
+                pic: document.getElementById('vendor-pic').value,
+                phone: document.getElementById('vendor-phone').value,
+                email: document.getElementById('vendor-email').value,
+                location: document.getElementById('vendor-location').value,
+                tier: document.getElementById('vendor-tier').value,
+                rating: Number(document.getElementById('vendor-rating').value) || 4.8,
+                cost: Number(document.getElementById('vendor-cost').value) || 0,
+                notes: document.getElementById('vendor-notes').value,
+                isDummy: existing ? existing.isDummy : false
+            };
+
+            const idx = vendors.findIndex(v => v.id === id);
+            if (idx !== -1) vendors[idx] = newVendor;
+            else vendors.unshift(newVendor);
+
+            closeVendorModal();
+            saveItem('vendors', newVendor);
+            showToast(t('toastVendorSaved'));
+        }
+
+        function deleteVendor(id) {
+            vendors = vendors.filter(v => v.id !== id);
+            deleteItem('vendors', id);
+            showToast(t('toastVendorDeleted'));
+        }
+
+        function useVendorInCalc(id) {
+            const v = vendors.find(item => item.id === id);
+            if (!v) return;
+            switchTab('calculator');
+            document.getElementById('calc-quick-vendor').value = `vendor_${v.id}`;
+            autoFillCalcFromVendor();
+        }
+
+        // --- INVOICE SETUP ---
+        function setupInvoiceSelectOptions() {
+            const select = document.getElementById('invoice-project-select');
+            select.innerHTML = `<option value="">${t('invSelectProjectDefault')}</option>`;
+            projects.forEach(p => {
+                select.innerHTML += `<option value="${p.id}">${p.client} - ${p.title}</option>`;
+            });
+        }
+
+        function loadProjectIntoInvoice() {
+            const projId = document.getElementById('invoice-project-select').value;
+            if (!projId) return;
+            const p = projects.find(item => item.id === projId);
+            if (p) {
+                document.getElementById('inv-client-name').value = p.client;
+                document.getElementById('inv-item-desc').value = `${p.category}: ${p.title}`;
+                document.getElementById('inv-amount').value = p.revenue;
+                updateInvoicePreview();
+            }
+        }
+
+        function updateInvoicePreview() {
+            const num = document.getElementById('inv-number').value;
+            const date = document.getElementById('inv-date').value;
+            const client = document.getElementById('inv-client-name').value;
+            const item = document.getElementById('inv-item-desc').value;
+            const amount = Number(document.getElementById('inv-amount').value) || 0;
+            const due = document.getElementById('inv-due-date').value;
+
+            document.getElementById('prev-inv-number').innerText = num || 'INV/2026/001';
+            document.getElementById('prev-inv-date').innerText = `Date/Tanggal: ${date || '-'}`;
+            document.getElementById('prev-inv-client').innerText = client || 'Valued Client';
+            document.getElementById('prev-inv-item').innerText = item || 'Agency Services Scope';
+            document.getElementById('prev-inv-amount').innerText = formatIDR(amount);
+            document.getElementById('prev-inv-subtotal').innerText = formatIDR(amount);
+            document.getElementById('prev-inv-total').innerText = formatIDR(amount);
+            document.getElementById('prev-inv-due').innerText = due || '-';
+        }
+
+        // --- BACKUP EXPORT & IMPORT ---
+        function exportData() {
+            const backupData = {
+                projects: window.projects,
+                freelancers: window.freelancers,
+                vendors: window.vendors,
+                exportedAt: new Date().toISOString()
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", `agile_agency_backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+            showToast(t('toastBackupDownloaded'));
+        }
+
+        function importData(event) {
+            const fileReader = new FileReader();
+            fileReader.onload = function (e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed.projects && parsed.freelancers) {
+                        window.projects = parsed.projects;
+                        window.freelancers = parsed.freelancers;
+                        if (parsed.vendors) window.vendors = parsed.vendors;
+
+                        localStorage.setItem('agile_agency_projects', JSON.stringify(window.projects));
+                        localStorage.setItem('agile_agency_freelancers', JSON.stringify(window.freelancers));
+                        localStorage.setItem('agile_agency_vendors', JSON.stringify(window.vendors));
+
+                        refreshActiveUI();
+                        showToast(t('toastImportSuccess'));
+                    }
+                } catch (err) {
+                    console.error("Import error", err);
+                }
+            };
+            fileReader.readAsText(event.target.files[0]);
+        }
+    </script>
+</body>
+</html>
