@@ -1419,6 +1419,12 @@
 			const syncBadge = document.getElementById('sync-status');
 			const syncText = document.getElementById('sync-text');
 
+			// Safe guard: cegah error jika elemen HTML belum dirender
+			if (!syncBadge || !syncText) {
+				console.warn("Elemen indikator status belum siap di DOM.");
+				return;
+			}
+
 			// 1. Cek ketersediaan SDK & Config
 			if (typeof firebase === 'undefined' || !firebaseConfig.apiKey || firebaseConfig.apiKey.includes("YOUR_")) {
 				enableLocalMode("Local Storage Mode");
@@ -1431,7 +1437,7 @@
 				}
 				db = firebase.firestore();
 
-				// 2. Langsung set status hijau setelah SDK Firestore siap
+				// 2. Update indikator status ke Cloud Synced
 				isCloudMode = true;
 				syncBadge.className = "flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300";
 				syncText.innerText = "Cloud Synced - Live Team";
@@ -1451,6 +1457,11 @@
 				enableLocalMode("Local Storage Mode");
 			}
 		}
+
+// Pastikan fungsi baru dipanggil setelah seluruh HTML selesai dimuat
+document.addEventListener('DOMContentLoaded', () => {
+    initFirebaseOrFallback();
+});
 
         function enableLocalMode() {
             window.isCloudMode = false;
