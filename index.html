@@ -69,7 +69,7 @@
                     </div>
                     <div>
                         <h1 class="font-extrabold text-base tracking-wide leading-tight" data-i18n="appName">3's Agency</h1>
-                        <span class="text-xs text-blue-400 font-medium" data-i18n="appSub">All-in-one Hub</span>
+                        <span class="text-xs text-blue-400 font-medium" data-i18n="appSub">All-in-One Hub</span>
                     </div>
                 </div>
                 <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-white">
@@ -427,20 +427,14 @@
                             </div>
                             <div class="flex items-center space-x-2">
                                 <button onclick="resetCalToToday()" class="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 rounded-xl text-xs font-bold hover:bg-blue-100 transition">
-                                    <i class="fa-solid fa-calendar-day mr-1"></i> Hari Ini
+                                    <i class="fa-solid fa-calendar-day mr-1"></i> <span data-i18n="calToday">Hari Ini</span>
                                 </button>
                             </div>
                         </div>
 
                         <!-- Calendar Grid Header -->
-                        <div class="grid grid-cols-7 gap-2 text-center font-bold text-xs uppercase tracking-wider text-gray-400 mb-2">
-                            <div>Min</div>
-                            <div>Sen</div>
-                            <div>Sel</div>
-                            <div>Rab</div>
-                            <div>Kam</div>
-                            <div>Jum</div>
-                            <div>Sab</div>
+                        <div id="calendar-header-grid" class="grid grid-cols-7 gap-2 text-center font-bold text-xs uppercase tracking-wider text-gray-400 mb-2">
+                            <!-- Dynamic -->
                         </div>
 
                         <div id="calendar-days-grid" class="grid grid-cols-7 gap-2">
@@ -582,7 +576,7 @@
                             </div>
 
                             <select id="freelancer-filter-skill" onchange="renderFreelancers()" class="bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-gray-100">
-                                <option value="ALL">Semua Keahlian</option>
+                                <option value="ALL" data-i18n="allCategories">Semua Keahlian</option>
                                 <option value="Web Dev">Web Dev</option>
                                 <option value="Design">Design</option>
                                 <option value="Video">Video</option>
@@ -610,7 +604,7 @@
                             </div>
 
                             <select id="vendor-filter-category" onchange="renderVendors()" class="bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-800 dark:text-gray-100">
-                                <option value="ALL">Semua Kategori Vendor</option>
+                                <option value="ALL" data-i18n="allCategories">Semua Kategori Vendor</option>
                                 <option value="Percetakan / Printing">Percetakan / Printing</option>
                                 <option value="Studio & Production">Studio & Production</option>
                                 <option value="Legal & Notaris">Legal & Notaris</option>
@@ -642,39 +636,39 @@
 
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Nomor Invoice</label>
+                                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="invNumberLabel">Nomor Invoice</label>
                                     <input type="text" id="inv-number" value="INV/2026/001" oninput="updateInvoicePreview()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-medium focus:outline-none">
                                 </div>
                                 <div>
-                                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Tanggal</label>
+                                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="invDateLabel">Tanggal</label>
                                     <input type="date" id="inv-date" onchange="updateInvoicePreview()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-medium focus:outline-none">
                                 </div>
                             </div>
 
                             <div>
-                                <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Nama Klien</label>
+                                <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="invClientLabel">Nama Klien</label>
                                 <input type="text" id="inv-client-name" value="PT Digital Nusantara" oninput="updateInvoicePreview()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-medium focus:outline-none">
                             </div>
 
                             <div>
-                                <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Deskripsi Item</label>
+                                <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="invDescLabel">Deskripsi Item</label>
                                 <input type="text" id="inv-item-desc" value="Pengembangan Website Modern & Rebranding Profil Kit" oninput="updateInvoicePreview()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-medium focus:outline-none">
                             </div>
 
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Total Tagihan (IDR)</label>
+                                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="invAmountLabel">Total Tagihan (IDR)</label>
                                     <input type="number" id="inv-amount" value="35000000" step="500000" oninput="updateInvoicePreview()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-medium focus:outline-none">
                                 </div>
                                 <div>
-                                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Jatuh Tempo</label>
+                                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="invDueDateLabel">Jatuh Tempo</label>
                                     <input type="date" id="inv-due-date" onchange="updateInvoicePreview()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-medium focus:outline-none">
                                 </div>
                             </div>
 
                             <button onclick="window.print()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center space-x-2">
                                 <i class="fa-solid fa-print"></i>
-                                <span>Cetak / Export PDF Invoice</span>
+                                <span data-i18n="btnPrintInv">Cetak / Export PDF Invoice</span>
                             </button>
                         </div>
 
@@ -688,7 +682,7 @@
                                         <p class="text-xs text-gray-500 mt-1">Jakarta, Indonesia | halo@3sagency.id</p>
                                     </div>
                                     <div class="text-right">
-                                        <span class="text-2xl font-bold uppercase tracking-widest text-blue-600">FAKTUR</span>
+                                        <span class="text-2xl font-bold uppercase tracking-widest text-blue-600" data-i18n="invHeaderTitle">FAKTUR</span>
                                         <p id="prev-inv-number" class="text-sm font-semibold text-gray-700 mt-1">INV/2026/001</p>
                                         <p id="prev-inv-date" class="text-xs text-gray-500">Tanggal: -</p>
                                     </div>
@@ -696,11 +690,11 @@
 
                                 <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 flex justify-between">
                                     <div>
-                                        <span class="text-xs text-gray-400 font-bold uppercase block">Ditagihkan Kepada:</span>
+                                        <span class="text-xs text-gray-400 font-bold uppercase block" data-i18n="invBilledTo">Ditagihkan Kepada:</span>
                                         <h4 id="prev-inv-client" class="text-base font-bold text-gray-900 mt-0.5">PT Digital Nusantara</h4>
                                     </div>
                                     <div class="text-right">
-                                        <span class="text-xs text-gray-400 font-bold uppercase block">Jatuh Tempo Pembayaran:</span>
+                                        <span class="text-xs text-gray-400 font-bold uppercase block" data-i18n="invDueDateTitle">Jatuh Tempo Pembayaran:</span>
                                         <span id="prev-inv-due" class="text-sm font-bold text-rose-600">-</span>
                                     </div>
                                 </div>
@@ -708,8 +702,8 @@
                                 <table class="w-full text-left text-sm border-collapse">
                                     <thead>
                                         <tr class="border-b border-gray-200 text-xs font-bold uppercase text-gray-400">
-                                            <th class="py-3">Deskripsi Layanan & Rincian</th>
-                                            <th class="py-3 text-right">Jumlah Total</th>
+                                            <th class="py-3" data-i18n="invTableDesc">Deskripsi Layanan & Rincian</th>
+                                            <th class="py-3 text-right" data-i18n="invTableTotal">Jumlah Total</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -723,7 +717,7 @@
                                 <div class="flex justify-end pt-4">
                                     <div class="w-64 space-y-2">
                                         <div class="flex justify-between text-base font-black text-gray-900 border-t pt-2 border-gray-200">
-                                            <span>Total Pembayaran</span>
+                                            <span data-i18n="invGrandTotal">Total Pembayaran</span>
                                             <span id="prev-inv-total" class="text-blue-600">Rp 35.000.000</span>
                                         </div>
                                     </div>
@@ -731,7 +725,7 @@
                             </div>
 
                             <div class="border-t pt-6 border-gray-200 text-xs text-gray-500 space-y-1">
-                                <p class="font-bold text-gray-700">Petunjuk Pembayaran Transfer Bank:</p>
+                                <p class="font-bold text-gray-700" data-i18n="invPaymentInstr">Petunjuk Pembayaran Transfer Bank:</p>
                                 <p>Bank BCA - 8830-1928-11 a.n PT 3s Agency Indonesia</p>
                             </div>
                         </div>
@@ -756,24 +750,24 @@
                 <input type="hidden" id="proj-id">
 
                 <div>
-                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Nama Klien / Instansi</label>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelClient">Nama Klien / Instansi</label>
                     <input type="text" id="proj-client" required placeholder="Contoh: PT Nusantara Baru" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
 
                 <div>
-                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Judul / Ruang Lingkup Proyek</label>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelProjTitle">Judul / Ruang Lingkup Proyek</label>
                     <input type="text" id="proj-title" required placeholder="Contoh: Redesain Landing Page & Logo" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">PIC / Penanggung Jawab</label>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelProjPic">PIC / Penanggung Jawab</label>
                         <select id="proj-pic" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <!-- Dynamic from PICs -->
                         </select>
                     </div>
                     <div>
-                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Kategori Layanan</label>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelCategory">Kategori Layanan</label>
                         <select id="proj-category" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="Web Dev">Web Dev</option>
                             <option value="Design">Design</option>
@@ -787,7 +781,7 @@
                 </div>
 
                 <div>
-                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Status Pipeline</label>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelStatus">Status Pipeline</label>
                     <select id="proj-status" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="Lead / Pitching">Lead / Pitching</option>
                         <option value="In Progress">In Progress</option>
@@ -799,29 +793,29 @@
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Nilai Penawaran (IDR)</label>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelRevenue">Nilai Penawaran (IDR)</label>
                         <input type="number" id="proj-revenue" required min="0" step="100000" placeholder="15000000" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Biaya Sub-Kontrak (IDR)</label>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelCost">Biaya Sub-Kontrak (IDR)</label>
                         <input type="number" id="proj-cost" required min="0" step="100000" placeholder="7500000" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Freelancer / Partner</label>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelFreelancer">Freelancer / Partner</label>
                         <input type="text" id="proj-freelancer" placeholder="Budi Santoso" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Deadline Proyek</label>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelDeadline">Deadline Proyek</label>
                         <input type="date" id="proj-deadline" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
 
                 <div class="pt-3 flex justify-end space-x-3 border-t border-gray-100 dark:border-gray-700">
-                    <button type="button" onclick="closeProjectModal()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition">Batal</button>
-                    <button type="submit" class="px-5 py-2 text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md transition">Simpan Proyek</button>
+                    <button type="button" onclick="closeProjectModal()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition" data-i18n="cancel">Batal</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md transition" data-i18n="saveProjBtn">Simpan Proyek</button>
                 </div>
             </form>
         </div>
@@ -832,8 +826,8 @@
         <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-700">
             <div class="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-slate-900 text-white">
                 <div>
-                    <h3 id="daily-log-proj-title" class="text-base font-bold">Daily Progress Log PIC</h3>
-                    <p id="daily-log-proj-sub" class="text-xs text-blue-400">Monitoring Perkembangan Proyek</p>
+                    <h3 id="daily-log-proj-title" class="text-base font-bold" data-i18n="dailyLogTitle">Daily Progress Log PIC</h3>
+                    <p id="daily-log-proj-sub" class="text-xs text-blue-400" data-i18n="dailyLogSub">Monitoring Perkembangan Proyek</p>
                 </div>
                 <button onclick="closeDailyLogModal()" class="text-gray-400 hover:text-white">
                     <i class="fa-solid fa-xmark text-lg"></i>
@@ -843,15 +837,15 @@
             <div class="p-5 space-y-5">
                 <form id="form-daily-log" onsubmit="saveDailyLog(event)" class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl border border-gray-200 dark:border-gray-600 space-y-3">
                     <input type="hidden" id="daily-log-proj-id">
-                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 block"><i class="fa-solid fa-pen-nib mr-1"></i> Input Progress Harian Baru</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 block"><i class="fa-solid fa-pen-nib mr-1"></i> <span data-i18n="dailyLogNewHeader">Input Progress Harian Baru</span></span>
                     
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-300 block mb-1">Tanggal</label>
+                            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-300 block mb-1" data-i18n="labelDate">Tanggal</label>
                             <input type="date" id="log-date" required class="w-full px-3 py-1.5 bg-white dark:bg-gray-800 rounded-lg text-xs border border-gray-200 dark:border-gray-600">
                         </div>
                         <div>
-                            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-300 block mb-1">PIC Pembuat Log</label>
+                            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-300 block mb-1" data-i18n="labelLogPic">PIC Pembuat Log</label>
                             <select id="log-pic" class="w-full px-3 py-1.5 bg-white dark:bg-gray-800 rounded-lg text-xs border border-gray-200 dark:border-gray-600">
                                 <!-- Dynamic from PICs -->
                             </select>
@@ -859,9 +853,9 @@
                     </div>
 
                     <div>
-                        <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-300 block mb-1">Update Status Pipeline (Opsional)</label>
+                        <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-300 block mb-1" data-i18n="labelStatusUpdate">Update Status Pipeline (Opsional)</label>
                         <select id="log-status-update" class="w-full px-3 py-1.5 bg-white dark:bg-gray-800 rounded-lg text-xs border border-gray-200 dark:border-gray-600">
-                            <option value="SAME">-- Tetap Sama --</option>
+                            <option value="SAME" data-i18n="sameStatus">-- Tetap Sama --</option>
                             <option value="Lead / Pitching">Lead / Pitching</option>
                             <option value="In Progress">In Progress</option>
                             <option value="In Review">In Review</option>
@@ -871,19 +865,19 @@
                     </div>
 
                     <div>
-                        <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-300 block mb-1">Catatan Kemajuan / Kendala (Daily Update)</label>
+                        <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-300 block mb-1" data-i18n="labelLogNote">Catatan Kemajuan / Kendala (Daily Update)</label>
                         <textarea id="log-note" required rows="2" placeholder="Contoh: Selesai mockup halaman utama, siap direview klien besok." class="w-full px-3 py-2 bg-white dark:bg-gray-800 rounded-lg text-xs border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                     </div>
 
                     <div class="text-right">
                         <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition shadow-sm">
-                            <i class="fa-solid fa-paper-plane mr-1"></i> Simpan Daily Log
+                            <i class="fa-solid fa-paper-plane mr-1"></i> <span data-i18n="saveLogBtn">Simpan Daily Log</span>
                         </button>
                     </div>
                 </form>
 
                 <div class="space-y-2">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400">Riwayat Daily Updates</h4>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400" data-i18n="historyLogHeader">Riwayat Daily Updates</h4>
                     <div id="daily-logs-history" class="max-h-60 overflow-y-auto space-y-2 pr-1 no-scrollbar"></div>
                 </div>
             </div>
@@ -900,24 +894,24 @@
             <form id="form-pic" onsubmit="savePic(event)" class="p-5 space-y-4">
                 <input type="hidden" id="pic-id">
                 <div>
-                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Nama PIC / Anggota Tim</label>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelPicName">Nama PIC / Anggota Tim</label>
                     <input type="text" id="pic-name" required placeholder="Contoh: Imam" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                 </div>
                 <div>
-                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Peran / Jabatan Utama</label>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelPicRole">Peran / Jabatan Utama</label>
                     <input type="text" id="pic-role" required placeholder="Contoh: Project Manager & Tech Lead" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                 </div>
                 <div>
-                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Alamat Email Kontak</label>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelPicEmail">Alamat Email Kontak</label>
                     <input type="email" id="pic-email" placeholder="imam@3sagency.id" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                 </div>
                 <div>
-                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Nomor WhatsApp (62...)</label>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelPicPhone">Nomor WhatsApp (62...)</label>
                     <input type="text" id="pic-phone" required placeholder="6281234567890" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                 </div>
                 <div class="pt-3 flex justify-end space-x-3 border-t border-gray-100 dark:border-gray-700">
-                    <button type="button" onclick="closePicModal()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 rounded-xl">Batal</button>
-                    <button type="submit" class="px-5 py-2 text-sm font-bold bg-indigo-600 text-white rounded-xl shadow-md">Simpan PIC</button>
+                    <button type="button" onclick="closePicModal()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 rounded-xl" data-i18n="cancel">Batal</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-bold bg-indigo-600 text-white rounded-xl shadow-md" data-i18n="save">Simpan PIC</button>
                 </div>
             </form>
         </div>
@@ -927,18 +921,18 @@
     <div id="modal-freelancer" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden p-4">
         <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-700">
             <div class="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                <h3 id="modal-freelancer-title" class="text-lg font-bold text-gray-800 dark:text-white">Tambah Freelancer Baru</h3>
+                <h3 id="modal-freelancer-title" class="text-lg font-bold text-gray-800 dark:text-white" data-i18n="modalFreeAddTitle">Tambah Freelancer Baru</h3>
                 <button onclick="closeFreelancerModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form id="form-freelancer" onsubmit="saveFreelancer(event)" class="p-5 space-y-4">
                 <input type="hidden" id="free-id">
                 <div>
-                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Nama Lengkap</label>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelFreeName">Nama Lengkap</label>
                     <input type="text" id="free-name" required placeholder="Budi Santoso" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Keahlian Utama</label>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelFreeSkill">Keahlian Utama</label>
                         <select id="free-skill" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                             <option value="Web Dev">Web Dev</option>
                             <option value="Design">Design</option>
@@ -948,7 +942,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Status Ketersediaan</label>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelFreeStatus">Status Ketersediaan</label>
                         <select id="free-status" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                             <option value="Available">Available</option>
                             <option value="Busy">Busy</option>
@@ -956,16 +950,16 @@
                     </div>
                 </div>
                 <div>
-                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Rate Standar</label>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelFreeRate">Rate Standar</label>
                     <input type="text" id="free-rate" required placeholder="Rp 500.000 / jam" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                 </div>
                 <div>
-                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Nomor WhatsApp (62...)</label>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelFreePhone">Nomor WhatsApp (62...)</label>
                     <input type="text" id="free-phone" required placeholder="6281234567890" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                 </div>
                 <div class="pt-3 flex justify-end space-x-3 border-t border-gray-100 dark:border-gray-700">
-                    <button type="button" onclick="closeFreelancerModal()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 rounded-xl">Batal</button>
-                    <button type="submit" class="px-5 py-2 text-sm font-bold bg-purple-600 text-white rounded-xl shadow-md">Simpan Freelancer</button>
+                    <button type="button" onclick="closeFreelancerModal()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 rounded-xl" data-i18n="cancel">Batal</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-bold bg-purple-600 text-white rounded-xl shadow-md" data-i18n="save">Simpan Freelancer</button>
                 </div>
             </form>
         </div>
@@ -975,18 +969,18 @@
     <div id="modal-vendor" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden p-4">
         <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-700">
             <div class="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                <h3 id="modal-vendor-title" class="text-lg font-bold text-gray-800 dark:text-white">Tambah Vendor Baru</h3>
+                <h3 id="modal-vendor-title" class="text-lg font-bold text-gray-800 dark:text-white" data-i18n="modalVendorAddTitle">Tambah Vendor Baru</h3>
                 <button onclick="closeVendorModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form id="form-vendor" onsubmit="saveVendor(event)" class="p-5 space-y-4">
                 <input type="hidden" id="vendor-id">
                 <div>
-                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Nama Vendor / Perusahaan</label>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelVendorName">Nama Vendor / Perusahaan</label>
                     <input type="text" id="vendor-name" required placeholder="PT Prima Cetak Grafika" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Kategori</label>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelVendorCat">Kategori</label>
                         <select id="vendor-category" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                             <option value="Percetakan / Printing">Percetakan / Printing</option>
                             <option value="Studio & Production">Studio & Production</option>
@@ -995,7 +989,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Status Partner</label>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelVendorStatus">Status Partner</label>
                         <select id="vendor-status" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                             <option value="Preferred Partner">Preferred Partner</option>
                             <option value="Active">Active</option>
@@ -1004,27 +998,27 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">PIC Kontak</label>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelVendorPic">PIC Kontak</label>
                         <input type="text" id="vendor-pic" required placeholder="Agus Raharjo" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                     </div>
                     <div>
-                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Nomor WhatsApp (62...)</label>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelVendorPhone">Nomor WhatsApp (62...)</label>
                         <input type="text" id="vendor-phone" required placeholder="6281299887766" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Biaya Standar Rate Card (IDR)</label>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelVendorCost">Biaya Standar Rate Card (IDR)</label>
                         <input type="number" id="vendor-cost" placeholder="4000000" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                     </div>
                     <div>
-                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1">Rating Keandalan</label>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelVendorRating">Rating Keandalan</label>
                         <input type="number" id="vendor-rating" min="1" max="5" step="0.1" value="4.8" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                     </div>
                 </div>
                 <div class="pt-3 flex justify-end space-x-3 border-t border-gray-100 dark:border-gray-700">
-                    <button type="button" onclick="closeVendorModal()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 rounded-xl">Batal</button>
-                    <button type="submit" class="px-5 py-2 text-sm font-bold bg-teal-600 text-white rounded-xl shadow-md">Simpan Vendor</button>
+                    <button type="button" onclick="closeVendorModal()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 rounded-xl" data-i18n="cancel">Batal</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-bold bg-teal-600 text-white rounded-xl shadow-md" data-i18n="save">Simpan Vendor</button>
                 </div>
             </form>
         </div>
@@ -1037,8 +1031,8 @@
             <h3 id="confirm-title" class="text-lg font-bold text-gray-900 dark:text-white">Judul Konfirmasi</h3>
             <p id="confirm-message" class="text-sm text-gray-500 dark:text-gray-300">Pesan konfirmasi detail.</p>
             <div class="pt-4 flex justify-center space-x-3">
-                <button onclick="closeConfirmModal()" class="px-5 py-2.5 text-sm font-semibold text-gray-500 hover:bg-gray-100 rounded-xl transition">Batal</button>
-                <button id="confirm-action-btn" onclick="executeConfirmedAction()" class="px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-md transition">Eksekusi</button>
+                <button onclick="closeConfirmModal()" class="px-5 py-2.5 text-sm font-semibold text-gray-500 hover:bg-gray-100 rounded-xl transition" data-i18n="cancel">Batal</button>
+                <button id="confirm-action-btn" onclick="executeConfirmedAction()" class="px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-md transition" data-i18n="execute">Eksekusi</button>
             </div>
         </div>
     </div>
@@ -1077,6 +1071,10 @@
                 syncConnecting: "Connecting Cloud...",
                 syncSynced: "Cloud Synced - Live Team",
                 syncOffline: "Local Storage Mode",
+                cancel: "Batal",
+                save: "Simpan",
+                execute: "Eksekusi",
+
                 kpiRevenue: "Total Omzet",
                 kpiRevenueSub: "Total nilai semua proyek",
                 kpiExpenses: "Beban Sub-Kontrak",
@@ -1091,10 +1089,12 @@
                 chartCatDist: "Distribusi Layanan",
                 recentProjects: "Proyek Terbaru",
                 viewAllPipeline: "Lihat Semua Pipeline",
+
                 colClientProj: "Klien & Proyek",
-                colPic: "PIC",
+                colPic: "PIC / Penanggung Jawab",
                 colCategory: "Kategori",
                 colValue: "Nilai Proyek",
+                colVendorCost: "Biaya Sub-Kontrak",
                 colMargin: "Margin %",
                 colStatus: "Status",
                 colDailyLogHeader: "Daily Log PIC",
@@ -1107,9 +1107,12 @@
                 kanbanView: "Kanban Board",
                 noProjectsFound: "Tidak ada proyek tersimpan.",
                 demoBadge: "DEMO",
-                picSearchPlaceholder: "Cari nama, peran, atau kontak PIC...",
-                picAddBtn: "Tambah PIC Baru",
-                modalPicAddTitle: "Tambah PIC / Anggota Tim",
+                dragHere: "- Tarik Proyek Ke Sini -",
+
+                calToday: "Hari Ini",
+                daysShort: ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"],
+                monthsLong: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
+
                 calcPresetTitle: "Template Paket Layanan Instan",
                 calcPresetSub: "Klik untuk memuat variabel harga default",
                 calcStructureTitle: "Simulasi Struktur Biaya",
@@ -1123,9 +1126,100 @@
                 calcNetProfit: "Laba Bersih Agency",
                 calcBreakeven: "Harga Break-Even",
                 calcConvertToProj: "Jadikan Proyek / Pitching",
+
+                picSearchPlaceholder: "Cari nama, peran, atau kontak PIC...",
+                picAddBtn: "Tambah PIC Baru",
+                modalPicAddTitle: "Tambah PIC / Anggota Tim",
+                noPicsFound: "Tidak ada PIC tersimpan.",
+                labelPicName: "Nama PIC / Anggota Tim",
+                labelPicRole: "Peran / Jabatan Utama",
+                labelPicEmail: "Alamat Email Kontak",
+                labelPicPhone: "Nomor WhatsApp (62...)",
+
+                freeSearchPlaceholder: "Cari nama atau keahlian freelancer...",
+                freeAddBtn: "Tambah Freelancer",
+                modalFreeAddTitle: "Tambah Freelancer Baru",
+                noFreeFound: "Tidak ada freelancer tersimpan.",
+                labelFreeName: "Nama Lengkap",
+                labelFreeSkill: "Keahlian Utama",
+                labelFreeStatus: "Status Ketersediaan",
+                labelFreeRate: "Rate Standar",
+                labelFreePhone: "Nomor WhatsApp (62...)",
+
+                vendorSearchPlaceholder: "Cari nama vendor, PIC, atau kota...",
+                vendorAddBtn: "Tambah Vendor Baru",
+                modalVendorAddTitle: "Tambah Vendor Baru",
+                noVendorsFound: "Tidak ada vendor tersimpan.",
+                labelVendorName: "Nama Vendor / Perusahaan",
+                labelVendorCat: "Kategori",
+                labelVendorStatus: "Status Partner",
+                labelVendorPic: "PIC Kontak",
+                labelVendorPhone: "Nomor WhatsApp (62...)",
+                labelVendorCost: "Biaya Standar Rate Card (IDR)",
+                labelVendorRating: "Rating Keandalan",
+
+                modalProjAddTitle: "Tambah Proyek Baru",
+                labelClient: "Nama Klien / Instansi",
+                labelProjTitle: "Judul / Ruang Lingkup Proyek",
+                labelProjPic: "PIC / Penanggung Jawab",
+                labelCategory: "Kategori Layanan",
+                labelStatus: "Status Pipeline",
+                labelRevenue: "Nilai Penawaran (IDR)",
+                labelCost: "Biaya Sub-Kontrak (IDR)",
+                labelFreelancer: "Freelancer / Partner",
+                labelDeadline: "Deadline Proyek",
+                saveProjBtn: "Simpan Proyek",
+
+                dailyLogTitle: "Daily Progress Log PIC",
+                dailyLogSub: "Monitoring Perkembangan Proyek",
+                dailyLogNewHeader: "Input Progress Harian Baru",
+                labelDate: "Tanggal",
+                labelLogPic: "PIC Pembuat Log",
+                labelStatusUpdate: "Update Status Pipeline (Opsional)",
+                sameStatus: "-- Tetap Sama --",
+                labelLogNote: "Catatan Kemajuan / Kendala (Daily Update)",
+                saveLogBtn: "Simpan Daily Log",
+                historyLogHeader: "Riwayat Daily Updates",
+                noLogsFound: "Belum ada catatan daily update dari PIC. Silakan tambah catatan pertama di atas.",
+
                 invConfigTitle: "Pengaturan Faktur / Invoice",
                 invImportProjectLabel: "Impor Data dari Proyek",
-                invSelectProjectDefault: "-- Pilih Proyek Pipeline --"
+                invSelectProjectDefault: "-- Pilih Proyek Pipeline --",
+                invNumberLabel: "Nomor Invoice",
+                invDateLabel: "Tanggal",
+                invClientLabel: "Nama Klien",
+                invDescLabel: "Deskripsi Item",
+                invAmountLabel: "Total Tagihan (IDR)",
+                invDueDateLabel: "Jatuh Tempo",
+                btnPrintInv: "Cetak / Export PDF Invoice",
+                invHeaderTitle: "FAKTUR",
+                invBilledTo: "Ditagihkan Kepada:",
+                invDueDateTitle: "Jatuh Tempo Pembayaran:",
+                invTableDesc: "Deskripsi Layanan & Rincian",
+                invTableTotal: "Jumlah Total",
+                invGrandTotal: "Total Pembayaran",
+                invPaymentInstr: "Petunjuk Pembayaran Transfer Bank:",
+
+                confirmTitleDemo: "Bersihkan Data Demo Saja?",
+                confirmMsgDemo: "Hanya item bertanda [DEMO] yang akan dihapus. Data asli Anda aman.",
+                confirmBtnDemo: "Ya, Bersihkan",
+                confirmTitleReset: "Konfirmasi Reset Total Workspace",
+                confirmMsgReset: "Apakah Anda yakin ingin MENGHAPUS SELURUH DATA WORKSPACE?",
+                confirmBtnReset: "Ya, Reset Total",
+                toastProjSaved: "Proyek berhasil disimpan!",
+                toastProjDeleted: "Proyek berhasil dihapus",
+                toastLogSaved: "Daily Log PIC berhasil disimpan!",
+                toastPicSaved: "PIC Tim berhasil disimpan!",
+                toastPicDeleted: "PIC berhasil dihapus!",
+                toastFreeSaved: "Freelancer berhasil disimpan!",
+                toastFreeDeleted: "Freelancer berhasil dihapus!",
+                toastVendorSaved: "Vendor berhasil disimpan!",
+                toastVendorDeleted: "Vendor berhasil dihapus!",
+                toastDemoAdded: "Data demo ditambahkan!",
+                toastDemoCleared: "Data demo dibersihkan!",
+                toastResetAll: "Workspace di-reset total!",
+                toastBackupDownloaded: "Backup JSON berhasil diunduh",
+                toastImportSuccess: "Data sistem berhasil diimpor!"
             },
             en: {
                 appName: "3's Agency",
@@ -1148,6 +1242,10 @@
                 syncConnecting: "Connecting Cloud...",
                 syncSynced: "Cloud Synced - Live Team",
                 syncOffline: "Local Storage Mode",
+                cancel: "Cancel",
+                save: "Save",
+                execute: "Execute",
+
                 kpiRevenue: "Total Revenue",
                 kpiRevenueSub: "Total value of all projects",
                 kpiExpenses: "Subcontractor Expense",
@@ -1162,10 +1260,12 @@
                 chartCatDist: "Services Distribution",
                 recentProjects: "Recent Projects",
                 viewAllPipeline: "View Full Pipeline",
+
                 colClientProj: "Client & Project",
                 colPic: "PIC / Owner",
                 colCategory: "Category",
                 colValue: "Project Value",
+                colVendorCost: "Subcontractor Cost",
                 colMargin: "Margin %",
                 colStatus: "Status",
                 colDailyLogHeader: "PIC Daily Log",
@@ -1178,9 +1278,12 @@
                 kanbanView: "Kanban Board",
                 noProjectsFound: "No projects saved.",
                 demoBadge: "DEMO",
-                picSearchPlaceholder: "Search PIC name, role, or contact...",
-                picAddBtn: "Add New PIC",
-                modalPicAddTitle: "Add PIC / Team Member",
+                dragHere: "- Drag Project Here -",
+
+                calToday: "Today",
+                daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+                monthsLong: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+
                 calcPresetTitle: "Instant Service Package Templates",
                 calcPresetSub: "Click to load default pricing variables",
                 calcStructureTitle: "Cost Structure Simulation",
@@ -1194,16 +1297,107 @@
                 calcNetProfit: "Agency Net Profit",
                 calcBreakeven: "Break-Even Price",
                 calcConvertToProj: "Convert to Project / Pitching",
+
+                picSearchPlaceholder: "Search PIC name, role, or contact...",
+                picAddBtn: "Add New PIC",
+                modalPicAddTitle: "Add PIC / Team Member",
+                noPicsFound: "No PICs saved.",
+                labelPicName: "PIC Name / Team Member",
+                labelPicRole: "Primary Role / Title",
+                labelPicEmail: "Contact Email Address",
+                labelPicPhone: "WhatsApp Number (62...)",
+
+                freeSearchPlaceholder: "Search freelancer name or skill...",
+                freeAddBtn: "Add Freelancer",
+                modalFreeAddTitle: "Add New Freelancer",
+                noFreeFound: "No freelancers saved.",
+                labelFreeName: "Full Name",
+                labelFreeSkill: "Primary Skill",
+                labelFreeStatus: "Availability Status",
+                labelFreeRate: "Standard Rate",
+                labelFreePhone: "WhatsApp Number (62...)",
+
+                vendorSearchPlaceholder: "Search vendor name, PIC, or city...",
+                vendorAddBtn: "Add New Vendor",
+                modalVendorAddTitle: "Add New Vendor",
+                noVendorsFound: "No vendors saved.",
+                labelVendorName: "Vendor / Company Name",
+                labelVendorCat: "Category",
+                labelVendorStatus: "Partner Status",
+                labelVendorPic: "Contact PIC",
+                labelVendorPhone: "WhatsApp Number (62...)",
+                labelVendorCost: "Standard Rate Card Cost (IDR)",
+                labelVendorRating: "Reliability Rating",
+
+                modalProjAddTitle: "Add New Project",
+                labelClient: "Client / Company Name",
+                labelProjTitle: "Project Title / Scope",
+                labelProjPic: "PIC / Owner",
+                labelCategory: "Service Category",
+                labelStatus: "Pipeline Status",
+                labelRevenue: "Quote Value (IDR)",
+                labelCost: "Subcontractor Cost (IDR)",
+                labelFreelancer: "Freelancer / Partner",
+                labelDeadline: "Project Deadline",
+                saveProjBtn: "Save Project",
+
+                dailyLogTitle: "PIC Daily Progress Log",
+                dailyLogSub: "Project Progress Monitoring",
+                dailyLogNewHeader: "Input New Daily Progress",
+                labelDate: "Date",
+                labelLogPic: "Log Author PIC",
+                labelStatusUpdate: "Update Pipeline Status (Optional)",
+                sameStatus: "-- Remain Same --",
+                labelLogNote: "Progress / Issue Notes (Daily Update)",
+                saveLogBtn: "Save Daily Log",
+                historyLogHeader: "Daily Updates History",
+                noLogsFound: "No daily updates recorded yet by PIC. Please add the first entry above.",
+
                 invConfigTitle: "Invoice Configuration",
                 invImportProjectLabel: "Import Data from Project",
-                invSelectProjectDefault: "-- Select Pipeline Project --"
+                invSelectProjectDefault: "-- Select Pipeline Project --",
+                invNumberLabel: "Invoice Number",
+                invDateLabel: "Date",
+                invClientLabel: "Client Name",
+                invDescLabel: "Item Description",
+                invAmountLabel: "Total Amount (IDR)",
+                invDueDateLabel: "Due Date",
+                btnPrintInv: "Print / Export PDF Invoice",
+                invHeaderTitle: "INVOICE",
+                invBilledTo: "Billed To:",
+                invDueDateTitle: "Payment Due Date:",
+                invTableDesc: "Service Description & Details",
+                invTableTotal: "Total Amount",
+                invGrandTotal: "Grand Total",
+                invPaymentInstr: "Bank Transfer Payment Instructions:",
+
+                confirmTitleDemo: "Clear Demo Data Only?",
+                confirmMsgDemo: "Only items marked as [DEMO] will be removed. Your real data is safe.",
+                confirmBtnDemo: "Yes, Clear Demo",
+                confirmTitleReset: "Confirm Reset Total Workspace",
+                confirmMsgReset: "Are you sure you want to DELETE ALL WORKSPACE DATA?",
+                confirmBtnReset: "Yes, Reset All",
+                toastProjSaved: "Project saved successfully!",
+                toastProjDeleted: "Project deleted successfully",
+                toastLogSaved: "PIC Daily Log saved successfully!",
+                toastPicSaved: "Team PIC saved successfully!",
+                toastPicDeleted: "PIC deleted successfully!",
+                toastFreeSaved: "Freelancer saved successfully!",
+                toastFreeDeleted: "Freelancer deleted successfully!",
+                toastVendorSaved: "Vendor saved successfully!",
+                toastVendorDeleted: "Vendor deleted successfully!",
+                toastDemoAdded: "Demo data added!",
+                toastDemoCleared: "Demo data cleared!",
+                toastResetAll: "Workspace reset completely!",
+                toastBackupDownloaded: "JSON Backup downloaded successfully",
+                toastImportSuccess: "System data imported successfully!"
             }
         };
 
         const DEFAULT_PICS = [
-            { id: 'pic_1', name: 'Imam', role: 'Project Manager', email: 'imam@3sagency.id', phone: '6281234567890', isDummy: false },
+            { id: 'pic_1', name: 'Imam', role: 'Founder & Director', email: 'imam@3sagency.id', phone: '6281234567890', isDummy: false },
             { id: 'pic_2', name: 'Sarah', role: 'Project Manager', email: 'pm1@3sagency.id', phone: '6281234567891', isDummy: false },
-            { id: 'pic_3', name: 'Lingga', role: 'Project Manager', email: 'ae@3sagency.id', phone: '6281234567892', isDummy: false }
+            { id: 'pic_3', name: 'Lingga', role: 'Account Executive', email: 'ae@3sagency.id', phone: '6281234567892', isDummy: false }
         ];
 
         const SAMPLE_DEMO_PROJECTS = [
@@ -1341,7 +1535,9 @@
 
         function t(key, replacements = {}) {
             let str = (translations[currentLang] && translations[currentLang][key]) || translations['id'][key] || key;
-            Object.keys(replacements).forEach(r => { str = str.replace(`{${r}}`, replacements[r]); });
+            if (typeof str === 'string') {
+                Object.keys(replacements).forEach(r => { str = str.replace(`{${r}}`, replacements[r]); });
+            }
             return str;
         }
 
@@ -1367,6 +1563,18 @@
                 const key = el.getAttribute('data-i18n');
                 if (key) el.innerText = t(key);
             });
+
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (key) el.setAttribute('placeholder', t(key));
+            });
+
+            // Refresh header titles
+            const activeNav = document.getElementById(`nav-${window.currentTab}`);
+            if (activeNav) {
+                const titleSpan = activeNav.querySelector('span');
+                if (titleSpan) document.getElementById('page-title').innerText = titleSpan.innerText;
+            }
         }
 
         function setupCurrentDate() {
@@ -1500,8 +1708,8 @@
                 data: {
                     labels: labels.length ? labels : ['Workspace Empty'],
                     datasets: [
-                        { label: 'Omzet', data: projects.map(p => p.revenue), backgroundColor: '#0284c7', borderRadius: 6 },
-                        { label: 'Beban Sub-Kontrak', data: projects.map(p => p.cost), backgroundColor: '#f43f5e', borderRadius: 6 }
+                        { label: currentLang === 'en' ? 'Revenue' : 'Omzet', data: projects.map(p => p.revenue), backgroundColor: '#0284c7', borderRadius: 6 },
+                        { label: currentLang === 'en' ? 'Subcontract Cost' : 'Beban Sub-Kontrak', data: projects.map(p => p.cost), backgroundColor: '#f43f5e', borderRadius: 6 }
                     ]
                 },
                 options: { responsive: true, maintainAspectRatio: false }
@@ -1614,7 +1822,7 @@
                 const col = cols[k];
                 col.countEl.innerText = col.items.length;
                 if (col.items.length === 0) {
-                    col.el.innerHTML = `<div class="text-center py-10 text-xs text-gray-400 border-2 border-dashed border-gray-200 dark:border-gray-700/50 rounded-xl">- Tarik Proyek Ke Sini -</div>`;
+                    col.el.innerHTML = `<div class="text-center py-10 text-xs text-gray-400 border-2 border-dashed border-gray-200 dark:border-gray-700/50 rounded-xl">${t('dragHere')}</div>`;
                     return;
                 }
                 col.items.forEach(p => {
@@ -1671,11 +1879,11 @@
                     id: `log_${Date.now()}`,
                     date: new Date().toISOString().slice(0, 10),
                     pic: p.pic || 'System',
-                    note: `Status dipindahkan ke ${targetStatus} (Drag & Drop)`,
+                    note: `Status updated to ${targetStatus} (Drag & Drop)`,
                     statusUpdate: targetStatus
                 });
                 saveItem('projects', p);
-                showToast(`Status ${p.client} diubah ke ${targetStatus}`);
+                showToast(`Status ${p.client} -> ${targetStatus}`);
             }
         }
 
@@ -1686,7 +1894,7 @@
 
             document.getElementById('daily-log-proj-id').value = p.id;
             document.getElementById('daily-log-proj-title').innerText = `${p.client} - ${p.title}`;
-            document.getElementById('daily-log-proj-sub').innerText = `PIC: ${p.pic || 'Imam'} | Status Saat Ini: ${p.status}`;
+            document.getElementById('daily-log-proj-sub').innerText = `PIC: ${p.pic || 'Imam'} | Status: ${p.status}`;
             document.getElementById('form-daily-log').reset();
             document.getElementById('log-date').valueAsDate = new Date();
 
@@ -1704,7 +1912,7 @@
 
             const logs = p.logs || [];
             if (logs.length === 0) {
-                container.innerHTML = `<div class="p-4 text-center text-xs text-gray-400 italic bg-gray-50 dark:bg-gray-700/30 rounded-xl">Belum ada catatan daily update dari PIC. Silakan tambah catatan pertama di atas.</div>`;
+                container.innerHTML = `<div class="p-4 text-center text-xs text-gray-400 italic bg-gray-50 dark:bg-gray-700/30 rounded-xl">${t('noLogsFound')}</div>`;
                 return;
             }
 
@@ -1716,7 +1924,7 @@
                             <span>${log.date}</span>
                         </div>
                         <p class="text-gray-800 dark:text-gray-200 font-medium">${log.note}</p>
-                        ${log.statusUpdate && log.statusUpdate !== 'SAME' ? `<span class="inline-block px-2 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 font-bold">Status Diubah: ${log.statusUpdate}</span>` : ''}
+                        ${log.statusUpdate && log.statusUpdate !== 'SAME' ? `<span class="inline-block px-2 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 font-bold">Status: ${log.statusUpdate}</span>` : ''}
                     </div>
                 `;
             });
@@ -1747,7 +1955,7 @@
             renderDailyLogsHistory(p);
             document.getElementById('form-daily-log').reset();
             document.getElementById('log-date').valueAsDate = new Date();
-            showToast("Daily Log PIC berhasil disimpan!");
+            showToast(t('toastLogSaved'));
         }
 
         // KALENDER MONITORING FEATURE
@@ -1765,8 +1973,14 @@
             const year = currentCalDate.getFullYear();
             const month = currentCalDate.getMonth();
 
-            const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            const monthNames = t('monthsLong');
             document.getElementById('calendar-month-year').innerText = `${monthNames[month]} ${year}`;
+
+            const headerGrid = document.getElementById('calendar-header-grid');
+            headerGrid.innerHTML = '';
+            t('daysShort').forEach(d => {
+                headerGrid.innerHTML += `<div>${d}</div>`;
+            });
 
             const grid = document.getElementById('calendar-days-grid');
             grid.innerHTML = '';
@@ -1819,7 +2033,7 @@
 
             grid.innerHTML = '';
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">Tidak ada PIC tersimpan.</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">${t('noPicsFound')}</div>`;
                 return;
             }
 
@@ -1838,11 +2052,11 @@
                         </div>
                         <div class="space-y-1.5 text-xs text-gray-500 dark:text-gray-400 border-t border-b py-3 border-gray-100 dark:border-gray-700">
                             <div class="flex justify-between"><span>Email:</span><span class="font-semibold text-gray-800 dark:text-gray-200">${p.email || '-'}</span></div>
-                            <div class="flex justify-between"><span>Proyek Dipegang:</span><span class="font-bold text-emerald-600">${assignedProjects} Proyek</span></div>
+                            <div class="flex justify-between"><span>Active Projects:</span><span class="font-bold text-emerald-600">${assignedProjects}</span></div>
                         </div>
                         <div class="flex items-center justify-between pt-1">
                             <a href="https://wa.me/${p.phone}" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition">
-                                <i class="fa-brands fa-whatsapp"></i><span>WA Kontak</span>
+                                <i class="fa-brands fa-whatsapp"></i><span>WA</span>
                             </a>
                             <div class="flex space-x-1">
                                 <button onclick="editPic('${p.id}')" class="p-1.5 text-gray-400 hover:text-blue-500"><i class="fa-solid fa-pen text-xs"></i></button>
@@ -1892,13 +2106,13 @@
 
             closePicModal();
             saveItem('pics', newPic);
-            showToast("PIC Tim berhasil disimpan!");
+            showToast(t('toastPicSaved'));
         }
 
         function deletePic(id) {
             pics = pics.filter(p => p.id !== id);
             deleteItem('pics', id);
-            showToast("PIC berhasil dihapus!");
+            showToast(t('toastPicDeleted'));
         }
 
         // MARGIN CALCULATOR
@@ -1989,7 +2203,7 @@
 
             grid.innerHTML = '';
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">Tidak ada freelancer tersimpan.</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">${t('noFreeFound')}</div>`;
                 return;
             }
 
@@ -2009,12 +2223,12 @@
                             <span class="text-xs px-2.5 py-0.5 rounded-full font-bold ${f.status === 'Available' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${f.status}</span>
                         </div>
                         <div class="space-y-1 text-xs text-gray-500 dark:text-gray-400 border-t border-b py-3 border-gray-100 dark:border-gray-700">
-                            <div class="flex justify-between"><span>Rate Standar:</span><span class="font-bold text-gray-800 dark:text-gray-200">${f.rate}</span></div>
+                            <div class="flex justify-between"><span>Rate:</span><span class="font-bold text-gray-800 dark:text-gray-200">${f.rate}</span></div>
                             <div class="flex justify-between"><span>Rating:</span><span class="font-bold text-amber-500"><i class="fa-solid fa-star mr-1"></i>${f.rating || '4.9'}</span></div>
                         </div>
                         <div class="flex items-center justify-between pt-1">
                             <a href="https://wa.me/${f.phone}" target="_blank" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center space-x-2 transition">
-                                <i class="fa-brands fa-whatsapp text-sm"></i><span>Hubungi WA</span>
+                                <i class="fa-brands fa-whatsapp text-sm"></i><span>WA</span>
                             </a>
                             <div class="flex space-x-1">
                                 <button onclick="editFreelancer('${f.id}')" class="p-2 text-gray-400 hover:text-blue-500"><i class="fa-solid fa-pen text-xs"></i></button>
@@ -2066,13 +2280,13 @@
 
             closeFreelancerModal();
             saveItem('freelancers', newFree);
-            showToast("Freelancer disimpan!");
+            showToast(t('toastFreeSaved'));
         }
 
         function deleteFreelancer(id) {
             freelancers = freelancers.filter(f => f.id !== id);
             deleteItem('freelancers', id);
-            showToast("Freelancer dihapus");
+            showToast(t('toastFreeDeleted'));
         }
 
         // VENDORS RENDERING
@@ -2089,7 +2303,7 @@
 
             grid.innerHTML = '';
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">Tidak ada vendor tersimpan.</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">${t('noVendorsFound')}</div>`;
                 return;
             }
 
@@ -2104,12 +2318,12 @@
                             <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-teal-100 text-teal-800">${v.status}</span>
                         </div>
                         <div class="space-y-2 text-xs text-gray-600 dark:text-gray-300 border-t border-b py-3 border-gray-100 dark:border-gray-700">
-                            <div class="flex justify-between"><span>PIC Kontak:</span><span class="font-semibold text-gray-800 dark:text-white">${v.pic}</span></div>
-                            <div class="flex justify-between"><span>Estimasi Cost:</span><span class="font-bold text-emerald-600">${v.cost ? formatIDR(v.cost) : '-'}</span></div>
+                            <div class="flex justify-between"><span>PIC:</span><span class="font-semibold text-gray-800 dark:text-white">${v.pic}</span></div>
+                            <div class="flex justify-between"><span>Cost:</span><span class="font-bold text-emerald-600">${v.cost ? formatIDR(v.cost) : '-'}</span></div>
                         </div>
                         <div class="flex items-center justify-between pt-1">
                             <a href="https://wa.me/${v.phone}" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition">
-                                <i class="fa-brands fa-whatsapp"></i><span>WA PIC</span>
+                                <i class="fa-brands fa-whatsapp"></i><span>WA</span>
                             </a>
                             <div class="flex space-x-1">
                                 <button onclick="editVendor('${v.id}')" class="p-1.5 text-gray-400 hover:text-blue-500"><i class="fa-solid fa-pen text-xs"></i></button>
@@ -2163,13 +2377,13 @@
 
             closeVendorModal();
             saveItem('vendors', newVendor);
-            showToast("Vendor disimpan!");
+            showToast(t('toastVendorSaved'));
         }
 
         function deleteVendor(id) {
             vendors = vendors.filter(v => v.id !== id);
             deleteItem('vendors', id);
-            showToast("Vendor dihapus");
+            showToast(t('toastVendorDeleted'));
         }
 
         // INVOICES & PROPOSAL SETUP
@@ -2202,7 +2416,7 @@
             const due = document.getElementById('inv-due-date').value;
 
             document.getElementById('prev-inv-number').innerText = num || 'INV/2026/001';
-            document.getElementById('prev-inv-date').innerText = `Tanggal: ${date || '-'}`;
+            document.getElementById('prev-inv-date').innerText = `${currentLang === 'en' ? 'Date:' : 'Tanggal:'} ${date || '-'}`;
             document.getElementById('prev-inv-client').innerText = client || 'PT Digital Nusantara';
             document.getElementById('prev-inv-item').innerText = item || 'Pengembangan Website Modern & Rebranding Profil Kit';
             document.getElementById('prev-inv-amount').innerText = formatIDR(amount);
@@ -2226,7 +2440,7 @@
             document.body.appendChild(dlAnchor);
             dlAnchor.click();
             dlAnchor.remove();
-            showToast("Backup JSON berhasil diunduh");
+            showToast(t('toastBackupDownloaded'));
         }
 
         function importData(event) {
@@ -2246,7 +2460,7 @@
                         localStorage.setItem('3s_agency_vendors', JSON.stringify(window.vendors));
 
                         refreshActiveUI();
-                        showToast("Data sistem berhasil diimpor!");
+                        showToast(t('toastImportSuccess'));
                     }
                 } catch (err) {
                     console.error("Import error", err);
@@ -2306,13 +2520,13 @@
 
             closeProjectModal();
             saveItem('projects', newProj);
-            showToast("Proyek berhasil disimpan!");
+            showToast(t('toastProjSaved'));
         }
 
         function deleteProject(id) {
             projects = projects.filter(p => p.id !== id);
             deleteItem('projects', id);
-            showToast("Proyek berhasil dihapus");
+            showToast(t('toastProjDeleted'));
         }
 
         // DEMO DATA CONTROLS
@@ -2330,7 +2544,7 @@
             newFreelancers.forEach(f => saveItem('freelancers', f));
             newVendors.forEach(v => saveItem('vendors', v));
 
-            showToast("Data demo ditambahkan!");
+            showToast(t('toastDemoAdded'));
         }
 
         function askClearDemoData() {
@@ -2339,12 +2553,12 @@
             iconBox.className = 'w-14 h-14 rounded-full flex items-center justify-center mx-auto text-2xl bg-amber-100 text-amber-600 dark:bg-amber-950/60 dark:text-amber-300';
             iconBox.innerHTML = `<i class="fa-solid fa-broom"></i>`;
 
-            document.getElementById('confirm-title').innerText = "Bersihkan Data Demo Saja?";
-            document.getElementById('confirm-message').innerText = "Hanya item bertanda [DEMO] yang akan dihapus. Data asli Anda aman.";
+            document.getElementById('confirm-title').innerText = t('confirmTitleDemo');
+            document.getElementById('confirm-message').innerText = t('confirmMsgDemo');
 
             const btn = document.getElementById('confirm-action-btn');
             btn.className = 'px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-md transition bg-amber-600 hover:bg-amber-500';
-            btn.innerText = "Ya, Bersihkan";
+            btn.innerText = t('confirmBtnDemo');
 
             document.getElementById('modal-confirm').classList.remove('hidden');
         }
@@ -2355,12 +2569,12 @@
             iconBox.className = 'w-14 h-14 rounded-full flex items-center justify-center mx-auto text-2xl bg-rose-100 text-rose-600 dark:bg-rose-950/60 dark:text-rose-300';
             iconBox.innerHTML = `<i class="fa-solid fa-trash-can"></i>`;
 
-            document.getElementById('confirm-title').innerText = "Konfirmasi Reset Total Workspace";
-            document.getElementById('confirm-message').innerText = "Apakah Anda yakin ingin MENGHAPUS SELURUH DATA WORKSPACE?";
+            document.getElementById('confirm-title').innerText = t('confirmTitleReset');
+            document.getElementById('confirm-message').innerText = t('confirmMsgReset');
 
             const btn = document.getElementById('confirm-action-btn');
             btn.className = 'px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-md transition bg-rose-600 hover:bg-rose-500';
-            btn.innerText = "Ya, Reset Total";
+            btn.innerText = t('confirmBtnReset');
 
             document.getElementById('modal-confirm').classList.remove('hidden');
         }
@@ -2384,7 +2598,7 @@
                 demoFreeIds.forEach(id => deleteItem('freelancers', id));
                 demoVendIds.forEach(id => deleteItem('vendors', id));
 
-                showToast("Data demo dibersihkan!");
+                showToast(t('toastDemoCleared'));
 
             } else if (window.pendingAction === 'resetAll') {
                 const allProjIds = projects.map(p => p.id);
@@ -2401,7 +2615,7 @@
                 allVendIds.forEach(id => deleteItem('vendors', id));
                 localStorage.setItem('3s_agency_pics', JSON.stringify(window.pics));
 
-                showToast("Workspace di-reset total!");
+                showToast(t('toastResetAll'));
             }
 
             closeConfirmModal();
