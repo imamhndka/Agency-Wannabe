@@ -1,22 +1,74 @@
 rules_version = '2';
 
 // Aturan keamanan Firestore untuk JADI.in Hub.
-// Salin isi file ini ke Firebase Console → Firestore Database → Rules, lalu klik Publish.
-// Ganti daftar email di bawah dengan akun Google tim yang boleh mengakses data (huruf kecil semua).
+// Cara pakai: salin seluruh isi file ini ke Firebase Console → Firestore Database → Rules, lalu klik Publish.
+//
+// 1. Ganti 'email-anda@gmail.com' di fungsi isOwner() dengan email Google pemilik (huruf kecil semua).
+//    Pemilik selalu admin, dan saat pertama login akunnya otomatis terdaftar sebagai admin.
+// 2. Anggota tim lain ditambahkan dari dalam aplikasi: Pengaturan → Akses Anggota Tim.
+//    Tidak perlu mengubah file ini lagi untuk menambah anggota.
+//
+// Hak akses:
+// - Anggota: lihat semua data, tambah dan ubah data, tambah kategori vendor.
+// - Admin: semua hak anggota + hapus data, import, reset, ubah identitas perusahaan, kelola anggota.
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function isTeamMember() {
-      return request.auth != null
-        && request.auth.token.email_verified == true
-        && request.auth.token.email.lower() in [
-          'email-anda@gmail.com'
-          // , 'anggota-tim@gmail.com'
-        ];
+    function signedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
     }
 
-    match /{document=**} {
-      allow read, write: if isTeamMember();
+    function myEmail() {
+      return request.auth.token.email.lower();
+    }
+
+    function isOwner() {
+      return signedIn() && myEmail() in [
+        'email-anda@gmail.com'
+      ];
+    }
+
+    function memberPath() {
+      return /databases/$(database)/documents/members/$(myEmail());
+    }
+
+    function isMember() {
+      return isOwner() || (signedIn() && exists(memberPath()));
+    }
+
+    function isAdmin() {
+      return isOwner() || (signedIn() && exists(memberPath()) && get(memberPath()).data.role == 'admin');
+    }
+
+    // Team access list. A user may read their own entry to find out their role.
+    match /members/{email} {
+      allow get: if signedIn() && email == myEmail();
+      allow read: if isMember();
+      allow write: if isAdmin();
+    }
+
+    // Company identity and bank details shown on invoices.
+    match /settings/company {
+      allow read: if isMember();
+      allow write: if isAdmin();
+    }
+
+    // Shared lists such as vendor categories.
+    match /settings/lists {
+      allow read, write: if isMember();
+    }
+
+    // Activity log: append-only, entries must carry the writer's own email.
+    match /auditLog/{entry} {
+      allow read: if isMember();
+      allow create: if isMember() && request.resource.data.by == myEmail();
+      allow update, delete: if false;
+    }
+
+    // Business data: projects, pics, freelancers, vendors, research, quotes, tasks, invoices.
+    match /{collection}/{docId} {
+      allow read, create, update: if isMember() && !(collection in ['members', 'settings', 'auditLog']);
+      allow delete: if isAdmin() && !(collection in ['members', 'settings', 'auditLog']);
     }
   }
 }

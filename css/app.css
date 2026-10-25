@@ -1,0 +1,18 @@
+body { font-family: 'Inter', sans-serif; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+@media print {
+    @page { margin: 14mm; }
+    .no-print, #toast { display: none !important; }
+    .print-only { display: block !important; }
+    html, body { background: white !important; color: black !important; height: auto !important; }
+    .h-screen { height: auto !important; }
+    .overflow-hidden, .overflow-y-auto { overflow: visible !important; }
+    main { padding: 0 !important; background: white !important; }
+    #tab-invoices > .grid:not(.no-print), #tab-invoices .xl\:col-span-8 { display: block !important; }
+    #invoice-paper { border: none !important; box-shadow: none !important; padding: 0 !important; width: 100% !important; min-height: 0 !important; border-radius: 0 !important; }
+}
+
+/* Role-based visibility: admin-only controls are hidden until the signed-in user is confirmed as admin. */
+body:not([data-role="admin"]) .admin-only { display: none !important; }
+body[data-role="admin"] .member-only { display: none !important; }
