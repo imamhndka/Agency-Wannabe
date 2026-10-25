@@ -36,6 +36,7 @@
     <!-- Firebase SDK (Compat Version) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -53,6 +54,23 @@
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-full flex flex-col transition-colors duration-200">
+
+    <!-- LOGIN SCREEN -->
+    <div id="auth-screen" class="fixed inset-0 z-[60] bg-slate-900 flex items-center justify-center p-6 hidden no-print">
+        <div class="w-full max-w-sm bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 space-y-6 text-center">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-extrabold text-2xl text-white shadow-lg">J</div>
+            <div>
+                <h1 class="text-xl font-extrabold text-gray-900 dark:text-white" data-i18n="authTitle">Masuk ke JADI.in</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" data-i18n="authSubtitle">Gunakan akun Google tim Anda.</p>
+            </div>
+            <button id="auth-btn" onclick="signInWithGoogle()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center space-x-2">
+                <i class="fa-brands fa-google"></i>
+                <span data-i18n="authBtn">Masuk dengan Google</span>
+            </button>
+            <p id="auth-error" class="text-xs text-rose-600 dark:text-rose-400 hidden"></p>
+            <button id="auth-switch-btn" onclick="signOutUser()" class="text-xs text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 underline hidden" data-i18n="authSwitch">Ganti akun</button>
+        </div>
+    </div>
 
     <div class="flex h-screen overflow-hidden relative">
         
@@ -107,9 +125,17 @@
                     <i class="fa-solid fa-handshake w-5 text-center text-teal-400"></i>
                     <span data-i18n="navVendors">Vendor & Partner Directory</span>
                 </button>
+                <button onclick="switchTab('research')" id="nav-research" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
+                    <i class="fa-solid fa-book-open-reader w-5 text-center text-lime-400"></i>
+                    <span data-i18n="navResearch">Riset & Catatan</span>
+                </button>
                 <button onclick="switchTab('invoices')" id="nav-invoices" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
                     <i class="fa-solid fa-file-invoice-dollar w-5 text-center text-rose-400"></i>
                     <span data-i18n="navInvoices">Invoice Generator</span>
+                </button>
+                <button onclick="switchTab('settings')" id="nav-settings" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
+                    <i class="fa-solid fa-gear w-5 text-center text-slate-400"></i>
+                    <span data-i18n="navSettings">Pengaturan</span>
                 </button>
             </nav>
 
@@ -176,6 +202,14 @@
                     <button onclick="toggleDarkMode()" class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition" title="Toggle Light/Dark Theme">
                         <i id="theme-toggle-icon" class="fa-solid fa-moon text-lg"></i>
                     </button>
+
+                    <!-- Signed-in user -->
+                    <div id="user-box" class="hidden items-center space-x-2">
+                        <span id="user-email" class="hidden lg:inline text-xs text-gray-500 dark:text-gray-400 max-w-[180px] truncate"></span>
+                        <button onclick="signOutUser()" class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition" title="Logout">
+                            <i class="fa-solid fa-right-from-bracket text-lg"></i>
+                        </button>
+                    </div>
 
                     <!-- Add Project CTA Button -->
                     <button onclick="openProjectModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 sm:px-4 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-md shadow-blue-500/20 transition">
@@ -604,11 +638,7 @@
                             </div>
 
                             <select id="vendor-filter-category" onchange="renderVendors()" class="bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-800 dark:text-gray-100">
-                                <option value="ALL" data-i18n="allCategories">Semua Kategori Vendor</option>
-                                <option value="Percetakan / Printing">Percetakan / Printing</option>
-                                <option value="Studio & Production">Studio & Production</option>
-                                <option value="Legal & Notaris">Legal & Notaris</option>
-                                <option value="Event & Venue">Event & Venue</option>
+                                <option value="ALL">Semua Kategori</option>
                             </select>
                         </div>
 
@@ -619,6 +649,73 @@
                     </div>
 
                     <div id="vendors-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                </section>
+
+                <!-- TAB: RESEARCH & NOTES -->
+                <section id="tab-research" class="space-y-6 hidden">
+                    <div class="grid grid-cols-3 gap-3" id="research-stats"></div>
+
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                        <div class="flex flex-wrap items-center gap-3 flex-1">
+                            <div class="relative flex-1 min-w-[200px]">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                <input type="text" id="research-search" oninput="renderResearch()" placeholder="Cari judul, topik, atau isi catatan..." data-i18n-placeholder="resSearchPlaceholder" class="w-full pl-9 pr-4 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-lime-500 text-gray-800 dark:text-gray-100">
+                            </div>
+                            <select id="research-filter-status" onchange="renderResearch()" class="bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-lime-500 text-gray-800 dark:text-gray-100"></select>
+                            <select id="research-filter-topic" onchange="renderResearch()" class="bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-lime-500 text-gray-800 dark:text-gray-100"></select>
+                        </div>
+                        <button onclick="openResearchModal()" class="bg-lime-600 hover:bg-lime-700 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-md shadow-lime-500/20 transition">
+                            <i class="fa-solid fa-plus"></i>
+                            <span data-i18n="resAddBtn">Tambah Riset</span>
+                        </button>
+                    </div>
+
+                    <div id="research-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                </section>
+
+                <!-- TAB: SETTINGS -->
+                <section id="tab-settings" class="space-y-6 hidden">
+                    <form id="form-settings" onsubmit="saveSettings(event)" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-4">
+                            <h3 class="font-bold text-gray-900 dark:text-white" data-i18n="setTitleCompany">Identitas Perusahaan (untuk Invoice)</h3>
+                            <div>
+                                <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="setCompanyName">Nama Perusahaan</label>
+                                <input type="text" id="set-company-name" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="setTagline">Tagline</label>
+                                <input type="text" id="set-tagline" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="setContact">Alamat & Kontak</label>
+                                <input type="text" id="set-contact" placeholder="Jakarta, Indonesia | email@domain.com" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="setBankName">Bank</label>
+                                    <input type="text" id="set-bank-name" placeholder="Bank BCA" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="setBankAccount">Nomor Rekening</label>
+                                    <input type="text" id="set-bank-account" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="setBankHolder">Atas Nama</label>
+                                <input type="text" id="set-bank-holder" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                            </div>
+                            <button type="submit" class="px-5 py-2.5 text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md" data-i18n="btnSaveSettings">Simpan Pengaturan</button>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-4">
+                            <h3 class="font-bold text-gray-900 dark:text-white" data-i18n="setTitleCats">Kategori Vendor</h3>
+                            <div class="flex space-x-2">
+                                <input type="text" id="set-new-cat" placeholder="Contoh: Hotel, Wedding Organizer" data-i18n-placeholder="setCatPlaceholder" class="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                                <button type="button" onclick="addVendorCategoryFromSettings()" class="px-4 py-2 text-sm font-bold bg-teal-600 hover:bg-teal-700 text-white rounded-xl" data-i18n="setAddCat">Tambah</button>
+                            </div>
+                            <div id="set-cat-list" class="flex flex-wrap gap-2"></div>
+                        </div>
+                    </form>
                 </section>
 
                 <!-- TAB 8: INVOICES -->
@@ -677,9 +774,9 @@
                             <div class="space-y-6">
                                 <div class="flex justify-between items-start border-b pb-6 border-gray-200">
                                     <div>
-                                        <h2 class="text-2xl font-black tracking-tight text-slate-900" data-i18n="appName">JADI.in</h2>
-                                        <p class="text-xs text-gray-500">Digital Partner · Solusi Layanan Terpadu</p>
-                                        <p class="text-xs text-gray-500 mt-1">Jakarta, Indonesia | halo@jadi.in</p>
+                                        <h2 id="inv-co-name" class="text-2xl font-black tracking-tight text-slate-900">JADI.in</h2>
+                                        <p id="inv-co-tagline" class="text-xs text-gray-500">Digital Partner</p>
+                                        <p id="inv-co-contact" class="text-xs text-gray-500 mt-1"></p>
                                     </div>
                                     <div class="text-right">
                                         <span class="text-2xl font-bold uppercase tracking-widest text-blue-600" data-i18n="invHeaderTitle">FAKTUR</span>
@@ -726,7 +823,7 @@
 
                             <div class="border-t pt-6 border-gray-200 text-xs text-gray-500 space-y-1">
                                 <p class="font-bold text-gray-700" data-i18n="invPaymentInstr">Petunjuk Pembayaran Transfer Bank:</p>
-                                <p>Bank BCA - 8830-1928-11 a.n JADI.in Digital Partner</p>
+                                <p id="inv-co-bank"></p>
                             </div>
                         </div>
                     </div>
@@ -981,12 +1078,10 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelVendorCat">Kategori</label>
-                        <select id="vendor-category" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
-                            <option value="Percetakan / Printing">Percetakan / Printing</option>
-                            <option value="Studio & Production">Studio & Production</option>
-                            <option value="Legal & Notaris">Legal & Notaris</option>
-                            <option value="Event & Venue">Event & Venue</option>
-                        </select>
+                        <div class="flex space-x-2">
+                            <select id="vendor-category" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none"></select>
+                            <button type="button" onclick="quickAddVendorCategory()" class="px-3 rounded-xl bg-teal-50 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300 hover:bg-teal-100 text-sm font-bold" title="+ Kategori"><i class="fa-solid fa-plus"></i></button>
+                        </div>
                     </div>
                     <div>
                         <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelVendorStatus">Status Partner</label>
@@ -1016,9 +1111,73 @@
                         <input type="number" id="vendor-rating" min="1" max="5" step="0.1" value="4.8" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                     </div>
                 </div>
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelVendorLocation">Lokasi / Kota</label>
+                    <input type="text" id="vendor-location" placeholder="Jakarta Selatan" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelVendorNotes">Catatan (harga, kualitas, pengalaman kerja sama)</label>
+                    <textarea id="vendor-notes" rows="2" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none"></textarea>
+                </div>
                 <div class="pt-3 flex justify-end space-x-3 border-t border-gray-100 dark:border-gray-700">
                     <button type="button" onclick="closeVendorModal()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 rounded-xl" data-i18n="cancel">Batal</button>
                     <button type="submit" class="px-5 py-2 text-sm font-bold bg-teal-600 text-white rounded-xl shadow-md" data-i18n="save">Simpan Vendor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT RESEARCH -->
+    <div id="modal-research" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-100 dark:border-gray-700">
+            <div class="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                <h3 id="modal-research-title" class="text-lg font-bold text-gray-800 dark:text-white">Tambah Riset</h3>
+                <button onclick="closeResearchModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="form-research" onsubmit="saveResearch(event)" class="p-5 space-y-4">
+                <input type="hidden" id="res-id">
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelResTitle">Judul Riset</label>
+                    <input type="text" id="res-title" required placeholder="Survei venue untuk gathering 200 orang" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelResTopic">Topik</label>
+                        <input type="text" id="res-topic" list="res-topic-list" placeholder="Venue, Harga, Kompetitor..." class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                        <datalist id="res-topic-list"></datalist>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelResStatus">Status</label>
+                        <select id="res-status" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none"></select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelResProject">Proyek Terkait</label>
+                        <select id="res-project" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none"></select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelResAuthor">Dikerjakan Oleh</label>
+                        <select id="res-author" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none"></select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelResDate">Tanggal</label>
+                        <input type="date" id="res-date" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelResLink">Link Dokumen / Sumber</label>
+                        <input type="url" id="res-link" placeholder="https://..." class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelResSummary">Ringkasan & Temuan</label>
+                    <textarea id="res-summary" rows="5" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none"></textarea>
+                </div>
+                <div class="pt-3 flex justify-end space-x-3 border-t border-gray-100 dark:border-gray-700">
+                    <button type="button" onclick="closeResearchModal()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 rounded-xl" data-i18n="cancel">Batal</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-bold bg-lime-600 text-white rounded-xl shadow-md" data-i18n="save">Simpan</button>
                 </div>
             </form>
         </div>
@@ -1070,6 +1229,57 @@
                 newProject: "Proyek Baru",
                 syncConnecting: "Connecting Cloud...",
                 syncError: "Sync Gagal",
+                navResearch: "Riset & Catatan",
+                navSettings: "Pengaturan",
+                authTitle: "Masuk ke JADI.in",
+                authSubtitle: "Gunakan akun Google tim Anda.",
+                authBtn: "Masuk dengan Google",
+                authSwitch: "Ganti akun",
+                authDenied: "Akun {email} belum punya akses. Minta admin menambahkan email ini ke aturan Firestore.",
+                authErrNotEnabled: "Login Google belum diaktifkan di Firebase Console (Authentication → Sign-in method → Google).",
+                authErrDomain: "Domain {domain} belum diizinkan. Tambahkan di Firebase Console → Authentication → Settings → Authorized domains.",
+                authErrGeneric: "Gagal masuk ({code}). Coba lagi.",
+                resAddBtn: "Tambah Riset",
+                resSearchPlaceholder: "Cari judul, topik, atau isi catatan...",
+                resAllTopics: "Semua Topik",
+                resStatusNotStarted: "Belum Mulai",
+                resStatusInProgress: "Berjalan",
+                resStatusDone: "Selesai",
+                resEmpty: "Belum ada riset tersimpan.",
+                resNoProject: "-- Tidak terkait proyek --",
+                resOpenLink: "Buka sumber",
+                resCycleHint: "Klik untuk ganti status",
+                modalResAddTitle: "Tambah Riset",
+                modalResEditTitle: "Edit Riset",
+                labelResTitle: "Judul Riset",
+                labelResTopic: "Topik",
+                labelResStatus: "Status",
+                labelResProject: "Proyek Terkait",
+                labelResAuthor: "Dikerjakan Oleh",
+                labelResDate: "Tanggal",
+                labelResLink: "Link Dokumen / Sumber",
+                labelResSummary: "Ringkasan & Temuan",
+                toastResSaved: "Riset tersimpan.",
+                toastResDeleted: "Riset dihapus.",
+                setTitleCompany: "Identitas Perusahaan (untuk Invoice)",
+                setCompanyName: "Nama Perusahaan",
+                setTagline: "Tagline",
+                setContact: "Alamat & Kontak",
+                setBankName: "Bank",
+                setBankAccount: "Nomor Rekening",
+                setBankHolder: "Atas Nama",
+                btnSaveSettings: "Simpan Pengaturan",
+                setTitleCats: "Kategori Vendor",
+                setCatPlaceholder: "Contoh: Hotel, Wedding Organizer",
+                setAddCat: "Tambah",
+                toastSettingsSaved: "Pengaturan tersimpan.",
+                toastCatAdded: "Kategori ditambahkan.",
+                toastCatInUse: "Kategori masih dipakai vendor, ubah vendornya dulu.",
+                promptNewCategory: "Nama kategori vendor baru:",
+                invBankMissing: "Nomor rekening belum diisi. Atur di menu Pengaturan.",
+                labelVendorLocation: "Lokasi / Kota",
+                labelVendorLocationShort: "Lokasi",
+                labelVendorNotes: "Catatan (harga, kualitas, pengalaman kerja sama)",
                 syncSynced: "Cloud Synced - Live Team",
                 syncOffline: "Local Storage Mode",
                 cancel: "Batal",
@@ -1242,6 +1452,57 @@
                 newProject: "New Project",
                 syncConnecting: "Connecting Cloud...",
                 syncError: "Sync Failed",
+                navResearch: "Research & Notes",
+                navSettings: "Settings",
+                authTitle: "Sign in to JADI.in",
+                authSubtitle: "Use your team Google account.",
+                authBtn: "Sign in with Google",
+                authSwitch: "Switch account",
+                authDenied: "Account {email} has no access yet. Ask the admin to add this email to the Firestore rules.",
+                authErrNotEnabled: "Google sign-in is not enabled in Firebase Console (Authentication → Sign-in method → Google).",
+                authErrDomain: "Domain {domain} is not authorized. Add it in Firebase Console → Authentication → Settings → Authorized domains.",
+                authErrGeneric: "Sign-in failed ({code}). Please try again.",
+                resAddBtn: "Add Research",
+                resSearchPlaceholder: "Search title, topic, or notes...",
+                resAllTopics: "All Topics",
+                resStatusNotStarted: "Not Started",
+                resStatusInProgress: "In Progress",
+                resStatusDone: "Completed",
+                resEmpty: "No research saved yet.",
+                resNoProject: "-- Not linked to a project --",
+                resOpenLink: "Open source",
+                resCycleHint: "Click to change status",
+                modalResAddTitle: "Add Research",
+                modalResEditTitle: "Edit Research",
+                labelResTitle: "Research Title",
+                labelResTopic: "Topic",
+                labelResStatus: "Status",
+                labelResProject: "Related Project",
+                labelResAuthor: "Done By",
+                labelResDate: "Date",
+                labelResLink: "Document / Source Link",
+                labelResSummary: "Summary & Findings",
+                toastResSaved: "Research saved.",
+                toastResDeleted: "Research deleted.",
+                setTitleCompany: "Company Identity (for Invoices)",
+                setCompanyName: "Company Name",
+                setTagline: "Tagline",
+                setContact: "Address & Contact",
+                setBankName: "Bank",
+                setBankAccount: "Account Number",
+                setBankHolder: "Account Holder",
+                btnSaveSettings: "Save Settings",
+                setTitleCats: "Vendor Categories",
+                setCatPlaceholder: "e.g. Hotel, Wedding Organizer",
+                setAddCat: "Add",
+                toastSettingsSaved: "Settings saved.",
+                toastCatAdded: "Category added.",
+                toastCatInUse: "Category is still used by a vendor; change that vendor first.",
+                promptNewCategory: "New vendor category name:",
+                invBankMissing: "Bank account not set. Fill it in under Settings.",
+                labelVendorLocation: "Location / City",
+                labelVendorLocationShort: "Location",
+                labelVendorNotes: "Notes (price, quality, past experience)",
                 syncSynced: "Cloud Synced - Live Team",
                 syncOffline: "Local Storage Mode",
                 cancel: "Cancel",
@@ -1402,6 +1663,27 @@
             { id: 'pic_3', name: 'Lingga', role: 'Account Executive', email: 'ae@jadi.in', phone: '6281234567892', isDummy: false }
         ];
 
+        const DEFAULT_VENDOR_CATEGORIES = [
+            'Percetakan / Printing', 'Studio & Production', 'Legal & Notaris', 'Event & Venue',
+            'Hotel & Akomodasi', 'Wedding', 'Social Space / Co-working', 'Katering', 'Transportasi'
+        ];
+
+        const DEFAULT_SETTINGS = {
+            companyName: 'JADI.in',
+            tagline: 'Digital Partner · Solusi Layanan Terpadu',
+            contact: 'Jakarta, Indonesia',
+            bankName: 'Bank BCA',
+            bankAccount: '',
+            bankHolder: 'JADI.in Digital Partner',
+            vendorCategories: DEFAULT_VENDOR_CATEGORIES
+        };
+
+        const RESEARCH_STATUSES = ['NOT_STARTED', 'IN_PROGRESS', 'DONE'];
+
+        const SAMPLE_DEMO_RESEARCH = [
+            { id: 'demo_r1', title: 'Perbandingan venue gathering 150 orang', topic: 'Venue', status: 'IN_PROGRESS', projectId: '', author: 'Imam', date: '2026-10-20', link: '', summary: '3 venue disurvei di Jakarta Selatan. Kisaran harga Rp 250-400rb/pax termasuk makan siang.', isDummy: true }
+        ];
+
         const SAMPLE_DEMO_PROJECTS = [
             { id: 'demo_p1', client: 'PT Digital Nusantara', title: 'Rebrand & Modern Web Development', pic: 'Imam', category: 'Web Dev', revenue: 35000000, cost: 18000000, freelancer: 'Budi Santoso', deadline: '2026-10-25', status: 'In Progress', isDummy: true, logs: [{ id: 'l1', date: '2026-10-08', pic: 'Imam', note: 'Kickoff meeting selesai, struktur sitemap disetujui.', statusUpdate: 'In Progress' }] },
             { id: 'demo_p2', client: 'Warung Kopi Maju', title: 'Social Media Retainer Q4', pic: 'Sarah', category: 'Marketing', revenue: 12000000, cost: 6500000, freelancer: 'Rina Melati', deadline: '2026-11-01', status: 'In Progress', isDummy: true, logs: [] },
@@ -1421,6 +1703,8 @@
         window.pics = [];
         window.freelancers = [];
         window.vendors = [];
+        window.research = [];
+        window.settings = { ...DEFAULT_SETTINGS };
         window.currentTab = 'dashboard';
         window.currentLang = 'id';
         window.projectViewMode = 'table';
@@ -1458,7 +1742,7 @@
         // ---------- CLOUD SYNC ----------
         // Keys keep the old "3s_agency_" prefix so data already saved in browsers is not lost.
         const STORAGE_PREFIX = '3s_agency_';
-        const CLOUD_COLLECTIONS = ['projects', 'pics', 'freelancers', 'vendors'];
+        const CLOUD_COLLECTIONS = ['projects', 'pics', 'freelancers', 'vendors', 'research'];
         window.cloudReady = {};
 
         function esc(value) {
@@ -1489,8 +1773,10 @@
             syncText.innerText = t({ synced: 'syncSynced', offline: 'syncOffline', error: 'syncError' }[state]);
         }
 
+        window.cloudUnsubs = [];
+
         function initFirebaseOrFallback() {
-            if (typeof firebase === 'undefined' || !firebaseConfig.apiKey) {
+            if (typeof firebase === 'undefined' || !firebaseConfig.apiKey || !firebase.auth) {
                 enableLocalMode();
                 return;
             }
@@ -1498,36 +1784,142 @@
             try {
                 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
                 window.db = firebase.firestore();
-                window.isCloudMode = true;
-
-                CLOUD_COLLECTIONS.forEach(colName => {
-                    window.db.collection(colName).onSnapshot((snapshot) => {
-                        const migratedKey = `${STORAGE_PREFIX}cloud_synced_${colName}`;
-                        if (!window.cloudReady[colName]) {
-                            window.cloudReady[colName] = true;
-                            // First time this browser meets an empty cloud collection: upload what it has locally
-                            // instead of wiping it. After that, the cloud is the single source of truth.
-                            if (snapshot.empty && window[colName].length && !localStorage.getItem(migratedKey)) {
-                                localStorage.setItem(migratedKey, '1');
-                                uploadCollection(colName, window[colName]);
-                                return;
-                            }
-                        }
-                        localStorage.setItem(migratedKey, '1');
-                        window[colName] = sortNewestFirst(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-                        cacheLocal(colName);
-                        refreshActiveUI();
-                        setSyncBadge('synced');
-                    }, (err) => {
-                        console.error(`Sync error (${colName})`, err);
-                        window.isCloudMode = false;
-                        setSyncBadge('error');
-                    });
+                window.auth = firebase.auth();
+                window.auth.getRedirectResult().catch(showAuthError);
+                window.auth.onAuthStateChanged(user => {
+                    if (user) {
+                        showSignedIn(user);
+                        startCloudSync();
+                    } else {
+                        stopCloudSync();
+                        showSignedOut();
+                    }
                 });
             } catch (err) {
                 console.error('Firebase init error', err);
                 enableLocalMode();
             }
+        }
+
+        function startCloudSync() {
+            if (window.cloudUnsubs.length) return;
+            window.isCloudMode = true;
+
+            CLOUD_COLLECTIONS.forEach(colName => {
+                const unsub = window.db.collection(colName).onSnapshot((snapshot) => {
+                    const migratedKey = `${STORAGE_PREFIX}cloud_synced_${colName}`;
+                    if (!window.cloudReady[colName]) {
+                        window.cloudReady[colName] = true;
+                        // First time this browser meets an empty cloud collection: upload what it has locally
+                        // instead of wiping it. After that, the cloud is the single source of truth.
+                        if (snapshot.empty && window[colName].length && !localStorage.getItem(migratedKey)) {
+                            localStorage.setItem(migratedKey, '1');
+                            uploadCollection(colName, window[colName]);
+                            return;
+                        }
+                    }
+                    localStorage.setItem(migratedKey, '1');
+                    window[colName] = sortNewestFirst(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+                    cacheLocal(colName);
+                    refreshActiveUI();
+                    setSyncBadge('synced');
+                }, onCloudReadError);
+                window.cloudUnsubs.push(unsub);
+            });
+
+            const unsubSettings = window.db.collection('settings').doc('company').onSnapshot((doc) => {
+                if (doc.exists) {
+                    window.settings = { ...DEFAULT_SETTINGS, ...doc.data() };
+                    localStorage.setItem(`${STORAGE_PREFIX}settings`, JSON.stringify(window.settings));
+                    refreshActiveUI();
+                } else {
+                    saveSettingsObject(window.settings);
+                }
+            }, onCloudReadError);
+            window.cloudUnsubs.push(unsubSettings);
+        }
+
+        function stopCloudSync() {
+            window.cloudUnsubs.forEach(unsub => { try { unsub(); } catch (e) {} });
+            window.cloudUnsubs = [];
+            window.cloudReady = {};
+            window.isCloudMode = false;
+        }
+
+        function onCloudReadError(err) {
+            console.error('Sync error', err);
+            if (err && err.code === 'permission-denied') {
+                const email = window.auth && window.auth.currentUser ? window.auth.currentUser.email : '';
+                stopCloudSync();
+                showSignedOut(t('authDenied', { email }));
+                return;
+            }
+            window.isCloudMode = false;
+            setSyncBadge('error');
+        }
+
+        // ---------- LOGIN ----------
+        function signInWithGoogle() {
+            if (!window.auth) return;
+            const provider = new firebase.auth.GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
+            document.getElementById('auth-error').classList.add('hidden');
+            window.auth.signInWithPopup(provider).catch(err => {
+                if (err && (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment')) {
+                    return window.auth.signInWithRedirect(provider);
+                }
+                showAuthError(err);
+            });
+        }
+
+        function signOutUser() {
+            stopCloudSync();
+            // Clear this browser's cached copy so the next person on this device does not see it.
+            [...CLOUD_COLLECTIONS, 'settings'].forEach(col => localStorage.removeItem(`${STORAGE_PREFIX}${col}`));
+            CLOUD_COLLECTIONS.forEach(col => { window[col] = []; });
+            window.settings = { ...DEFAULT_SETTINGS };
+            refreshActiveUI();
+            if (window.auth) window.auth.signOut();
+            else showSignedOut();
+        }
+
+        function showAuthError(err) {
+            if (!err || err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') return;
+            console.error('Auth error', err);
+            const map = {
+                'auth/operation-not-allowed': 'authErrNotEnabled',
+                'auth/configuration-not-found': 'authErrNotEnabled',
+                'auth/unauthorized-domain': 'authErrDomain'
+            };
+            const box = document.getElementById('auth-error');
+            box.innerText = t(map[err.code] || 'authErrGeneric', { domain: location.hostname, code: err.code || '' });
+            box.classList.remove('hidden');
+        }
+
+        function showSignedIn(user) {
+            document.getElementById('auth-screen').classList.add('hidden');
+            const box = document.getElementById('user-box');
+            box.classList.remove('hidden');
+            box.classList.add('flex');
+            document.getElementById('user-email').innerText = user.email || '';
+        }
+
+        function showSignedOut(message) {
+            document.getElementById('auth-screen').classList.remove('hidden');
+            const box = document.getElementById('user-box');
+            box.classList.add('hidden');
+            box.classList.remove('flex');
+            const err = document.getElementById('auth-error');
+            const switchBtn = document.getElementById('auth-switch-btn');
+            if (message) {
+                err.innerText = message;
+                err.classList.remove('hidden');
+                switchBtn.classList.remove('hidden');
+            } else {
+                err.classList.add('hidden');
+                switchBtn.classList.add('hidden');
+            }
+            setSyncBadge('offline');
         }
 
         function enableLocalMode() {
@@ -1599,6 +1991,10 @@
             renderPics();
             renderFreelancers();
             renderVendors();
+            populateVendorCategoryOptions();
+            renderResearch();
+            renderSettings();
+            updateInvoicePreview();
             populateCalculatorVendorDropdown();
             setupInvoiceSelectOptions();
         }
@@ -1608,6 +2004,10 @@
             const spi = localStorage.getItem('3s_agency_pics');
             const sf = localStorage.getItem('3s_agency_freelancers');
             const sv = localStorage.getItem('3s_agency_vendors');
+            const sr = localStorage.getItem('3s_agency_research');
+            const ss = localStorage.getItem('3s_agency_settings');
+            if (sr) window.research = JSON.parse(sr);
+            if (ss) window.settings = { ...DEFAULT_SETTINGS, ...JSON.parse(ss) };
             const sl = localStorage.getItem('3s_agency_lang');
 
             if (sp) window.projects = JSON.parse(sp);
@@ -1679,7 +2079,7 @@
 
         function switchTab(tabId) {
             window.currentTab = tabId;
-            const tabs = ['dashboard', 'projects', 'calendar', 'calculator', 'pics', 'freelancers', 'vendors', 'invoices'];
+            const tabs = ['dashboard', 'projects', 'calendar', 'calculator', 'pics', 'freelancers', 'vendors', 'research', 'invoices', 'settings'];
             tabs.forEach(tName => {
                 const el = document.getElementById(`tab-${tName}`);
                 const nav = document.getElementById(`nav-${tName}`);
@@ -1777,7 +2177,7 @@
                                 <div class="flex items-center">${getDemoBadgeHTML(p.isDummy)}<span>${esc(p.client)}</span></div>
                                 <div class="text-xs text-gray-400 font-normal">${esc(p.title)}</div>
                             </td>
-                            <td class="py-3 px-4"><span class="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">${esc(p.pic || 'Imam')}</span></td>
+                            <td class="py-3 px-4"><span class="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">${esc(p.pic || '-')}</span></td>
                             <td class="py-3 px-4"><span class="text-xs px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-700">${esc(p.category)}</span></td>
                             <td class="py-3 px-4 font-bold">${formatIDR(p.revenue)}</td>
                             <td class="py-3 px-4"><span class="text-xs px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-700">${margin}%</span></td>
@@ -1846,7 +2246,7 @@
 
             const filtered = projects.filter(p => {
                 const matchesSearch = p.client.toLowerCase().includes(searchQuery) || p.title.toLowerCase().includes(searchQuery);
-                const matchesPic = picFilter === 'ALL' || (p.pic || 'Imam') === picFilter;
+                const matchesPic = picFilter === 'ALL' || (p.pic || '-') === picFilter;
                 const matchesCat = catFilter === 'ALL' || p.category === catFilter;
                 const matchesStatus = statusFilter === 'ALL' || p.status === statusFilter;
                 return matchesSearch && matchesPic && matchesCat && matchesStatus;
@@ -1875,7 +2275,7 @@
                             <div class="flex items-center">${getDemoBadgeHTML(p.isDummy)}<span>${esc(p.client)}</span></div>
                             <div class="text-xs text-gray-400 font-normal">${esc(p.title)}</div>
                         </td>
-                        <td class="py-3 px-4"><span class="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">${esc(p.pic || 'Imam')}</span></td>
+                        <td class="py-3 px-4"><span class="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">${esc(p.pic || '-')}</span></td>
                         <td class="py-3 px-4"><span class="text-xs px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-700">${esc(p.category)}</span></td>
                         <td class="py-3 px-4 font-bold text-gray-900 dark:text-white">${formatIDR(p.revenue)}</td>
                         <td class="py-3 px-4 text-gray-500">${formatIDR(p.cost)}</td>
@@ -1920,7 +2320,7 @@
                         <div draggable="true" ondragstart="handleDragStart(event, '${p.id}')" class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-3 cursor-grab active:cursor-grabbing hover:shadow-md transition">
                             <div class="flex justify-between items-start">
                                 <h4 class="font-bold text-sm text-gray-900 dark:text-white flex items-center">${getDemoBadgeHTML(p.isDummy)}<span>${esc(p.client)}</span></h4>
-                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">${esc(p.pic || 'Imam')}</span>
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">${esc(p.pic || '-')}</span>
                             </div>
                             <p class="text-xs text-gray-500">${esc(p.title)}</p>
                             <div class="flex justify-between items-center text-xs font-bold text-gray-900 dark:text-white pt-1">
@@ -1984,7 +2384,7 @@
 
             document.getElementById('daily-log-proj-id').value = p.id;
             document.getElementById('daily-log-proj-title').innerText = `${p.client} - ${p.title}`;
-            document.getElementById('daily-log-proj-sub').innerText = `PIC: ${p.pic || 'Imam'} | Status: ${p.status}`;
+            document.getElementById('daily-log-proj-sub').innerText = `PIC: ${p.pic || '-'} | Status: ${p.status}`;
             document.getElementById('form-daily-log').reset();
             document.getElementById('log-date').valueAsDate = new Date();
 
@@ -2386,7 +2786,8 @@
             const catFilter = document.getElementById('vendor-filter-category').value;
 
             const filtered = vendors.filter(v => {
-                const matchesSearch = v.name.toLowerCase().includes(search) || v.pic.toLowerCase().includes(search);
+                const haystack = [v.name, v.pic, v.location, v.notes, v.category].map(x => String(x || '').toLowerCase()).join(' ');
+                const matchesSearch = haystack.includes(search);
                 const matchesCat = catFilter === 'ALL' || v.category === catFilter;
                 return matchesSearch && matchesCat;
             });
@@ -2410,7 +2811,10 @@
                         <div class="space-y-2 text-xs text-gray-600 dark:text-gray-300 border-t border-b py-3 border-gray-100 dark:border-gray-700">
                             <div class="flex justify-between"><span>PIC:</span><span class="font-semibold text-gray-800 dark:text-white">${esc(v.pic)}</span></div>
                             <div class="flex justify-between"><span>Cost:</span><span class="font-bold text-emerald-600">${v.cost ? formatIDR(v.cost) : '-'}</span></div>
+                            ${v.location ? `<div class="flex justify-between"><span>${t('labelVendorLocationShort')}:</span><span class="font-semibold text-gray-800 dark:text-white">${esc(v.location)}</span></div>` : ''}
+                            ${v.rating ? `<div class="flex justify-between"><span>Rating:</span><span class="font-semibold text-amber-500"><i class="fa-solid fa-star text-[10px]"></i> ${esc(v.rating)}</span></div>` : ''}
                         </div>
+                        ${v.notes ? `<p class="text-xs text-gray-500 dark:text-gray-400 whitespace-pre-line">${esc(v.notes)}</p>` : ''}
                         <div class="flex items-center justify-between pt-1">
                             <a href="https://wa.me/${esc(v.phone)}" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition">
                                 <i class="fa-brands fa-whatsapp"></i><span>WA</span>
@@ -2428,6 +2832,7 @@
         function openVendorModal() {
             document.getElementById('form-vendor').reset();
             document.getElementById('vendor-id').value = '';
+            populateVendorCategoryOptions();
             document.getElementById('modal-vendor').classList.remove('hidden');
         }
 
@@ -2436,6 +2841,7 @@
         function editVendor(id) {
             const v = vendors.find(item => item.id === id);
             if (!v) return;
+            populateVendorCategoryOptions();
             document.getElementById('vendor-id').value = v.id;
             document.getElementById('vendor-name').value = v.name;
             document.getElementById('vendor-category').value = v.category;
@@ -2443,6 +2849,9 @@
             document.getElementById('vendor-pic').value = v.pic;
             document.getElementById('vendor-phone').value = v.phone;
             document.getElementById('vendor-cost').value = v.cost || '';
+            document.getElementById('vendor-rating').value = v.rating || 4.8;
+            document.getElementById('vendor-location').value = v.location || '';
+            document.getElementById('vendor-notes').value = v.notes || '';
             document.getElementById('modal-vendor').classList.remove('hidden');
         }
 
@@ -2459,6 +2868,8 @@
                 phone: document.getElementById('vendor-phone').value,
                 cost: Number(document.getElementById('vendor-cost').value) || 0,
                 rating: Number(document.getElementById('vendor-rating').value) || 4.8,
+                location: document.getElementById('vendor-location').value,
+                notes: document.getElementById('vendor-notes').value,
                 isDummy: existing ? existing.isDummy : false
             };
             const idx = vendors.findIndex(v => v.id === id);
@@ -2512,6 +2923,268 @@
             document.getElementById('prev-inv-amount').innerText = formatIDR(amount);
             document.getElementById('prev-inv-total').innerText = formatIDR(amount);
             document.getElementById('prev-inv-due').innerText = due || '-';
+
+            const s = window.settings;
+            document.getElementById('inv-co-name').innerText = s.companyName || 'JADI.in';
+            document.getElementById('inv-co-tagline').innerText = s.tagline || '';
+            document.getElementById('inv-co-contact').innerText = s.contact || '';
+            const bankEl = document.getElementById('inv-co-bank');
+            if (s.bankAccount) {
+                bankEl.innerText = `${s.bankName || 'Bank'} - ${s.bankAccount} a.n ${s.bankHolder || s.companyName || ''}`;
+                bankEl.className = '';
+            } else {
+                bankEl.innerText = t('invBankMissing');
+                bankEl.className = 'text-rose-600 font-semibold no-print';
+            }
+        }
+
+        // ---------- SETTINGS ----------
+        function saveSettingsObject(obj) {
+            window.settings = obj;
+            localStorage.setItem(`${STORAGE_PREFIX}settings`, JSON.stringify(obj));
+            refreshActiveUI();
+            if (window.isCloudMode && window.db) {
+                window.db.collection('settings').doc('company').set(obj).catch(onCloudWriteError);
+            }
+        }
+
+        function renderSettings() {
+            const s = window.settings;
+            const fields = { 'set-company-name': 'companyName', 'set-tagline': 'tagline', 'set-contact': 'contact', 'set-bank-name': 'bankName', 'set-bank-account': 'bankAccount', 'set-bank-holder': 'bankHolder' };
+            Object.entries(fields).forEach(([elId, key]) => {
+                const el = document.getElementById(elId);
+                if (el && document.activeElement !== el) el.value = s[key] || '';
+            });
+            const list = document.getElementById('set-cat-list');
+            if (!list) return;
+            list.innerHTML = getVendorCategories().map(cat => {
+                const used = vendors.filter(v => v.category === cat).length;
+                return `<span class="inline-flex items-center space-x-2 pl-3 pr-1 py-1 rounded-full text-xs font-semibold bg-teal-50 text-teal-800 dark:bg-teal-950 dark:text-teal-300 border border-teal-200/50">
+                    <span>${esc(cat)}${used ? ` <span class="text-teal-500">(${used})</span>` : ''}</span>
+                    <button type="button" data-cat="${esc(cat)}" onclick="removeVendorCategory(this.dataset.cat)" class="w-5 h-5 rounded-full hover:bg-teal-200 dark:hover:bg-teal-800" title="Hapus"><i class="fa-solid fa-xmark text-[10px]"></i></button>
+                </span>`;
+            }).join('');
+        }
+
+        function saveSettings(e) {
+            e.preventDefault();
+            saveSettingsObject({
+                ...window.settings,
+                companyName: document.getElementById('set-company-name').value.trim(),
+                tagline: document.getElementById('set-tagline').value.trim(),
+                contact: document.getElementById('set-contact').value.trim(),
+                bankName: document.getElementById('set-bank-name').value.trim(),
+                bankAccount: document.getElementById('set-bank-account').value.trim(),
+                bankHolder: document.getElementById('set-bank-holder').value.trim()
+            });
+            showToast(t('toastSettingsSaved'));
+        }
+
+        // ---------- VENDOR CATEGORIES ----------
+        function getVendorCategories() {
+            const saved = Array.isArray(window.settings.vendorCategories) ? window.settings.vendorCategories : DEFAULT_VENDOR_CATEGORIES;
+            const inUse = vendors.map(v => v.category).filter(Boolean);
+            return [...new Set([...saved, ...inUse])];
+        }
+
+        function addVendorCategory(name) {
+            const cat = String(name || '').trim();
+            if (!cat) return false;
+            const current = Array.isArray(window.settings.vendorCategories) ? window.settings.vendorCategories : DEFAULT_VENDOR_CATEGORIES;
+            if (current.some(c => c.toLowerCase() === cat.toLowerCase())) return false;
+            saveSettingsObject({ ...window.settings, vendorCategories: [...current, cat] });
+            return true;
+        }
+
+        function addVendorCategoryFromSettings() {
+            const input = document.getElementById('set-new-cat');
+            if (addVendorCategory(input.value)) showToast(t('toastCatAdded'));
+            input.value = '';
+        }
+
+        function quickAddVendorCategory() {
+            const name = prompt(t('promptNewCategory'));
+            if (!name || !name.trim()) return;
+            addVendorCategory(name);
+            populateVendorCategoryOptions();
+            document.getElementById('vendor-category').value = getVendorCategories().find(c => c.toLowerCase() === name.trim().toLowerCase()) || '';
+        }
+
+        function removeVendorCategory(cat) {
+            if (vendors.some(v => v.category === cat)) {
+                showToast(t('toastCatInUse'));
+                return;
+            }
+            const current = Array.isArray(window.settings.vendorCategories) ? window.settings.vendorCategories : DEFAULT_VENDOR_CATEGORIES;
+            saveSettingsObject({ ...window.settings, vendorCategories: current.filter(c => c !== cat) });
+        }
+
+        function populateVendorCategoryOptions() {
+            const cats = getVendorCategories();
+            const filter = document.getElementById('vendor-filter-category');
+            if (filter) {
+                const val = filter.value || 'ALL';
+                filter.innerHTML = `<option value="ALL">${t('allCategories')}</option>` + cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+                filter.value = cats.includes(val) ? val : 'ALL';
+            }
+            const select = document.getElementById('vendor-category');
+            if (select) {
+                const val = select.value;
+                select.innerHTML = cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+                if (val && cats.includes(val)) select.value = val;
+            }
+        }
+
+        // ---------- RESEARCH ----------
+        function researchStatusLabel(status) {
+            return t({ NOT_STARTED: 'resStatusNotStarted', IN_PROGRESS: 'resStatusInProgress', DONE: 'resStatusDone' }[status] || 'resStatusNotStarted');
+        }
+
+        function researchStatusClass(status) {
+            return {
+                NOT_STARTED: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200',
+                IN_PROGRESS: 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300',
+                DONE: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300'
+            }[status] || 'bg-gray-100 text-gray-700';
+        }
+
+        function renderResearch() {
+            const grid = document.getElementById('research-grid');
+            if (!grid) return;
+
+            const statusSel = document.getElementById('research-filter-status');
+            const statusVal = statusSel.value || 'ALL';
+            statusSel.innerHTML = `<option value="ALL">${t('allStatuses')}</option>` + RESEARCH_STATUSES.map(s => `<option value="${s}">${researchStatusLabel(s)}</option>`).join('');
+            statusSel.value = statusVal;
+
+            const topics = [...new Set(research.map(r => (r.topic || '').trim()).filter(Boolean))].sort();
+            const topicSel = document.getElementById('research-filter-topic');
+            const topicVal = topicSel.value || 'ALL';
+            topicSel.innerHTML = `<option value="ALL">${t('resAllTopics')}</option>` + topics.map(tp => `<option value="${esc(tp)}">${esc(tp)}</option>`).join('');
+            topicSel.value = topics.includes(topicVal) ? topicVal : 'ALL';
+            document.getElementById('res-topic-list').innerHTML = topics.map(tp => `<option value="${esc(tp)}"></option>`).join('');
+
+            document.getElementById('research-stats').innerHTML = RESEARCH_STATUSES.map(s => `
+                <button onclick="document.getElementById('research-filter-status').value='${s}'; renderResearch();" class="text-left bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:ring-2 hover:ring-lime-500 transition">
+                    <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${researchStatusClass(s)}">${researchStatusLabel(s)}</span>
+                    <div class="text-2xl font-black text-gray-900 dark:text-white mt-2">${research.filter(r => (r.status || 'NOT_STARTED') === s).length}</div>
+                </button>`).join('');
+
+            const search = document.getElementById('research-search').value.toLowerCase();
+            const filtered = research.filter(r => {
+                const haystack = [r.title, r.topic, r.summary, r.author].map(x => String(x || '').toLowerCase()).join(' ');
+                return haystack.includes(search)
+                    && (topicSel.value === 'ALL' || (r.topic || '').trim() === topicSel.value)
+                    && (statusSel.value === 'ALL' || (r.status || 'NOT_STARTED') === statusSel.value);
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">${t('resEmpty')}</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(r => {
+                const proj = r.projectId ? projects.find(p => p.id === r.projectId) : null;
+                const safeLink = /^https?:\/\//i.test(r.link || '') ? r.link : '';
+                const status = r.status || 'NOT_STARTED';
+                return `
+                    <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col space-y-3">
+                        <div class="flex justify-between items-start gap-2">
+                            <div class="min-w-0">
+                                ${r.topic ? `<span class="text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-0.5 rounded-md bg-lime-50 text-lime-800 dark:bg-lime-950 dark:text-lime-300 border border-lime-200/50">${esc(r.topic)}</span>` : ''}
+                                <h4 class="font-bold text-base text-gray-900 dark:text-white mt-1.5 flex items-center">${getDemoBadgeHTML(r.isDummy)}<span>${esc(r.title)}</span></h4>
+                            </div>
+                            <button onclick="cycleResearchStatus('${r.id}')" title="${esc(t('resCycleHint'))}" class="flex-shrink-0 text-xs px-2.5 py-1 rounded-full font-semibold ${researchStatusClass(status)}">${researchStatusLabel(status)}</button>
+                        </div>
+                        ${r.summary ? `<p class="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-line line-clamp-5">${esc(r.summary)}</p>` : ''}
+                        <div class="text-xs text-gray-500 dark:text-gray-400 space-y-1 border-t border-gray-100 dark:border-gray-700 pt-3 mt-auto">
+                            ${proj ? `<div><i class="fa-solid fa-diagram-project w-4"></i> ${esc(proj.client)} - ${esc(proj.title)}</div>` : ''}
+                            <div><i class="fa-solid fa-user w-4"></i> ${esc(r.author || '-')} · ${esc(r.date || '-')}</div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            ${safeLink ? `<a href="${esc(safeLink)}" target="_blank" rel="noopener" class="text-xs font-bold text-lime-700 dark:text-lime-400 hover:underline"><i class="fa-solid fa-link"></i> ${t('resOpenLink')}</a>` : '<span></span>'}
+                            <div class="flex space-x-1">
+                                <button onclick="editResearch('${r.id}')" class="p-1.5 text-gray-400 hover:text-blue-500"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="deleteResearch('${r.id}')" class="p-1.5 text-gray-400 hover:text-rose-500"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        function fillResearchSelects() {
+            document.getElementById('res-status').innerHTML = RESEARCH_STATUSES.map(s => `<option value="${s}">${researchStatusLabel(s)}</option>`).join('');
+            document.getElementById('res-project').innerHTML = `<option value="">${t('resNoProject')}</option>` + projects.map(p => `<option value="${p.id}">${esc(p.client)} - ${esc(p.title)}</option>`).join('');
+            document.getElementById('res-author').innerHTML = pics.map(p => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
+        }
+
+        function openResearchModal() {
+            document.getElementById('form-research').reset();
+            fillResearchSelects();
+            document.getElementById('res-id').value = '';
+            document.getElementById('res-date').valueAsDate = new Date();
+            document.getElementById('modal-research-title').innerText = t('modalResAddTitle');
+            document.getElementById('modal-research').classList.remove('hidden');
+        }
+
+        function closeResearchModal() { document.getElementById('modal-research').classList.add('hidden'); }
+
+        function editResearch(id) {
+            const r = research.find(item => item.id === id);
+            if (!r) return;
+            fillResearchSelects();
+            document.getElementById('res-id').value = r.id;
+            document.getElementById('res-title').value = r.title || '';
+            document.getElementById('res-topic').value = r.topic || '';
+            document.getElementById('res-status').value = r.status || 'NOT_STARTED';
+            document.getElementById('res-project').value = r.projectId || '';
+            if (r.author && ![...document.getElementById('res-author').options].some(o => o.value === r.author)) {
+                document.getElementById('res-author').innerHTML += `<option value="${esc(r.author)}">${esc(r.author)}</option>`;
+            }
+            document.getElementById('res-author').value = r.author || '';
+            document.getElementById('res-date').value = r.date || '';
+            document.getElementById('res-link').value = r.link || '';
+            document.getElementById('res-summary').value = r.summary || '';
+            document.getElementById('modal-research-title').innerText = t('modalResEditTitle');
+            document.getElementById('modal-research').classList.remove('hidden');
+        }
+
+        function saveResearch(e) {
+            e.preventDefault();
+            const id = document.getElementById('res-id').value || `real_${Date.now()}`;
+            const existing = research.find(r => r.id === id);
+            const item = {
+                id,
+                title: document.getElementById('res-title').value.trim(),
+                topic: document.getElementById('res-topic').value.trim(),
+                status: document.getElementById('res-status').value,
+                projectId: document.getElementById('res-project').value,
+                author: document.getElementById('res-author').value,
+                date: document.getElementById('res-date').value,
+                link: document.getElementById('res-link').value.trim(),
+                summary: document.getElementById('res-summary').value,
+                isDummy: existing ? !!existing.isDummy : false
+            };
+            const idx = research.findIndex(r => r.id === id);
+            if (idx !== -1) research[idx] = item;
+            else research.unshift(item);
+            closeResearchModal();
+            saveItem('research', item);
+            showToast(t('toastResSaved'));
+        }
+
+        function cycleResearchStatus(id) {
+            const r = research.find(item => item.id === id);
+            if (!r) return;
+            const next = RESEARCH_STATUSES[(RESEARCH_STATUSES.indexOf(r.status || 'NOT_STARTED') + 1) % RESEARCH_STATUSES.length];
+            r.status = next;
+            saveItem('research', r);
+        }
+
+        function deleteResearch(id) {
+            window.research = research.filter(r => r.id !== id);
+            deleteItem('research', id);
+            showToast(t('toastResDeleted'));
         }
 
         // BACKUP EXPORT & IMPORT DATA
@@ -2521,6 +3194,8 @@
                 pics: window.pics,
                 freelancers: window.freelancers,
                 vendors: window.vendors,
+                research: window.research,
+                settings: window.settings,
                 exportedAt: new Date().toISOString()
             };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
@@ -2543,6 +3218,8 @@
                         replaceCollection('freelancers', parsed.freelancers);
                         if (parsed.pics) replaceCollection('pics', parsed.pics);
                         if (parsed.vendors) replaceCollection('vendors', parsed.vendors);
+                        if (parsed.research) replaceCollection('research', parsed.research);
+                        if (parsed.settings) saveSettingsObject({ ...DEFAULT_SETTINGS, ...parsed.settings });
                         showToast(t('toastImportSuccess'));
                     }
                 } catch (err) {
@@ -2569,7 +3246,7 @@
             document.getElementById('proj-id').value = p.id;
             document.getElementById('proj-client').value = p.client;
             document.getElementById('proj-title').value = p.title;
-            document.getElementById('proj-pic').value = p.pic || (pics[0] ? pics[0].name : 'Imam');
+            document.getElementById('proj-pic').value = p.pic || (pics[0] ? pics[0].name : '');
             document.getElementById('proj-category').value = p.category;
             document.getElementById('proj-status').value = p.status;
             document.getElementById('proj-revenue').value = p.revenue;
@@ -2619,6 +3296,9 @@
             const newProjects = SAMPLE_DEMO_PROJECTS.map(p => ({ ...p, id: `demo_${timestamp}_${Math.random().toString(36).substring(2, 6)}`, isDummy: true }));
             const newFreelancers = SAMPLE_DEMO_FREELANCERS.map(f => ({ ...f, id: `demo_${timestamp}_${Math.random().toString(36).substring(2, 6)}`, isDummy: true }));
             const newVendors = SAMPLE_DEMO_VENDORS.map(v => ({ ...v, id: `demo_${timestamp}_${Math.random().toString(36).substring(2, 6)}`, isDummy: true }));
+            const newResearch = SAMPLE_DEMO_RESEARCH.map(r => ({ ...r, id: `demo_${timestamp}_${Math.random().toString(36).substring(2, 6)}`, isDummy: true }));
+            window.research = [...newResearch, ...window.research];
+            newResearch.forEach(r => saveItem('research', r));
 
             window.projects = [...window.projects, ...newProjects];
             window.freelancers = [...window.freelancers, ...newFreelancers];
@@ -2673,6 +3353,9 @@
                 const demoProjIds = projects.filter(p => p.isDummy).map(p => p.id);
                 const demoFreeIds = freelancers.filter(f => f.isDummy).map(f => f.id);
                 const demoVendIds = vendors.filter(v => v.isDummy).map(v => v.id);
+                const demoResIds = research.filter(r => r.isDummy).map(r => r.id);
+                window.research = research.filter(r => !r.isDummy);
+                demoResIds.forEach(id => deleteItem('research', id));
 
                 window.projects = projects.filter(p => !p.isDummy);
                 window.freelancers = freelancers.filter(f => !f.isDummy);
@@ -2689,6 +3372,7 @@
                 replaceCollection('freelancers', []);
                 replaceCollection('vendors', []);
                 replaceCollection('pics', [...DEFAULT_PICS]);
+                replaceCollection('research', []);
 
                 showToast(t('toastResetAll'));
             }

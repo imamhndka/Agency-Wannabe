@@ -1,0 +1,22 @@
+rules_version = '2';
+
+// Aturan keamanan Firestore untuk JADI.in Hub.
+// Salin isi file ini ke Firebase Console → Firestore Database → Rules, lalu klik Publish.
+// Ganti daftar email di bawah dengan akun Google tim yang boleh mengakses data (huruf kecil semua).
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isTeamMember() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() in [
+          'email-anda@gmail.com'
+          // , 'anggota-tim@gmail.com'
+        ];
+    }
+
+    match /{document=**} {
+      allow read, write: if isTeamMember();
+    }
+  }
+}
