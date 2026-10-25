@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3's Agency - All-in-one Hub</title>
+    <title>JADI.in - Digital Partner Hub</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -61,15 +61,15 @@
 
         <!-- SIDEBAR NAVIGATION -->
         <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-64 bg-slate-900 text-white flex flex-col transition-transform duration-300 transform -translate-x-full md:relative md:translate-x-0 no-print flex-shrink-0 shadow-xl md:shadow-none">
-            <!-- Agency Branding Header -->
+            <!-- JADI.in Branding Header -->
             <div class="p-5 flex items-center justify-between border-b border-slate-800">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-extrabold text-xl text-white shadow-lg">
-                        3's
+                        J
                     </div>
                     <div>
-                        <h1 class="font-extrabold text-base tracking-wide leading-tight" data-i18n="appName">3's Agency</h1>
-                        <span class="text-xs text-blue-400 font-medium" data-i18n="appSub">All-in-One Hub</span>
+                        <h1 class="font-extrabold text-base tracking-wide leading-tight" data-i18n="appName">JADI.in</h1>
+                        <span class="text-xs text-blue-400 font-medium" data-i18n="appSub">Digital Partner</span>
                     </div>
                 </div>
                 <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-white">
@@ -97,7 +97,7 @@
                 </button>
                 <button onclick="switchTab('pics')" id="nav-pics" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
                     <i class="fa-solid fa-user-shield w-5 text-center text-indigo-400"></i>
-                    <span data-i18n="navPics">Tim & PIC Agency</span>
+                    <span data-i18n="navPics">Tim & PIC</span>
                 </button>
                 <button onclick="switchTab('freelancers')" id="nav-freelancers" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
                     <i class="fa-solid fa-users-gear w-5 text-center text-purple-400"></i>
@@ -677,9 +677,9 @@
                             <div class="space-y-6">
                                 <div class="flex justify-between items-start border-b pb-6 border-gray-200">
                                     <div>
-                                        <h2 class="text-2xl font-black tracking-tight text-slate-900" data-i18n="appName">3's Agency</h2>
-                                        <p class="text-xs text-gray-500">Solusi Layanan Terpadu & Strategic Partner</p>
-                                        <p class="text-xs text-gray-500 mt-1">Jakarta, Indonesia | halo@3sagency.id</p>
+                                        <h2 class="text-2xl font-black tracking-tight text-slate-900" data-i18n="appName">JADI.in</h2>
+                                        <p class="text-xs text-gray-500">Digital Partner · Solusi Layanan Terpadu</p>
+                                        <p class="text-xs text-gray-500 mt-1">Jakarta, Indonesia | halo@jadi.in</p>
                                     </div>
                                     <div class="text-right">
                                         <span class="text-2xl font-bold uppercase tracking-widest text-blue-600" data-i18n="invHeaderTitle">FAKTUR</span>
@@ -726,7 +726,7 @@
 
                             <div class="border-t pt-6 border-gray-200 text-xs text-gray-500 space-y-1">
                                 <p class="font-bold text-gray-700" data-i18n="invPaymentInstr">Petunjuk Pembayaran Transfer Bank:</p>
-                                <p>Bank BCA - 8830-1928-11 a.n PT 3s Agency Indonesia</p>
+                                <p>Bank BCA - 8830-1928-11 a.n JADI.in Digital Partner</p>
                             </div>
                         </div>
                     </div>
@@ -903,7 +903,7 @@
                 </div>
                 <div>
                     <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelPicEmail">Alamat Email Kontak</label>
-                    <input type="email" id="pic-email" placeholder="imam@3sagency.id" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
+                    <input type="email" id="pic-email" placeholder="imam@jadi.in" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm focus:outline-none">
                 </div>
                 <div>
                     <label class="text-xs font-semibold uppercase text-gray-400 block mb-1" data-i18n="labelPicPhone">Nomor WhatsApp (62...)</label>
@@ -1051,13 +1051,13 @@
 
         const translations = {
             id: {
-                appName: "3's Agency",
-                appSub: "All-in-one Hub",
+                appName: "JADI.in",
+                appSub: "Digital Partner",
                 navDashboard: "Dashboard Utama",
                 navProjects: "Projects & Pipeline",
                 navCalendar: "Kalender Project",
                 navCalculator: "Margin Calculator",
-                navPics: "Tim & PIC Agency",
+                navPics: "Tim & PIC",
                 navFreelancers: "Talent Pool (Freelancer)",
                 navVendors: "Vendor & Partner Directory",
                 navInvoices: "Invoice Generator",
@@ -1069,6 +1069,7 @@
                 importBtn: "Import",
                 newProject: "Proyek Baru",
                 syncConnecting: "Connecting Cloud...",
+                syncError: "Sync Gagal",
                 syncSynced: "Cloud Synced - Live Team",
                 syncOffline: "Local Storage Mode",
                 cancel: "Batal",
@@ -1222,13 +1223,13 @@
                 toastImportSuccess: "Data sistem berhasil diimpor!"
             },
             en: {
-                appName: "3's Agency",
-                appSub: "All-in-one Hub",
+                appName: "JADI.in",
+                appSub: "Digital Partner",
                 navDashboard: "Main Dashboard",
                 navProjects: "Projects & Pipeline",
                 navCalendar: "Project Calendar",
                 navCalculator: "Margin Calculator",
-                navPics: "Team & Agency PICs",
+                navPics: "Team & PICs",
                 navFreelancers: "Talent Pool (Freelancers)",
                 navVendors: "Vendor & Partner Directory",
                 navInvoices: "Invoice Generator",
@@ -1240,6 +1241,7 @@
                 importBtn: "Import",
                 newProject: "New Project",
                 syncConnecting: "Connecting Cloud...",
+                syncError: "Sync Failed",
                 syncSynced: "Cloud Synced - Live Team",
                 syncOffline: "Local Storage Mode",
                 cancel: "Cancel",
@@ -1395,9 +1397,9 @@
         };
 
         const DEFAULT_PICS = [
-            { id: 'pic_1', name: 'Imam', role: 'Founder & Director', email: 'imam@3sagency.id', phone: '6281234567890', isDummy: false },
-            { id: 'pic_2', name: 'Sarah', role: 'Project Manager', email: 'pm1@3sagency.id', phone: '6281234567891', isDummy: false },
-            { id: 'pic_3', name: 'Lingga', role: 'Account Executive', email: 'ae@3sagency.id', phone: '6281234567892', isDummy: false }
+            { id: 'pic_1', name: 'Imam', role: 'Founder & Director', email: 'imam@jadi.in', phone: '6281234567890', isDummy: false },
+            { id: 'pic_2', name: 'Sarah', role: 'Project Manager', email: 'pm1@jadi.in', phone: '6281234567891', isDummy: false },
+            { id: 'pic_3', name: 'Lingga', role: 'Account Executive', email: 'ae@jadi.in', phone: '6281234567892', isDummy: false }
         ];
 
         const SAMPLE_DEMO_PROJECTS = [
@@ -1453,10 +1455,41 @@
             }
         }
 
-        function initFirebaseOrFallback() {
-            const syncBadge = document.getElementById('sync-badge');
-            const syncText = document.getElementById('sync-text');
+        // ---------- CLOUD SYNC ----------
+        // Keys keep the old "3s_agency_" prefix so data already saved in browsers is not lost.
+        const STORAGE_PREFIX = '3s_agency_';
+        const CLOUD_COLLECTIONS = ['projects', 'pics', 'freelancers', 'vendors'];
+        window.cloudReady = {};
 
+        function esc(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+        }
+
+        // Newest first, using the timestamp inside ids like real_1729850000000 / demo_1729850000000_ab12.
+        function sortNewestFirst(items) {
+            const ts = item => { const m = String(item.id || '').match(/(\d{13})/); return m ? Number(m[1]) : 0; };
+            return items.map((item, i) => ({ item, i })).sort((a, b) => (ts(b.item) - ts(a.item)) || (a.i - b.i)).map(x => x.item);
+        }
+
+        function cacheLocal(colName) {
+            localStorage.setItem(`${STORAGE_PREFIX}${colName}`, JSON.stringify(window[colName]));
+        }
+
+        function setSyncBadge(state) {
+            const badge = document.getElementById('sync-badge');
+            const syncText = document.getElementById('sync-text');
+            if (!badge || !syncText) return;
+            const base = 'hidden sm:flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold border ';
+            const styles = {
+                synced: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300',
+                offline: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300',
+                error: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300'
+            };
+            badge.className = base + styles[state];
+            syncText.innerText = t({ synced: 'syncSynced', offline: 'syncOffline', error: 'syncError' }[state]);
+        }
+
+        function initFirebaseOrFallback() {
             if (typeof firebase === 'undefined' || !firebaseConfig.apiKey) {
                 enableLocalMode();
                 return;
@@ -1466,39 +1499,96 @@
                 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
                 window.db = firebase.firestore();
                 window.isCloudMode = true;
-                syncBadge.className = "hidden sm:flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300";
-                syncText.innerText = t('syncSynced');
 
-                window.db.collection('projects').onSnapshot((snapshot) => {
-                    if (!snapshot.empty) window.projects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    refreshActiveUI();
-                }, () => enableLocalMode());
+                CLOUD_COLLECTIONS.forEach(colName => {
+                    window.db.collection(colName).onSnapshot((snapshot) => {
+                        const migratedKey = `${STORAGE_PREFIX}cloud_synced_${colName}`;
+                        if (!window.cloudReady[colName]) {
+                            window.cloudReady[colName] = true;
+                            // First time this browser meets an empty cloud collection: upload what it has locally
+                            // instead of wiping it. After that, the cloud is the single source of truth.
+                            if (snapshot.empty && window[colName].length && !localStorage.getItem(migratedKey)) {
+                                localStorage.setItem(migratedKey, '1');
+                                uploadCollection(colName, window[colName]);
+                                return;
+                            }
+                        }
+                        localStorage.setItem(migratedKey, '1');
+                        window[colName] = sortNewestFirst(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+                        cacheLocal(colName);
+                        refreshActiveUI();
+                        setSyncBadge('synced');
+                    }, (err) => {
+                        console.error(`Sync error (${colName})`, err);
+                        window.isCloudMode = false;
+                        setSyncBadge('error');
+                    });
+                });
             } catch (err) {
+                console.error('Firebase init error', err);
                 enableLocalMode();
             }
         }
 
         function enableLocalMode() {
             window.isCloudMode = false;
-            const badge = document.getElementById('sync-badge');
-            const syncText = document.getElementById('sync-text');
-            if (badge && syncText) {
-                badge.className = 'hidden sm:flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300';
-                syncText.innerText = t('syncOffline');
-            }
+            setSyncBadge('offline');
             refreshActiveUI();
+        }
+
+        function onCloudWriteError(err) {
+            console.error('Cloud write failed', err);
+            setSyncBadge('error');
         }
 
         function saveItem(colName, item) {
-            localStorage.setItem(`3s_agency_${colName}`, JSON.stringify(window[colName]));
+            cacheLocal(colName);
             refreshActiveUI();
-            if (window.isCloudMode && window.db) db.collection(colName).doc(item.id).set(item, { merge: true });
+            if (window.isCloudMode && window.db) {
+                window.db.collection(colName).doc(item.id).set(item, { merge: true }).catch(onCloudWriteError);
+            }
         }
 
         function deleteItem(colName, itemId) {
-            localStorage.setItem(`3s_agency_${colName}`, JSON.stringify(window[colName]));
+            cacheLocal(colName);
             refreshActiveUI();
-            if (window.isCloudMode && window.db) db.collection(colName).doc(itemId).delete();
+            if (window.isCloudMode && window.db) {
+                window.db.collection(colName).doc(itemId).delete().catch(onCloudWriteError);
+            }
+        }
+
+        // Write many docs (and optionally delete others) in batches of up to 400 operations.
+        async function uploadCollection(colName, items, idsToDelete = []) {
+            if (!window.isCloudMode || !window.db) return;
+            const ops = [
+                ...idsToDelete.map(id => batch => batch.delete(window.db.collection(colName).doc(id))),
+                ...items.map(item => batch => batch.set(window.db.collection(colName).doc(item.id), item))
+            ];
+            try {
+                for (let i = 0; i < ops.length; i += 400) {
+                    const batch = window.db.batch();
+                    ops.slice(i, i + 400).forEach(op => op(batch));
+                    await batch.commit();
+                }
+            } catch (err) {
+                onCloudWriteError(err);
+            }
+        }
+
+        // Replace a whole collection (used by Import and Reset) both locally and in the cloud.
+        async function replaceCollection(colName, items) {
+            window[colName] = items;
+            cacheLocal(colName);
+            refreshActiveUI();
+            if (!window.isCloudMode || !window.db) return;
+            try {
+                const keep = new Set(items.map(item => item.id));
+                const existing = await window.db.collection(colName).get();
+                const toDelete = existing.docs.map(doc => doc.id).filter(id => !keep.has(id));
+                await uploadCollection(colName, items, toDelete);
+            } catch (err) {
+                onCloudWriteError(err);
+            }
         }
 
         function refreshActiveUI() {
@@ -1529,7 +1619,7 @@
                 window.pics = JSON.parse(spi);
             } else {
                 window.pics = [...DEFAULT_PICS];
-                localStorage.setItem('3s_agency_pics', JSON.stringify(window.pics));
+                cacheLocal('pics');
             }
         }
 
@@ -1640,7 +1730,7 @@
             if (filterSelect) {
                 const currentVal = filterSelect.value;
                 filterSelect.innerHTML = `<option value="ALL">${t('allPics')}</option>`;
-                pics.forEach(p => { filterSelect.innerHTML += `<option value="${p.name}">${p.name}</option>`; });
+                pics.forEach(p => { filterSelect.innerHTML += `<option value="${esc(p.name)}">${esc(p.name)}</option>`; });
                 if (currentVal) filterSelect.value = currentVal;
             }
 
@@ -1648,7 +1738,7 @@
                 if (select) {
                     const currentVal = select.value;
                     select.innerHTML = '';
-                    pics.forEach(p => { select.innerHTML += `<option value="${p.name}">${p.name} (${p.role || 'PIC'})</option>`; });
+                    pics.forEach(p => { select.innerHTML += `<option value="${esc(p.name)}">${esc(p.name)} (${esc(p.role || 'PIC')})</option>`; });
                     if (currentVal) select.value = currentVal;
                 }
             });
@@ -1684,11 +1774,11 @@
                     recentList.innerHTML += `
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
                             <td class="py-3 px-4 font-semibold text-gray-800 dark:text-white">
-                                <div class="flex items-center">${getDemoBadgeHTML(p.isDummy)}<span>${p.client}</span></div>
-                                <div class="text-xs text-gray-400 font-normal">${p.title}</div>
+                                <div class="flex items-center">${getDemoBadgeHTML(p.isDummy)}<span>${esc(p.client)}</span></div>
+                                <div class="text-xs text-gray-400 font-normal">${esc(p.title)}</div>
                             </td>
-                            <td class="py-3 px-4"><span class="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">${p.pic || 'Imam'}</span></td>
-                            <td class="py-3 px-4"><span class="text-xs px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-700">${p.category}</span></td>
+                            <td class="py-3 px-4"><span class="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">${esc(p.pic || 'Imam')}</span></td>
+                            <td class="py-3 px-4"><span class="text-xs px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-700">${esc(p.category)}</span></td>
                             <td class="py-3 px-4 font-bold">${formatIDR(p.revenue)}</td>
                             <td class="py-3 px-4"><span class="text-xs px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-700">${margin}%</span></td>
                             <td class="py-3 px-4">${getStatusBadgeHTML(p.status)}</td>
@@ -1782,11 +1872,11 @@
                 tbody.innerHTML += `
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
                         <td class="py-3 px-4 font-semibold text-gray-800 dark:text-white">
-                            <div class="flex items-center">${getDemoBadgeHTML(p.isDummy)}<span>${p.client}</span></div>
-                            <div class="text-xs text-gray-400 font-normal">${p.title}</div>
+                            <div class="flex items-center">${getDemoBadgeHTML(p.isDummy)}<span>${esc(p.client)}</span></div>
+                            <div class="text-xs text-gray-400 font-normal">${esc(p.title)}</div>
                         </td>
-                        <td class="py-3 px-4"><span class="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">${p.pic || 'Imam'}</span></td>
-                        <td class="py-3 px-4"><span class="text-xs px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-700">${p.category}</span></td>
+                        <td class="py-3 px-4"><span class="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">${esc(p.pic || 'Imam')}</span></td>
+                        <td class="py-3 px-4"><span class="text-xs px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-700">${esc(p.category)}</span></td>
                         <td class="py-3 px-4 font-bold text-gray-900 dark:text-white">${formatIDR(p.revenue)}</td>
                         <td class="py-3 px-4 text-gray-500">${formatIDR(p.cost)}</td>
                         <td class="py-3 px-4 font-bold text-emerald-600">${margin}%</td>
@@ -1829,13 +1919,13 @@
                     col.el.innerHTML += `
                         <div draggable="true" ondragstart="handleDragStart(event, '${p.id}')" class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-3 cursor-grab active:cursor-grabbing hover:shadow-md transition">
                             <div class="flex justify-between items-start">
-                                <h4 class="font-bold text-sm text-gray-900 dark:text-white flex items-center">${getDemoBadgeHTML(p.isDummy)}<span>${p.client}</span></h4>
-                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">${p.pic || 'Imam'}</span>
+                                <h4 class="font-bold text-sm text-gray-900 dark:text-white flex items-center">${getDemoBadgeHTML(p.isDummy)}<span>${esc(p.client)}</span></h4>
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">${esc(p.pic || 'Imam')}</span>
                             </div>
-                            <p class="text-xs text-gray-500">${p.title}</p>
+                            <p class="text-xs text-gray-500">${esc(p.title)}</p>
                             <div class="flex justify-between items-center text-xs font-bold text-gray-900 dark:text-white pt-1">
                                 <span>${formatIDR(p.revenue)}</span>
-                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">${p.category}</span>
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">${esc(p.category)}</span>
                             </div>
                             <div class="flex justify-between items-center text-xs border-t pt-2 border-gray-100 dark:border-gray-700">
                                 <button onclick="openDailyLogModal('${p.id}')" class="text-blue-600 font-bold text-xs"><i class="fa-solid fa-comments mr-1"></i>Logs (${(p.logs||[]).length})</button>
@@ -1920,11 +2010,11 @@
                 container.innerHTML += `
                     <div class="p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-1 text-xs">
                         <div class="flex justify-between items-center text-gray-400">
-                            <span class="font-bold text-slate-700 dark:text-slate-200"><i class="fa-solid fa-user-circle mr-1"></i>${log.pic}</span>
+                            <span class="font-bold text-slate-700 dark:text-slate-200"><i class="fa-solid fa-user-circle mr-1"></i>${esc(log.pic)}</span>
                             <span>${log.date}</span>
                         </div>
-                        <p class="text-gray-800 dark:text-gray-200 font-medium">${log.note}</p>
-                        ${log.statusUpdate && log.statusUpdate !== 'SAME' ? `<span class="inline-block px-2 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 font-bold">Status: ${log.statusUpdate}</span>` : ''}
+                        <p class="text-gray-800 dark:text-gray-200 font-medium">${esc(log.note)}</p>
+                        ${log.statusUpdate && log.statusUpdate !== 'SAME' ? `<span class="inline-block px-2 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 font-bold">Status: ${esc(log.statusUpdate)}</span>` : ''}
                     </div>
                 `;
             });
@@ -2003,8 +2093,8 @@
                 let projectsHTML = '';
                 dayProjects.forEach(dp => {
                     projectsHTML += `
-                        <div onclick="openDailyLogModal('${dp.id}')" class="p-1.5 rounded-lg bg-blue-600 text-white text-[10px] font-bold cursor-pointer hover:bg-blue-500 transition shadow-sm truncate" title="${dp.client} - ${dp.title}">
-                            <i class="fa-solid fa-flag-checkered mr-1"></i>${dp.client}
+                        <div onclick="openDailyLogModal('${dp.id}')" class="p-1.5 rounded-lg bg-blue-600 text-white text-[10px] font-bold cursor-pointer hover:bg-blue-500 transition shadow-sm truncate" title="${esc(dp.client)} - ${esc(dp.title)}">
+                            <i class="fa-solid fa-flag-checkered mr-1"></i>${esc(dp.client)}
                         </div>
                     `;
                 });
@@ -2043,19 +2133,19 @@
                     <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-4">
                         <div class="flex items-center space-x-3">
                             <div class="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-950 font-bold text-indigo-700 dark:text-indigo-300 flex items-center justify-center text-lg border border-indigo-200 dark:border-indigo-800">
-                                ${p.name.charAt(0)}
+                                ${esc(p.name.charAt(0))}
                             </div>
                             <div>
-                                <h4 class="font-bold text-base text-gray-900 dark:text-white">${p.name}</h4>
-                                <span class="text-xs text-indigo-600 dark:text-indigo-400 font-medium block">${p.role}</span>
+                                <h4 class="font-bold text-base text-gray-900 dark:text-white">${esc(p.name)}</h4>
+                                <span class="text-xs text-indigo-600 dark:text-indigo-400 font-medium block">${esc(p.role)}</span>
                             </div>
                         </div>
                         <div class="space-y-1.5 text-xs text-gray-500 dark:text-gray-400 border-t border-b py-3 border-gray-100 dark:border-gray-700">
-                            <div class="flex justify-between"><span>Email:</span><span class="font-semibold text-gray-800 dark:text-gray-200">${p.email || '-'}</span></div>
+                            <div class="flex justify-between"><span>Email:</span><span class="font-semibold text-gray-800 dark:text-gray-200">${esc(p.email || '-')}</span></div>
                             <div class="flex justify-between"><span>Active Projects:</span><span class="font-bold text-emerald-600">${assignedProjects}</span></div>
                         </div>
                         <div class="flex items-center justify-between pt-1">
-                            <a href="https://wa.me/${p.phone}" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition">
+                            <a href="https://wa.me/${esc(p.phone)}" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition">
                                 <i class="fa-brands fa-whatsapp"></i><span>WA</span>
                             </a>
                             <div class="flex space-x-1">
@@ -2119,7 +2209,7 @@
         function populateCalculatorVendorDropdown() {
             const select = document.getElementById('calc-quick-vendor');
             select.innerHTML = `<option value="">${t('calcManualOption')}</option>`;
-            vendors.forEach(v => { select.innerHTML += `<option value="vendor_${v.id}">Vendor: ${v.name} - ${formatIDR(v.cost)}</option>`; });
+            vendors.forEach(v => { select.innerHTML += `<option value="vendor_${v.id}">Vendor: ${esc(v.name)} - ${formatIDR(v.cost)}</option>`; });
         }
 
         function autoFillCalcFromVendor() {
@@ -2213,21 +2303,21 @@
                         <div class="flex justify-between items-start">
                             <div class="flex items-center space-x-3">
                                 <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center text-lg">
-                                    ${f.name.charAt(0)}
+                                    ${esc(f.name.charAt(0))}
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-base text-gray-900 dark:text-white flex items-center">${getDemoBadgeHTML(f.isDummy)}<span>${f.name}</span></h4>
-                                    <span class="text-xs text-blue-600 dark:text-blue-400 font-semibold">${f.skill}</span>
+                                    <h4 class="font-bold text-base text-gray-900 dark:text-white flex items-center">${getDemoBadgeHTML(f.isDummy)}<span>${esc(f.name)}</span></h4>
+                                    <span class="text-xs text-blue-600 dark:text-blue-400 font-semibold">${esc(f.skill)}</span>
                                 </div>
                             </div>
-                            <span class="text-xs px-2.5 py-0.5 rounded-full font-bold ${f.status === 'Available' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${f.status}</span>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full font-bold ${f.status === 'Available' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${esc(f.status)}</span>
                         </div>
                         <div class="space-y-1 text-xs text-gray-500 dark:text-gray-400 border-t border-b py-3 border-gray-100 dark:border-gray-700">
-                            <div class="flex justify-between"><span>Rate:</span><span class="font-bold text-gray-800 dark:text-gray-200">${f.rate}</span></div>
+                            <div class="flex justify-between"><span>Rate:</span><span class="font-bold text-gray-800 dark:text-gray-200">${esc(f.rate)}</span></div>
                             <div class="flex justify-between"><span>Rating:</span><span class="font-bold text-amber-500"><i class="fa-solid fa-star mr-1"></i>${f.rating || '4.9'}</span></div>
                         </div>
                         <div class="flex items-center justify-between pt-1">
-                            <a href="https://wa.me/${f.phone}" target="_blank" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center space-x-2 transition">
+                            <a href="https://wa.me/${esc(f.phone)}" target="_blank" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center space-x-2 transition">
                                 <i class="fa-brands fa-whatsapp text-sm"></i><span>WA</span>
                             </a>
                             <div class="flex space-x-1">
@@ -2312,17 +2402,17 @@
                     <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-4">
                         <div class="flex justify-between items-start">
                             <div>
-                                <span class="text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-0.5 rounded-md bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300 border border-teal-200/50">${v.category}</span>
-                                <h4 class="font-bold text-base text-gray-900 dark:text-white mt-1.5 flex items-center">${getDemoBadgeHTML(v.isDummy)}<span>${v.name}</span></h4>
+                                <span class="text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-0.5 rounded-md bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300 border border-teal-200/50">${esc(v.category)}</span>
+                                <h4 class="font-bold text-base text-gray-900 dark:text-white mt-1.5 flex items-center">${getDemoBadgeHTML(v.isDummy)}<span>${esc(v.name)}</span></h4>
                             </div>
-                            <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-teal-100 text-teal-800">${v.status}</span>
+                            <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-teal-100 text-teal-800">${esc(v.status)}</span>
                         </div>
                         <div class="space-y-2 text-xs text-gray-600 dark:text-gray-300 border-t border-b py-3 border-gray-100 dark:border-gray-700">
-                            <div class="flex justify-between"><span>PIC:</span><span class="font-semibold text-gray-800 dark:text-white">${v.pic}</span></div>
+                            <div class="flex justify-between"><span>PIC:</span><span class="font-semibold text-gray-800 dark:text-white">${esc(v.pic)}</span></div>
                             <div class="flex justify-between"><span>Cost:</span><span class="font-bold text-emerald-600">${v.cost ? formatIDR(v.cost) : '-'}</span></div>
                         </div>
                         <div class="flex items-center justify-between pt-1">
-                            <a href="https://wa.me/${v.phone}" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition">
+                            <a href="https://wa.me/${esc(v.phone)}" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition">
                                 <i class="fa-brands fa-whatsapp"></i><span>WA</span>
                             </a>
                             <div class="flex space-x-1">
@@ -2391,7 +2481,7 @@
             const select = document.getElementById('invoice-project-select');
             select.innerHTML = `<option value="">${t('invSelectProjectDefault')}</option>`;
             projects.forEach(p => {
-                select.innerHTML += `<option value="${p.id}">${p.client} - ${p.title}</option>`;
+                select.innerHTML += `<option value="${p.id}">${esc(p.client)} - ${esc(p.title)}</option>`;
             });
         }
 
@@ -2436,7 +2526,7 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
             const dlAnchor = document.createElement('a');
             dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", `3s_agency_backup_${new Date().toISOString().slice(0,10)}.json`);
+            dlAnchor.setAttribute("download", `jadiin_backup_${new Date().toISOString().slice(0,10)}.json`);
             document.body.appendChild(dlAnchor);
             dlAnchor.click();
             dlAnchor.remove();
@@ -2449,17 +2539,10 @@
                 try {
                     const parsed = JSON.parse(e.target.result);
                     if (parsed.projects && parsed.freelancers) {
-                        window.projects = parsed.projects;
-                        window.freelancers = parsed.freelancers;
-                        if (parsed.pics) window.pics = parsed.pics;
-                        if (parsed.vendors) window.vendors = parsed.vendors;
-
-                        localStorage.setItem('3s_agency_projects', JSON.stringify(window.projects));
-                        localStorage.setItem('3s_agency_pics', JSON.stringify(window.pics));
-                        localStorage.setItem('3s_agency_freelancers', JSON.stringify(window.freelancers));
-                        localStorage.setItem('3s_agency_vendors', JSON.stringify(window.vendors));
-
-                        refreshActiveUI();
+                        replaceCollection('projects', parsed.projects);
+                        replaceCollection('freelancers', parsed.freelancers);
+                        if (parsed.pics) replaceCollection('pics', parsed.pics);
+                        if (parsed.vendors) replaceCollection('vendors', parsed.vendors);
                         showToast(t('toastImportSuccess'));
                     }
                 } catch (err) {
@@ -2467,6 +2550,7 @@
                 }
             };
             fileReader.readAsText(event.target.files[0]);
+            event.target.value = '';
         }
 
         // PROJECT MODAL HANDLERS
@@ -2601,19 +2685,10 @@
                 showToast(t('toastDemoCleared'));
 
             } else if (window.pendingAction === 'resetAll') {
-                const allProjIds = projects.map(p => p.id);
-                const allFreeIds = freelancers.map(f => f.id);
-                const allVendIds = vendors.map(v => v.id);
-
-                window.projects = [];
-                window.pics = [...DEFAULT_PICS];
-                window.freelancers = [];
-                window.vendors = [];
-
-                allProjIds.forEach(id => deleteItem('projects', id));
-                allFreeIds.forEach(id => deleteItem('freelancers', id));
-                allVendIds.forEach(id => deleteItem('vendors', id));
-                localStorage.setItem('3s_agency_pics', JSON.stringify(window.pics));
+                replaceCollection('projects', []);
+                replaceCollection('freelancers', []);
+                replaceCollection('vendors', []);
+                replaceCollection('pics', [...DEFAULT_PICS]);
 
                 showToast(t('toastResetAll'));
             }
