@@ -1,10 +1,39 @@
 // JADI.in Hub — projects.js
 // PROJECTS PIPELINE RENDERING & KANBAN DRAG AND DROP
+const VIEW_BTN_ON = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-gray-800 shadow-sm text-gray-800 dark:text-white';
+const VIEW_BTN_OFF = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-800 transition';
+
 function toggleProjectView(mode) {
     window.projectViewMode = mode;
     document.getElementById('project-view-table').classList.toggle('hidden', mode !== 'table');
     document.getElementById('project-view-kanban').classList.toggle('hidden', mode === 'table');
+    document.getElementById('view-btn-table').className = mode === 'table' ? VIEW_BTN_ON : VIEW_BTN_OFF;
+    document.getElementById('view-btn-kanban').className = mode === 'table' ? VIEW_BTN_OFF : VIEW_BTN_ON;
+    try { localStorage.setItem(`${STORAGE_PREFIX}projectView`, mode); } catch (e) {}
     renderProjects();
+}
+
+// Change status from a button/select (works on touch screens, where drag & drop does not).
+function moveProjectStatus(projId, targetStatus, via) {
+    const p = projects.find(item => item.id === projId);
+    if (!p || !targetStatus || p.status === targetStatus) return;
+    p.status = targetStatus;
+    if (!p.logs) p.logs = [];
+    p.logs.unshift({
+        id: `log_${Date.now()}`,
+        date: todayStr(),
+        pic: p.pic || 'System',
+        note: `Status updated to ${targetStatus}${via ? ` (${via})` : ''}`,
+        statusUpdate: targetStatus
+    });
+    saveItem('projects', p);
+    showToast(`Status ${p.client} -> ${targetStatus}`);
+}
+
+function statusSelectHTML(p) {
+    return `<select onchange="moveProjectStatus('${p.id}', this.value, 'Kanban')" onclick="event.stopPropagation()" class="text-[11px] font-semibold bg-gray-50 dark:bg-gray-700 rounded-lg px-1.5 py-1 focus:outline-none" title="${esc(t('moveStatus'))}">
+        ${PROJECT_STATUSES.map(s => `<option value="${s}" ${s === p.status ? 'selected' : ''}>${s}</option>`).join('')}
+    </select>`;
 }
 
 function getStatusBadgeHTML(status) {
@@ -36,7 +65,42 @@ function renderProjects() {
     else renderProjectsKanban(filtered);
 }
 
+function renderProjectCards(data) {
+    const box = document.getElementById('project-cards');
+    if (!box) return;
+    box.innerHTML = data.map(p => {
+        const cost = projectCost(p);
+        const margin = p.revenue > 0 ? (((Number(p.revenue || 0) - cost) / p.revenue) * 100).toFixed(1) : 0;
+        return `
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-3">
+            <div class="flex justify-between items-start gap-3">
+                <button onclick="openProjectDetail('${p.id}')" class="text-left min-w-0">
+                    <div class="font-bold text-gray-900 dark:text-white flex items-center">${getDemoBadgeHTML(p.isDummy)}<span class="truncate">${esc(p.client)}</span></div>
+                    <div class="text-xs text-gray-500">${esc(p.title)}</div>
+                </button>
+                ${getStatusBadgeHTML(p.status)}
+            </div>
+            ${progressBarHTML(p.id, true)}
+            <div class="grid grid-cols-3 gap-2 text-xs">
+                <div><div class="text-gray-400">${esc(t('colValue'))}</div><div class="font-bold text-gray-900 dark:text-white">${formatIDR(p.revenue || 0)}</div></div>
+                <div><div class="text-gray-400">Margin</div><div class="font-bold ${margin >= 40 ? 'text-emerald-600' : margin >= 0 ? 'text-amber-600' : 'text-rose-600'}">${margin}%</div></div>
+                <div><div class="text-gray-400">Deadline</div><div class="font-semibold ${p.deadline && p.deadline < todayStr() && !['Completed', 'Invoiced'].includes(p.status) ? 'text-rose-600' : 'text-gray-700 dark:text-gray-200'}">${esc(p.deadline || '-')}</div></div>
+            </div>
+            <div class="flex items-center justify-between border-t border-gray-100 dark:border-gray-700 pt-2">
+                <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">${esc(p.pic || '-')}</span>
+                <div class="flex items-center gap-1">
+                    <button onclick="openDailyLogModal('${p.id}')" class="p-2 text-gray-400 hover:text-blue-600" title="Logs"><i class="fa-solid fa-comments"></i></button>
+                    <button onclick="editProject('${p.id}')" class="p-2 text-gray-400 hover:text-blue-600"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button onclick="deleteProject('${p.id}')" class="admin-only p-2 text-gray-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button>
+                    <button onclick="openProjectDetail('${p.id}')" class="ml-1 px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-bold">${esc(t('open'))}</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('') || `<p class="text-center py-8 text-gray-400">${t('noProjectsFound')}</p>`;
+}
+
 function renderProjectsTable(data) {
+    renderProjectCards(data);
     const tbody = document.getElementById('project-table-body');
     tbody.innerHTML = '';
     if (data.length === 0) {
@@ -114,8 +178,9 @@ function renderProjectsKanban(data) {
                         <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">${esc(p.category)}</span>
                     </div>
                     <div class="flex justify-between items-center text-xs border-t pt-2 border-gray-100 dark:border-gray-700">
-                        <button onclick="openDailyLogModal('${p.id}')" class="text-blue-600 font-bold text-xs"><i class="fa-solid fa-comments mr-1"></i>Logs (${(p.logs||[]).length})</button>
+                        ${statusSelectHTML(p)}
                         <div class="flex space-x-1">
+                            <button onclick="openDailyLogModal('${p.id}')" class="p-1 text-gray-400 hover:text-blue-500" title="Logs"><i class="fa-solid fa-comments text-xs"></i>${(p.logs || []).length ? `<span class="text-[10px] ml-0.5">${(p.logs || []).length}</span>` : ''}</button>
                             <button onclick="openProjectDetail('${p.id}')" class="p-1 text-gray-400 hover:text-blue-500"><i class="fa-solid fa-folder-open text-xs"></i></button>
                             <button onclick="editProject('${p.id}')" class="p-1 text-gray-400 hover:text-blue-500"><i class="fa-solid fa-pen text-xs"></i></button>
                             <button onclick="deleteProject('${p.id}')" class="admin-only p-1 text-gray-400 hover:text-rose-500"><i class="fa-solid fa-trash-can text-xs"></i></button>
@@ -148,20 +213,7 @@ function handleDrop(e, targetStatus) {
     const projId = e.dataTransfer.getData('text/plain');
     if (!projId) return;
 
-    const p = projects.find(item => item.id === projId);
-    if (p && p.status !== targetStatus) {
-        p.status = targetStatus;
-        if (!p.logs) p.logs = [];
-        p.logs.unshift({
-            id: `log_${Date.now()}`,
-            date: todayStr(),
-            pic: p.pic || 'System',
-            note: `Status updated to ${targetStatus} (Drag & Drop)`,
-            statusUpdate: targetStatus
-        });
-        saveItem('projects', p);
-        showToast(`Status ${p.client} -> ${targetStatus}`);
-    }
+    moveProjectStatus(projId, targetStatus, 'Drag & Drop');
 }
 
 // DAILY UPDATE PIC FEATURE

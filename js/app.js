@@ -1,6 +1,11 @@
 // JADI.in Hub — app.js
 window.onload = function () {
     loadLocalData();
+    try {
+        if (localStorage.getItem(`${STORAGE_PREFIX}sidebarCollapsed`)) document.body.classList.add('sidebar-collapsed');
+        const view = localStorage.getItem(`${STORAGE_PREFIX}projectView`);
+        if (view === 'kanban') toggleProjectView('kanban');
+    } catch (e) {}
     setupCurrentDate();
     applyLanguage();
     const startTab = (location.hash || '').replace('#', '');

@@ -1,5 +1,12 @@
 // JADI.in Hub — ui.js
 function toggleSidebar() {
+    // Desktop: collapse / expand the sidebar and remember the choice.
+    if (window.innerWidth >= 768) {
+        const collapsed = document.body.classList.toggle('sidebar-collapsed');
+        try { localStorage.setItem(`${STORAGE_PREFIX}sidebarCollapsed`, collapsed ? '1' : ''); } catch (e) {}
+        setTimeout(() => { [chartRevExp, chartCategory].forEach(c => { if (c && typeof c.resize === 'function') c.resize(); }); }, 50);
+        return;
+    }
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebar-overlay');
     if (sidebar.classList.contains('-translate-x-full')) {
