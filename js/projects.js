@@ -1,6 +1,6 @@
 // JADI.in Hub — projects.js
 // PROJECTS PIPELINE RENDERING & KANBAN DRAG AND DROP
-const VIEW_BTN_ON = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-gray-800 shadow-sm text-gray-800 dark:text-white';
+const VIEW_BTN_ON = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-blue-600 text-white';
 const VIEW_BTN_OFF = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-800 transition';
 
 function toggleProjectView(mode) {

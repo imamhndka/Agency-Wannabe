@@ -9,7 +9,7 @@ window.onload = function () {
     setupCurrentDate();
     applyLanguage();
     const startTab = (location.hash || '').replace('#', '');
-    if (startTab && startTab !== 'dashboard') switchTab(startTab); else refreshActiveUI();
+    switchTab(startTab || 'dashboard');
     updateCalculator();
     initFirebaseOrFallback();
     registerServiceWorker();

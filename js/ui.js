@@ -40,6 +40,7 @@ function refreshActiveUI() {
 
 function setupCurrentDate() {
     document.getElementById('log-date').value = todayStr();
+    syncThemeIcons();
 }
 
 const APP_TABS = ['dashboard', 'projects', 'calendar', 'calculator', 'pics', 'freelancers', 'vendors', 'research', 'invoices', 'settings'];
@@ -53,10 +54,10 @@ function switchTab(tabId) {
         const nav = document.getElementById(`nav-${tName}`);
         if (tName === tabId) {
             el.classList.remove('hidden');
-            if (nav) nav.classList.add('bg-slate-800', 'text-white');
+            if (nav) nav.classList.add('is-active');
         } else {
             el.classList.add('hidden');
-            if (nav) nav.classList.remove('bg-slate-800', 'text-white');
+            if (nav) nav.classList.remove('is-active');
         }
     });
 
@@ -84,7 +85,19 @@ function showToast(msg) {
 
 function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle('dark');
-    document.getElementById('theme-toggle-icon').className = isDark ? 'fa-solid fa-sun text-lg text-amber-400' : 'fa-solid fa-moon text-lg';
+    try { localStorage.setItem(`${STORAGE_PREFIX}theme`, isDark ? 'dark' : 'light'); } catch (e) {}
+    syncThemeIcons();
+    if (typeof renderDashboardCharts === 'function' && window.currentTab === 'dashboard') renderDashboardCharts();
+}
+
+function syncThemeIcons() {
+    const isDark = document.documentElement.classList.contains('dark');
+    document.querySelectorAll('.theme-icon').forEach(icon => { icon.className = `theme-icon fa-solid ${isDark ? 'fa-sun' : 'fa-moon'}`; });
+}
+
+// Reads a design token (css/theme.css) so charts follow the light / dark theme.
+function themeColor(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
 function getDemoBadgeHTML(isDummy) {

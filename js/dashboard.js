@@ -50,17 +50,26 @@ function renderDashboard() {
 function renderDashboardCharts() {
     const ctx1 = document.getElementById('chart-revenue-expenses').getContext('2d');
     const labels = projects.map(p => { const c = String(p.client || ''); return c.length > 10 ? c.substring(0, 10) + '...' : c; });
+    // Chart styling follows the design tokens in css/theme.css.
+    const ink = themeColor('--ink'), ink3 = themeColor('--ink3'), line = themeColor('--line');
+    Chart.defaults.font.family = "'Plus Jakarta Sans', system-ui, sans-serif";
+    Chart.defaults.color = ink3;
+    const legend = { position: 'top', align: 'end', labels: { usePointStyle: true, pointStyle: 'rectRounded', boxWidth: 10, boxHeight: 10, color: ink, font: { weight: 600 } } };
     if (chartRevExp) chartRevExp.destroy();
     chartRevExp = new Chart(ctx1, {
         type: 'bar',
         data: {
             labels: labels.length ? labels : ['Workspace Empty'],
             datasets: [
-                { label: currentLang === 'en' ? 'Revenue' : 'Omzet', data: projects.map(p => p.revenue), backgroundColor: '#0284c7', borderRadius: 6 },
-                { label: currentLang === 'en' ? 'Subcontract Cost' : 'Beban Sub-Kontrak', data: projects.map(p => projectCost(p)), backgroundColor: '#f43f5e', borderRadius: 6 }
+                { label: currentLang === 'en' ? 'Revenue' : 'Omzet', data: projects.map(p => p.revenue), backgroundColor: ink, borderRadius: 8, maxBarThickness: 34 },
+                { label: currentLang === 'en' ? 'Subcontract Cost' : 'Beban Sub-Kontrak', data: projects.map(p => projectCost(p)), backgroundColor: themeColor('--chart2'), borderRadius: 8, maxBarThickness: 34 }
             ]
         },
-        options: { responsive: true, maintainAspectRatio: false }
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend },
+            scales: { x: { grid: { display: false }, border: { display: false } }, y: { grid: { color: line }, border: { display: false } } }
+        }
     });
 
     const ctx2 = document.getElementById('chart-categories').getContext('2d');
@@ -71,9 +80,13 @@ function renderDashboardCharts() {
         type: 'doughnut',
         data: {
             labels: Object.keys(catCounts).length ? Object.keys(catCounts) : ['No Data'],
-            datasets: [{ data: Object.values(catCounts).length ? Object.values(catCounts) : [1], backgroundColor: ['#0284c7', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'] }]
+            datasets: [{
+                data: Object.values(catCounts).length ? Object.values(catCounts) : [1],
+                backgroundColor: ['oklch(0.68 0.14 255)', 'oklch(0.68 0.15 305)', 'oklch(0.68 0.16 28)', 'oklch(0.74 0.14 80)', 'oklch(0.68 0.14 150)', 'oklch(0.68 0.11 200)', 'oklch(0.68 0.15 350)'],
+                borderColor: themeColor('--surface'), borderWidth: 3, borderRadius: 6, spacing: 2
+            }]
         },
-        options: { responsive: true, maintainAspectRatio: false }
+        options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { position: 'right', labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 8, color: ink, font: { weight: 600 } } } } }
     });
 }
 

@@ -3,14 +3,14 @@ const translations = {
     id: {
         appName: "JADI.in",
         appSub: "Digital Partner",
-        navDashboard: "Dashboard Utama",
-        navProjects: "Projects & Pipeline",
-        navCalendar: "Kalender Project",
-        navCalculator: "Margin Calculator",
+        navDashboard: "Dashboard",
+        navProjects: "Proyek & Pipeline",
+        navCalendar: "Kalender",
+        navCalculator: "Kalkulator Margin",
         navPics: "Tim & PIC",
-        navFreelancers: "Talent Pool (Freelancer)",
-        navVendors: "Vendor & Partner Directory",
-        navInvoices: "Invoice Generator",
+        navFreelancers: "Talent Pool",
+        navVendors: "Vendor & Partner",
+        navInvoices: "Invoice",
         sidebarDataHeader: "Kelola Data Workspace",
         btnGenerateDemo: "Generate Data Demo",
         btnClearDemo: "Hapus Data Demo Saja",
@@ -196,10 +196,18 @@ const translations = {
         col_workspace: "workspace",
         navResearch: "Riset & Catatan",
         navSettings: "Pengaturan",
-        authTitle: "Masuk ke JADI.in",
-        authSubtitle: "Gunakan akun Google tim Anda.",
+        authTitle: "Masuk ke Hub",
+        authSubtitle: "Proyek, orang, mitra, riset & invoice agensi dalam satu tempat, dengan margin yang selalu kelihatan.",
         authBtn: "Masuk dengan Google",
         authSwitch: "Ganti akun",
+        authNote: "Hanya anggota tim yang terdaftar yang bisa masuk.",
+        authHeadline1: "Harga sehat.",
+        authHeadline2: "Tim jelas.",
+        authHeadline3: "Invoice beres.",
+        appSubHub: "Digital Partner Hub",
+        navGroupWork: "Kerja",
+        navGroupPeople: "Orang & Mitra",
+        navGroupDocs: "Dokumen",
         authDenied: "Akun {email} belum punya akses. Minta admin menambahkan email ini di Pengaturan → Akses Anggota Tim.",
         authErrNotEnabled: "Login Google belum diaktifkan di Firebase Console (Authentication → Sign-in method → Google).",
         authErrDomain: "Domain {domain} belum diizinkan. Tambahkan di Firebase Console → Authentication → Settings → Authorized domains.",
@@ -400,14 +408,14 @@ const translations = {
     en: {
         appName: "JADI.in",
         appSub: "Digital Partner",
-        navDashboard: "Main Dashboard",
+        navDashboard: "Dashboard",
         navProjects: "Projects & Pipeline",
-        navCalendar: "Project Calendar",
+        navCalendar: "Calendar",
         navCalculator: "Margin Calculator",
         navPics: "Team & PICs",
-        navFreelancers: "Talent Pool (Freelancers)",
-        navVendors: "Vendor & Partner Directory",
-        navInvoices: "Invoice Generator",
+        navFreelancers: "Talent Pool",
+        navVendors: "Vendors & Partners",
+        navInvoices: "Invoices",
         sidebarDataHeader: "Workspace Data Tools",
         btnGenerateDemo: "Generate Demo Data",
         btnClearDemo: "Clear Demo Data Only",
@@ -593,10 +601,18 @@ const translations = {
         col_workspace: "workspace",
         navResearch: "Research & Notes",
         navSettings: "Settings",
-        authTitle: "Sign in to JADI.in",
-        authSubtitle: "Use your team Google account.",
+        authTitle: "Sign in to the Hub",
+        authSubtitle: "Your agency's projects, people, partners, research and invoices in one place, with margins always in view.",
         authBtn: "Sign in with Google",
         authSwitch: "Switch account",
+        authNote: "Only registered team members can sign in.",
+        authHeadline1: "Healthy prices.",
+        authHeadline2: "Clear teams.",
+        authHeadline3: "Invoices done.",
+        appSubHub: "Digital Partner Hub",
+        navGroupWork: "Work",
+        navGroupPeople: "People & Partners",
+        navGroupDocs: "Documents",
         authDenied: "Account {email} has no access yet. Ask the admin to add this email in Settings → Team Access.",
         authErrNotEnabled: "Google sign-in is not enabled in Firebase Console (Authentication → Sign-in method → Google).",
         authErrDomain: "Domain {domain} is not authorized. Add it in Firebase Console → Authentication → Settings → Authorized domains.",
@@ -815,13 +831,13 @@ function setLanguage(lang) {
 function applyLanguage() {
     const btnId = document.getElementById('lang-btn-id');
     const btnEn = document.getElementById('lang-btn-en');
-    if (currentLang === 'id') {
-        btnId.className = 'px-2 py-1 sm:px-2.5 rounded-lg transition-all bg-white dark:bg-gray-800 text-blue-600 shadow-sm font-bold';
-        btnEn.className = 'px-2 py-1 sm:px-2.5 rounded-lg transition-all hover:text-gray-900 font-medium';
-    } else {
-        btnEn.className = 'px-2 py-1 sm:px-2.5 rounded-lg transition-all bg-white dark:bg-gray-800 text-blue-600 shadow-sm font-bold';
-        btnId.className = 'px-2 py-1 sm:px-2.5 rounded-lg transition-all hover:text-gray-900 font-medium';
-    }
+    btnId.classList.toggle('is-active', currentLang === 'id');
+    btnEn.classList.toggle('is-active', currentLang !== 'id');
+    document.querySelectorAll('.auth-lang-label').forEach(el => { el.innerText = currentLang.toUpperCase(); });
+    document.documentElement.lang = currentLang;
+
+    const today = document.getElementById('today-label');
+    if (today) today.innerText = new Date().toLocaleDateString(currentLang === 'en' ? 'en-US' : 'id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
