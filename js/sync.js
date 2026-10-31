@@ -246,6 +246,8 @@ function showSignedIn(user) {
     box.classList.remove('hidden');
     box.classList.add('flex');
     document.getElementById('user-email').innerText = user.email || '';
+    const initials = String(user.displayName || user.email || '?').split(/[\s@._-]+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+    document.getElementById('user-avatar').innerText = initials || '?';
 }
 
 function showSignedOut(message) {

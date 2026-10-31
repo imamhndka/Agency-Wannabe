@@ -2,31 +2,35 @@
 <html lang="id" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>JADI.in - Digital Partner Hub</title>
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#151513">
     <meta name="description" content="JADI.in Hub: proyek, vendor, riset, dan invoice dalam satu tempat.">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48.png">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="JADI.in">
+    <script>try { if (localStorage.getItem('3s_agency_theme') === 'dark') document.documentElement.classList.add('dark'); } catch (e) {}</script>
     <link rel="stylesheet" href="css/tailwind.css">
     <link rel="stylesheet" href="css/app.css">
-    
+    <link rel="stylesheet" href="css/theme.css">
+
     <!-- Font Awesome 6 Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Chart.js for Visualizations -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
-    
+
     <!-- Firebase SDK (Compat Version) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Fonts: Bricolage Grotesque (display) + Plus Jakarta Sans (UI) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Plus+Jakarta+Sans:wght@400..800&display=swap" rel="stylesheet">
     <script src="js/config.js" defer></script>
     <script src="js/i18n.js" defer></script>
     <script src="js/constants.js" defer></script>
@@ -49,176 +53,215 @@
     <script src="js/data-tools.js" defer></script>
     <script src="js/app.js" defer></script>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-full flex flex-col transition-colors duration-200">
+<body class="min-h-full flex flex-col transition-colors duration-200">
+
+    <!-- Brand mark (reused by every logo below) -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <symbol id="jd-mark" viewBox="0 0 1056 1056"><g fill="currentColor"><circle cx="558" cy="188" r="60"/><rect x="377" y="270" width="360" height="81" rx="26"/><path d="M453 351H534V718Q534 745 507 745H480Q453 745 453 718Z"/><path d="M594 351H675V705C662 870 520 925 433 928H345Q319 928 319 902V771Q319 745 345 745H399V847H428C540 842 590 760 594 705Z"/></g></symbol>
+    </svg>
 
     <!-- LOGIN SCREEN -->
-    <div id="auth-screen" class="fixed inset-0 z-[60] bg-slate-900 flex items-center justify-center p-6 hidden no-print">
-        <div class="w-full max-w-sm bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 space-y-6 text-center">
-            <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-extrabold text-2xl text-white shadow-lg">J</div>
-            <div>
-                <h1 class="text-xl font-extrabold text-gray-900 dark:text-white" data-i18n="authTitle">Masuk ke JADI.in</h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" data-i18n="authSubtitle">Gunakan akun Google tim Anda.</p>
+    <div id="auth-screen" class="fixed inset-0 z-[60] hidden no-print">
+        <section class="auth-hero">
+            <div class="flex items-center gap-3 relative z-10">
+                <div class="jd-logo"><svg style="color:#151513"><use href="#jd-mark"/></svg></div>
+                <div>
+                    <div class="jd-brand-name">JADI.in</div>
+                    <div class="jd-brand-sub" data-i18n="appSubHub">Digital Partner Hub</div>
+                </div>
             </div>
-            <button id="auth-btn" onclick="signInWithGoogle()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center space-x-2">
-                <i class="fa-brands fa-google"></i>
-                <span data-i18n="authBtn">Masuk dengan Google</span>
-            </button>
-            <p id="auth-error" class="text-xs text-rose-600 dark:text-rose-400 hidden"></p>
-            <button id="auth-switch-btn" onclick="signOutUser()" class="text-xs text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 underline hidden" data-i18n="authSwitch">Ganti akun</button>
-        </div>
+            <div class="auth-chips" aria-hidden="true">
+                <span class="auth-chip" style="--r:-3deg"><i class="fa-solid fa-arrow-trend-up"></i> Margin 47%</span>
+                <span class="auth-chip lime" style="--r:4deg;animation-delay:-2s"><i class="fa-solid fa-circle-check"></i> INV/005 · LUNAS</span>
+                <span class="auth-chip" style="--r:-2deg;animation-delay:-4s"><i class="fa-solid fa-table-columns"></i> Review → Ditagih</span>
+            </div>
+            <h2 class="auth-headline relative z-10">
+                <span data-i18n="authHeadline1">Harga sehat.</span>
+                <span class="lime" data-i18n="authHeadline2">Tim jelas.</span>
+                <span data-i18n="authHeadline3">Invoice beres.</span>
+            </h2>
+        </section>
+        <section class="auth-panel">
+            <div class="auth-panel-top">
+                <button type="button" class="btn-ghost" onclick="setLanguage(currentLang === 'id' ? 'en' : 'id')" title="ID / EN">
+                    <i class="fa-solid fa-language"></i><span class="auth-lang-label">ID</span>
+                </button>
+                <button type="button" class="btn-ghost" onclick="toggleDarkMode()" title="Toggle Light/Dark Theme">
+                    <i class="theme-icon fa-solid fa-moon"></i>
+                </button>
+            </div>
+            <div class="auth-card">
+                <h1 data-i18n="authTitle">Masuk ke Hub</h1>
+                <p class="lead" data-i18n="authSubtitle">Proyek, orang, mitra, riset &amp; invoice agensi dalam satu tempat, dengan margin yang selalu kelihatan.</p>
+                <button id="auth-btn" onclick="signInWithGoogle()" class="btn-google">
+                    <i class="fa-brands fa-google"></i>
+                    <span data-i18n="authBtn">Masuk dengan Google</span>
+                </button>
+                <p id="auth-error" class="text-sm text-rose-600 mt-4 hidden"></p>
+                <button id="auth-switch-btn" onclick="signOutUser()" class="text-sm font-semibold underline mt-2 hidden" data-i18n="authSwitch">Ganti akun</button>
+                <div class="auth-note"><i class="fa-solid fa-lock"></i><span data-i18n="authNote">Hanya anggota tim yang terdaftar yang bisa masuk.</span></div>
+            </div>
+        </section>
     </div>
 
     <div class="flex h-screen overflow-hidden relative">
-        
+
         <!-- SIDEBAR BACKDROP OVERLAY FOR MOBILE -->
         <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden transition-opacity"></div>
 
         <!-- SIDEBAR NAVIGATION -->
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-64 bg-slate-900 text-white flex flex-col transition-transform duration-300 transform -translate-x-full md:relative md:translate-x-0 no-print flex-shrink-0 shadow-xl md:shadow-none">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 flex flex-col transition-transform duration-300 transform -translate-x-full md:relative md:translate-x-0 no-print flex-shrink-0">
             <!-- JADI.in Branding Header -->
-            <div class="p-5 flex items-center justify-between border-b border-slate-800">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-extrabold text-xl text-white shadow-lg">
-                        J
-                    </div>
+            <div class="flex items-center justify-between px-1 pb-3">
+                <div class="flex items-center gap-3">
+                    <div class="jd-logo"><svg style="color:#151513"><use href="#jd-mark"/></svg></div>
                     <div>
-                        <h1 class="font-extrabold text-base tracking-wide leading-tight" data-i18n="appName">JADI.in</h1>
-                        <span class="text-xs text-blue-400 font-medium" data-i18n="appSub">Digital Partner</span>
+                        <div class="jd-brand-name" data-i18n="appName">JADI.in</div>
+                        <div class="jd-brand-sub" data-i18n="appSubHub">Digital Partner Hub</div>
                     </div>
                 </div>
-                <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+                <button onclick="toggleSidebar()" class="btn-ghost" style="height:34px;min-width:34px;padding:0" title="Menu">
+                    <i class="fa-solid fa-angles-left text-xs only-desktop"></i>
+                    <i class="fa-solid fa-xmark only-mobile"></i>
                 </button>
             </div>
 
             <!-- Navigation Links -->
-            <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto no-scrollbar">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
-                    <i class="fa-solid fa-chart-pie w-5 text-center text-blue-400"></i>
-                    <span data-i18n="navDashboard">Dashboard Utama</span>
+            <nav class="flex-1 overflow-y-auto no-scrollbar space-y-0.5">
+                <div class="nav-group" data-i18n="navGroupWork">Kerja</div>
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item">
+                    <i class="fa-solid fa-table-cells-large"></i>
+                    <span data-i18n="navDashboard">Dashboard</span>
                 </button>
-                <button onclick="switchTab('projects')" id="nav-projects" class="nav-item w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
-                    <i class="fa-solid fa-diagram-project w-5 text-center text-emerald-400"></i>
-                    <span data-i18n="navProjects">Projects & Pipeline</span>
+                <button onclick="switchTab('projects')" id="nav-projects" class="nav-item">
+                    <i class="fa-solid fa-diagram-project"></i>
+                    <span data-i18n="navProjects">Proyek & Pipeline</span>
                 </button>
-                <button onclick="switchTab('calendar')" id="nav-calendar" class="nav-item w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
-                    <i class="fa-solid fa-calendar-days w-5 text-center text-amber-400"></i>
-                    <span data-i18n="navCalendar">Kalender Project</span>
+                <button onclick="switchTab('calendar')" id="nav-calendar" class="nav-item">
+                    <i class="fa-regular fa-calendar"></i>
+                    <span data-i18n="navCalendar">Kalender</span>
                 </button>
-                <button onclick="switchTab('calculator')" id="nav-calculator" class="nav-item w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
-                    <i class="fa-solid fa-calculator w-5 text-center text-sky-400"></i>
-                    <span data-i18n="navCalculator">Margin Calculator</span>
+                <button onclick="switchTab('calculator')" id="nav-calculator" class="nav-item">
+                    <i class="fa-solid fa-calculator"></i>
+                    <span data-i18n="navCalculator">Kalkulator Margin</span>
                 </button>
-                <button onclick="switchTab('pics')" id="nav-pics" class="nav-item w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
-                    <i class="fa-solid fa-user-shield w-5 text-center text-indigo-400"></i>
+
+                <div class="nav-group" data-i18n="navGroupPeople">Orang & Mitra</div>
+                <button onclick="switchTab('pics')" id="nav-pics" class="nav-item">
+                    <i class="fa-solid fa-user-group"></i>
                     <span data-i18n="navPics">Tim & PIC</span>
                 </button>
-                <button onclick="switchTab('freelancers')" id="nav-freelancers" class="nav-item w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
-                    <i class="fa-solid fa-users-gear w-5 text-center text-purple-400"></i>
-                    <span data-i18n="navFreelancers">Talent Pool (Freelancer)</span>
+                <button onclick="switchTab('freelancers')" id="nav-freelancers" class="nav-item">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span data-i18n="navFreelancers">Talent Pool</span>
                 </button>
-                <button onclick="switchTab('vendors')" id="nav-vendors" class="nav-item w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
-                    <i class="fa-solid fa-handshake w-5 text-center text-teal-400"></i>
-                    <span data-i18n="navVendors">Vendor & Partner Directory</span>
+                <button onclick="switchTab('vendors')" id="nav-vendors" class="nav-item">
+                    <i class="fa-regular fa-handshake"></i>
+                    <span data-i18n="navVendors">Vendor & Partner</span>
                 </button>
-                <button onclick="switchTab('research')" id="nav-research" class="nav-item w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
-                    <i class="fa-solid fa-book-open-reader w-5 text-center text-lime-400"></i>
+
+                <div class="nav-group" data-i18n="navGroupDocs">Dokumen</div>
+                <button onclick="switchTab('research')" id="nav-research" class="nav-item">
+                    <i class="fa-regular fa-file-lines"></i>
                     <span data-i18n="navResearch">Riset & Catatan</span>
                 </button>
-                <button onclick="switchTab('invoices')" id="nav-invoices" class="nav-item w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
-                    <i class="fa-solid fa-file-invoice-dollar w-5 text-center text-rose-400"></i>
-                    <span data-i18n="navInvoices">Invoice Generator</span>
-                </button>
-                <button onclick="switchTab('settings')" id="nav-settings" class="nav-item w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
-                    <i class="fa-solid fa-gear w-5 text-center text-slate-400"></i>
-                    <span data-i18n="navSettings">Pengaturan</span>
+                <button onclick="switchTab('invoices')" id="nav-invoices" class="nav-item">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <span data-i18n="navInvoices">Invoice</span>
                 </button>
             </nav>
 
-            <!-- Data Management & Backup Controls -->
-            <div class="p-4 border-t border-slate-800 space-y-2">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1" data-i18n="sidebarDataHeader">Kelola Data Workspace</span>
-                
-                <button onclick="generateDemoData()" class="admin-only w-full flex items-center justify-center space-x-2 py-2 px-3 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/30 text-xs font-semibold transition">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    <span data-i18n="btnGenerateDemo">Generate Data Demo</span>
+            <div class="pt-3 space-y-2">
+                <button onclick="switchTab('settings')" id="nav-settings" class="nav-item">
+                    <i class="fa-solid fa-gear"></i>
+                    <span data-i18n="navSettings">Pengaturan</span>
                 </button>
 
-                <button onclick="askClearDemoData()" class="admin-only w-full flex items-center justify-center space-x-2 py-2 px-3 rounded-lg bg-amber-600/20 hover:bg-amber-600/40 text-amber-300 border border-amber-500/30 text-xs font-semibold transition">
-                    <i class="fa-solid fa-broom"></i>
-                    <span data-i18n="btnClearDemo">Hapus Data Demo Saja</span>
-                </button>
+                <!-- Data Management & Backup Controls -->
+                <details class="side-tools">
+                    <summary><i class="fa-solid fa-database"></i><span data-i18n="sidebarDataHeader">Kelola Data Workspace</span><i class="fa-solid fa-chevron-up chev"></i></summary>
+                    <div class="px-2 pb-2 space-y-0.5">
+                        <button onclick="generateDemoData()" class="admin-only side-tool">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span data-i18n="btnGenerateDemo">Generate Data Demo</span>
+                        </button>
+                        <button onclick="askClearDemoData()" class="admin-only side-tool">
+                            <i class="fa-solid fa-broom"></i>
+                            <span data-i18n="btnClearDemo">Hapus Data Demo Saja</span>
+                        </button>
+                        <button onclick="exportData()" class="side-tool" title="Export Backup">
+                            <i class="fa-solid fa-download"></i>
+                            <span data-i18n="exportBtn">Export</span>
+                        </button>
+                        <label class="admin-only side-tool" title="Import Data">
+                            <i class="fa-solid fa-upload"></i>
+                            <span data-i18n="importBtn">Import</span>
+                            <input type="file" id="import-file" onchange="importData(event)" class="hidden" accept=".json">
+                        </label>
+                        <button onclick="askResetAllData()" class="admin-only side-tool danger">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span data-i18n="btnResetAll">Reset Total Workspace</span>
+                        </button>
+                    </div>
+                </details>
 
-                <div class="grid grid-cols-2 gap-2 pt-1">
-                    <button onclick="exportData()" class="flex items-center justify-center space-x-1 py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 font-medium transition" title="Export Backup">
-                        <i class="fa-solid fa-download"></i>
-                        <span data-i18n="exportBtn">Export</span>
+                <!-- Signed-in user -->
+                <div id="user-box" class="hidden user-card">
+                    <div id="user-avatar" class="avatar">J</div>
+                    <div class="min-w-0 flex-1 leading-tight">
+                        <div id="user-email" class="text-[13px] font-bold truncate"></div>
+                        <div id="user-role" class="text-[11px] font-semibold text-emerald-600 mt-0.5"></div>
+                    </div>
+                    <button onclick="signOutUser()" class="btn-ghost" style="height:34px;min-width:34px;padding:0" title="Logout">
+                        <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i>
                     </button>
-                    <label class="admin-only flex items-center justify-center space-x-1 py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 font-medium cursor-pointer transition" title="Import Data">
-                        <i class="fa-solid fa-upload"></i>
-                        <span data-i18n="importBtn">Import</span>
-                        <input type="file" id="import-file" onchange="importData(event)" class="hidden" accept=".json">
-                    </label>
                 </div>
-
-                <button onclick="askResetAllData()" class="admin-only w-full flex items-center justify-center space-x-2 py-2 px-3 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs font-semibold transition mt-2">
-                    <i class="fa-solid fa-trash-can"></i>
-                    <span data-i18n="btnResetAll">Reset Total Workspace</span>
-                </button>
             </div>
         </aside>
 
         <!-- MAIN CONTENT AREA -->
         <div class="flex-1 flex flex-col overflow-hidden min-w-0">
-            
-            <header class="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 sm:px-6 z-10 no-print flex-shrink-0">
-                <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
+
+            <header class="topbar flex items-center justify-between gap-3 px-4 sm:px-8 z-10 no-print flex-shrink-0">
+                <div class="flex items-center gap-3 min-w-0">
                     <!-- Sidebar Toggle Button (Mobile & Desktop) -->
-                    <button onclick="toggleSidebar()" class="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition">
-                        <i class="fa-solid fa-bars text-lg"></i>
+                    <button onclick="toggleSidebar()" class="btn-ghost sidebar-open-btn" title="Menu">
+                        <i class="fa-solid fa-bars"></i>
                     </button>
 
-                    <h2 id="page-title" class="text-base sm:text-xl font-bold text-gray-800 dark:text-white truncate" data-i18n="navDashboard">Dashboard Utama</h2>
-                    
-                    <!-- Realtime Multi-User Sync Badge -->
-                    <div id="sync-badge" class="hidden sm:flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
-                        <span id="sync-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                        <span id="sync-text">Connecting Cloud...</span>
+                    <div class="min-w-0">
+                        <div id="today-label" class="text-[12px] font-semibold text-gray-500 hidden sm:block"></div>
+                        <h2 id="page-title" class="text-xl sm:text-[26px] leading-tight truncate" data-i18n="navDashboard">Dashboard</h2>
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <!-- Realtime Multi-User Sync Badge -->
+                    <div id="sync-badge" class="hidden sm:flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold border">
+                        <span id="sync-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                        <span id="sync-text">Connecting Cloud...</span>
+                    </div>
+
                     <!-- Language Switcher (ID / EN) -->
-                    <div class="flex items-center bg-gray-100 dark:bg-gray-700 p-1 rounded-xl text-xs font-bold text-gray-600 dark:text-gray-300">
-                        <button id="lang-btn-id" onclick="setLanguage('id')" class="px-2 py-1 sm:px-2.5 rounded-lg transition-all">ID</button>
-                        <button id="lang-btn-en" onclick="setLanguage('en')" class="px-2 py-1 sm:px-2.5 rounded-lg transition-all">EN</button>
+                    <div class="seg">
+                        <button id="lang-btn-id" onclick="setLanguage('id')">ID</button>
+                        <button id="lang-btn-en" onclick="setLanguage('en')">EN</button>
                     </div>
 
                     <!-- Theme Switcher -->
-                    <button onclick="toggleDarkMode()" class="hidden sm:inline-block p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition" title="Toggle Light/Dark Theme">
-                        <i id="theme-toggle-icon" class="fa-solid fa-moon text-lg"></i>
+                    <button onclick="toggleDarkMode()" class="btn-ghost hidden sm:inline-flex" title="Toggle Light/Dark Theme">
+                        <i id="theme-toggle-icon" class="theme-icon fa-solid fa-moon"></i>
                     </button>
 
-                    <!-- Signed-in user -->
-                    <div id="user-box" class="hidden items-center space-x-2">
-                        <div class="hidden lg:flex flex-col items-end leading-tight">
-                            <span id="user-email" class="text-xs text-gray-500 dark:text-gray-400 max-w-[180px] truncate"></span>
-                            <span id="user-role" class="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400"></span>
-                        </div>
-                        <button onclick="signOutUser()" class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition" title="Logout">
-                            <i class="fa-solid fa-right-from-bracket text-lg"></i>
-                        </button>
-                    </div>
-
                     <!-- Add Project CTA Button -->
-                    <button onclick="openProjectModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 sm:px-4 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-md shadow-blue-500/20 transition">
+                    <button onclick="openProjectModal()" class="btn-accent h-10 px-3 sm:px-4 text-sm flex items-center gap-2">
                         <i class="fa-solid fa-plus"></i>
                         <span class="hidden sm:inline" data-i18n="newProject">Proyek Baru</span>
                     </button>
                 </div>
             </header>
 
-            <main class="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900">
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:px-8">
                 
                 <!-- Toast Notification Box -->
                 <div id="toast" class="fixed top-20 right-4 sm:right-6 left-4 sm:left-auto z-[80] opacity-0 translate-x-8 transition-all duration-300 no-print bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 pointer-events-none">
