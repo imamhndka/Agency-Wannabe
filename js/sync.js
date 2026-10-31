@@ -16,6 +16,9 @@ function setSyncBadge(state) {
     syncText.innerText = t({ synced: 'syncSynced', offline: 'syncOffline', error: 'syncError' }[state]);
     const dot = document.getElementById('sync-dot');
     if (dot) dot.className = `w-2 h-2 rounded-full ${{ synced: 'bg-emerald-500', offline: 'bg-blue-500', error: 'bg-rose-500 animate-pulse' }[state]}`;
+    // Mobile shows the design's cloud icon instead of the dot + text.
+    const icon = document.getElementById('sync-icon');
+    if (icon) icon.className = `ph-bold ${{ synced: 'ph-cloud-check text-emerald-600', offline: 'ph-cloud-slash text-rose-600', error: 'ph-cloud-warning text-rose-600' }[state]}`;
 }
 
 window.cloudUnsubs = [];
