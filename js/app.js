@@ -18,6 +18,8 @@ window.onload = function () {
 // Close the top-most open dialog with Escape.
 document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
+    const sheet = document.getElementById('more-sheet');
+    if (sheet && !sheet.classList.contains('hidden')) return toggleMoreSheet(false);
     const order = ['modal-confirm', 'modal-attachments', 'modal-history', 'modal-daily-log', 'modal-project', 'modal-vendor', 'modal-freelancer', 'modal-pic', 'modal-research', 'modal-project-detail'];
     const open = order.find(id => { const el = document.getElementById(id); return el && !el.classList.contains('hidden'); });
     if (!open) return;

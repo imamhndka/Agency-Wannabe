@@ -19,6 +19,11 @@
     <!-- Font Awesome 6 Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Phosphor Icons (mobile bottom navigation, as in the design file) -->
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css">
+
     <!-- Chart.js for Visualizations -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
 
@@ -229,7 +234,13 @@
                         <i class="fa-solid fa-bars"></i>
                     </button>
 
-                    <div class="min-w-0">
+                    <!-- Mobile brand (replaces the page title under 900px) -->
+                    <div class="m-brand">
+                        <div class="jd-logo"><svg style="color:#151513"><use href="#jd-mark"/></svg></div>
+                        <span>JADI.in</span>
+                    </div>
+
+                    <div class="min-w-0 desk-title">
                         <div id="today-label" class="text-[12px] font-semibold text-gray-500 hidden sm:block"></div>
                         <h2 id="page-title" class="text-xl sm:text-[26px] leading-tight truncate" data-i18n="navDashboard">Dashboard</h2>
                     </div>
@@ -239,24 +250,25 @@
                     <!-- Realtime Multi-User Sync Badge -->
                     <div id="sync-badge" class="hidden sm:flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold border">
                         <span id="sync-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                        <i id="sync-icon" class="ph-bold ph-circle-notch"></i>
                         <span id="sync-text">Connecting Cloud...</span>
                     </div>
 
                     <!-- Language Switcher (ID / EN) -->
-                    <div class="seg">
+                    <div class="seg desk-only">
                         <button id="lang-btn-id" onclick="setLanguage('id')">ID</button>
                         <button id="lang-btn-en" onclick="setLanguage('en')">EN</button>
                     </div>
 
                     <!-- Theme Switcher -->
-                    <button onclick="toggleDarkMode()" class="btn-ghost hidden sm:inline-flex" title="Toggle Light/Dark Theme">
+                    <button onclick="toggleDarkMode()" class="btn-ghost desk-only" title="Toggle Light/Dark Theme">
                         <i id="theme-toggle-icon" class="theme-icon fa-solid fa-moon"></i>
                     </button>
 
                     <!-- Add Project CTA Button -->
-                    <button onclick="openProjectModal()" class="btn-accent h-10 px-3 sm:px-4 text-sm flex items-center gap-2">
+                    <button onclick="openProjectModal()" class="btn-accent cta-new h-10 px-3 sm:px-4 text-sm flex items-center gap-2">
                         <i class="fa-solid fa-plus"></i>
-                        <span class="hidden sm:inline" data-i18n="newProject">Proyek Baru</span>
+                        <span class="cta-label" data-i18n="newProject">Proyek Baru</span>
                     </button>
                 </div>
             </header>
@@ -267,6 +279,13 @@
                 <div id="toast" class="fixed top-20 right-4 sm:right-6 left-4 sm:left-auto z-[80] opacity-0 translate-x-8 transition-all duration-300 no-print bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 pointer-events-none">
                     <i class="fa-solid fa-circle-check text-xl"></i>
                     <span id="toast-message" class="text-sm font-medium">Notifikasi</span>
+                </div>
+
+                <!-- Mobile page heading (design: kicker + title + subtitle) -->
+                <div id="m-head" class="m-head no-print">
+                    <div id="m-head-kicker" class="m-head-kicker"></div>
+                    <h1 id="m-head-title" class="m-head-title"></h1>
+                    <p id="m-head-sub" class="m-head-sub"></p>
                 </div>
 
                 <!-- TAB 1: DASHBOARD -->
@@ -809,6 +828,32 @@
                         </form>
                         <div id="members-list"></div>
                     </div>
+
+                    <!-- Workspace data (on mobile the sidebar tools live here, as in the design) -->
+                    <div class="m-only bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 space-y-2">
+                        <h3 class="font-bold text-gray-900 dark:text-white mb-2" data-i18n="setDataTitle">Data Workspace</h3>
+                        <button type="button" onclick="exportData()" class="data-row">
+                            <i class="ph-duotone ph-download-simple"></i>
+                            <span><b data-i18n="dataExport">Export workspace</b><small data-i18n="dataExportSub">Unduh semua data sebagai JSON untuk backup.</small></span>
+                        </button>
+                        <label class="admin-only data-row">
+                            <i class="ph-duotone ph-upload-simple"></i>
+                            <span><b data-i18n="dataImport">Import workspace</b><small data-i18n="dataImportSub">Ganti data dari file JSON. Divalidasi sebelum ditulis.</small></span>
+                            <input type="file" onchange="importData(event)" class="hidden" accept=".json">
+                        </label>
+                        <button type="button" onclick="generateDemoData()" class="admin-only data-row">
+                            <i class="ph-duotone ph-magic-wand"></i>
+                            <span><b data-i18n="dataDemo">Buat data demo</b><small data-i18n="dataDemoSub">Isi contoh proyek, vendor &amp; invoice.</small></span>
+                        </button>
+                        <button type="button" onclick="askClearDemoData()" class="admin-only data-row">
+                            <i class="ph-duotone ph-broom"></i>
+                            <span><b data-i18n="dataClearDemo">Hapus data demo saja</b><small data-i18n="dataClearDemoSub">Data asli tidak disentuh.</small></span>
+                        </button>
+                        <button type="button" onclick="askResetAllData()" class="admin-only data-row danger">
+                            <i class="ph-duotone ph-warning"></i>
+                            <span><b data-i18n="dataReset">Reset total workspace</b><small data-i18n="dataResetSub">Menghapus SEMUA proyek, orang, vendor, riset &amp; invoice.</small></span>
+                        </button>
+                    </div>
                 </section>
 
                 <!-- TAB 8: INVOICES -->
@@ -969,6 +1014,45 @@
                 </section>
 
             </main>
+        </div>
+    </div>
+
+    <!-- MOBILE BOTTOM NAVIGATION (under 900px, from the design file) -->
+    <nav id="bottom-nav" class="bottom-nav no-print" aria-label="Main">
+        <button type="button" data-tab="dashboard" data-icon="ph-squares-four" onclick="switchTab('dashboard')">
+            <span class="bn-pill"><i class="ph-duotone ph-squares-four"></i></span><span data-i18n="shDashboard">Beranda</span>
+        </button>
+        <button type="button" data-tab="projects" data-icon="ph-kanban" onclick="switchTab('projects')">
+            <span class="bn-pill"><i class="ph-duotone ph-kanban"></i></span><span data-i18n="shProjects">Proyek</span>
+        </button>
+        <button type="button" data-tab="calculator" data-icon="ph-calculator" onclick="switchTab('calculator')">
+            <span class="bn-pill"><i class="ph-duotone ph-calculator"></i></span><span data-i18n="shCalculator">Hitung</span>
+        </button>
+        <button type="button" data-tab="invoices" data-icon="ph-receipt" onclick="switchTab('invoices')">
+            <span class="bn-pill"><i class="ph-duotone ph-receipt"></i></span><span data-i18n="shInvoices">Invoice</span>
+        </button>
+        <button type="button" data-tab="more" data-icon="ph-dots-three-circle" onclick="toggleMoreSheet()" aria-haspopup="dialog">
+            <span class="bn-pill"><i class="ph-duotone ph-dots-three-circle"></i></span><span data-i18n="shMore">Lainnya</span>
+        </button>
+    </nav>
+
+    <!-- "MORE" SHEET -->
+    <div id="more-sheet" class="more-scrim hidden no-print" onclick="toggleMoreSheet(false)">
+        <div class="more-panel" role="dialog" aria-modal="true" onclick="event.stopPropagation()">
+            <div class="more-handle"></div>
+            <div class="more-grid">
+                <button type="button" data-tab="calendar" data-icon="ph-calendar-dots" onclick="switchTab('calendar')"><i class="ph-duotone ph-calendar-dots"></i><span data-i18n="navCalendar">Kalender</span></button>
+                <button type="button" data-tab="pics" data-icon="ph-users-three" onclick="switchTab('pics')"><i class="ph-duotone ph-users-three"></i><span data-i18n="navPics">Tim & PIC</span></button>
+                <button type="button" data-tab="freelancers" data-icon="ph-sparkle" onclick="switchTab('freelancers')"><i class="ph-duotone ph-sparkle"></i><span data-i18n="navFreelancers">Talent Pool</span></button>
+                <button type="button" data-tab="vendors" data-icon="ph-storefront" onclick="switchTab('vendors')"><i class="ph-duotone ph-storefront"></i><span data-i18n="navVendors">Vendor & Partner</span></button>
+                <button type="button" data-tab="research" data-icon="ph-notebook" onclick="switchTab('research')"><i class="ph-duotone ph-notebook"></i><span data-i18n="navResearch">Riset & Catatan</span></button>
+                <button type="button" data-tab="settings" data-icon="ph-gear-six" onclick="switchTab('settings')"><i class="ph-duotone ph-gear-six"></i><span data-i18n="navSettings">Pengaturan</span></button>
+            </div>
+            <div class="more-actions">
+                <button type="button" onclick="toggleDarkMode()"><i class="theme-icon ph-bold ph-moon" data-icon-set="ph"></i><span data-i18n="themeLabel">Tema</span></button>
+                <button type="button" onclick="setLanguage(currentLang === 'id' ? 'en' : 'id')"><i class="ph-bold ph-translate"></i><span class="auth-lang-label">ID</span></button>
+                <button type="button" class="more-signout" onclick="signOutUser()" aria-label="Keluar / Sign out"><i class="ph-bold ph-sign-out"></i></button>
+            </div>
         </div>
     </div>
 

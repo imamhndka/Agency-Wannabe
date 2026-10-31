@@ -1,6 +1,6 @@
 // JADI.in Hub service worker: network-first for the app's own files, with an offline fallback.
 // Bump CACHE when releasing so old copies are cleaned up.
-const CACHE = 'jadiin-hub-v5';
+const CACHE = 'jadiin-hub-v6';
 const SHELL = [
   './', './index.html', './manifest.webmanifest',
   './css/tailwind.css', './css/app.css', './css/theme.css',

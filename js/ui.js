@@ -66,9 +66,61 @@ function switchTab(tabId) {
         document.getElementById('sidebar-overlay').classList.add('hidden');
     }
 
+    toggleMoreSheet(false);
     if (location.hash !== `#${tabId}`) history.replaceState(null, '', `#${tabId}`);
     applyLanguage();
     refreshActiveUI();
+}
+
+// ---------- MOBILE NAVIGATION (under 900px) ----------
+// Bottom bar holds four tabs plus "More"; the rest of the tabs live in the More sheet.
+const MORE_TABS = ['calendar', 'pics', 'freelancers', 'vendors', 'research', 'settings'];
+
+function toggleMoreSheet(open) {
+    const sheet = document.getElementById('more-sheet');
+    if (!sheet) return;
+    const show = typeof open === 'boolean' ? open : sheet.classList.contains('hidden');
+    sheet.classList.toggle('hidden', !show);
+    updateMobileNav();
+}
+
+function updateMobileNav() {
+    const sheetOpen = !document.getElementById('more-sheet').classList.contains('hidden');
+    const setActive = (btn, on) => {
+        btn.classList.toggle('is-active', on);
+        if (on) btn.setAttribute('aria-current', 'page'); else btn.removeAttribute('aria-current');
+        const icon = btn.querySelector('i');
+        if (icon) icon.className = `${on ? 'ph-fill' : 'ph-duotone'} ${btn.dataset.icon}`;
+    };
+    document.querySelectorAll('#bottom-nav button').forEach(btn => {
+        const tab = btn.dataset.tab;
+        setActive(btn, tab === 'more' ? (sheetOpen || MORE_TABS.includes(window.currentTab)) : (tab === window.currentTab && !sheetOpen));
+    });
+    document.querySelectorAll('#more-sheet .more-grid button').forEach(btn => setActive(btn, btn.dataset.tab === window.currentTab));
+}
+
+// Mobile page heading: date + greeting on the dashboard, group + title + subtitle elsewhere.
+const TAB_GROUP = { dashboard: 'navGroupWork', projects: 'navGroupWork', calendar: 'navGroupWork', calculator: 'navGroupWork', pics: 'navGroupPeople', freelancers: 'navGroupPeople', vendors: 'navGroupPeople', research: 'navGroupDocs', invoices: 'navGroupDocs', settings: 'navSettings' };
+
+function renderMobileHead() {
+    const kicker = document.getElementById('m-head-kicker');
+    if (!kicker) return;
+    const tab = window.currentTab;
+    const title = document.getElementById('m-head-title');
+    const sub = document.getElementById('m-head-sub');
+    if (tab === 'dashboard') {
+        const h = new Date().getHours();
+        const name = String((window.currentUser && window.currentUser.name) || '').split(/[\s@]/)[0];
+        kicker.innerText = new Date().toLocaleDateString(currentLang === 'en' ? 'en-US' : 'id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        title.innerText = t(h < 11 ? 'greetMorning' : h < 18 ? 'greetAfternoon' : 'greetEvening') + (name && name !== 'Local' ? `, ${name}` : '');
+        sub.innerText = '';
+    } else {
+        const nav = document.querySelector(`#nav-${tab} span`);
+        kicker.innerText = t(TAB_GROUP[tab]);
+        title.innerText = nav ? nav.innerText : '';
+        sub.innerText = t(`sub_${tab}`) === `sub_${tab}` ? '' : t(`sub_${tab}`);
+    }
+    updateMobileNav();
 }
 
 function formatIDR(amount) {
@@ -92,7 +144,9 @@ function toggleDarkMode() {
 
 function syncThemeIcons() {
     const isDark = document.documentElement.classList.contains('dark');
-    document.querySelectorAll('.theme-icon').forEach(icon => { icon.className = `theme-icon fa-solid ${isDark ? 'fa-sun' : 'fa-moon'}`; });
+    document.querySelectorAll('.theme-icon').forEach(icon => {
+        icon.className = icon.dataset.iconSet === 'ph' ? `theme-icon ph-bold ${isDark ? 'ph-sun' : 'ph-moon'}` : `theme-icon fa-solid ${isDark ? 'fa-sun' : 'fa-moon'}`;
+    });
 }
 
 // Reads a design token (css/theme.css) so charts follow the light / dark theme.

@@ -311,11 +311,76 @@ html.dark #toast i { color: #151513; }
 }
 @media (max-width: 767px) { .only-desktop { display: none !important; } }
 
-/* Mobile: sidebar slides over the content */
-@media (max-width: 767px) {
-    #sidebar { box-shadow: var(--shadow-lg); }
-    .topbar { height: 64px; }
+/* ---------- Mobile layout (under 900px, as in the design file) ----------
+   The sidebar is replaced by a floating bottom navigation and a "More" sheet. */
+.m-brand, .m-head, .bottom-nav, .m-only, #sync-icon { display: none; }
+
+@media (max-width: 899px) {
+    #sidebar, #sidebar-overlay, .sidebar-open-btn, .desk-title, .desk-only, .cta-label { display: none !important; }
+
+    .topbar { height: auto; padding: 10px 14px; gap: 8px; background: color-mix(in oklab, var(--bg) 80%, transparent); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+    .topbar > div:first-child { flex: 1; min-width: 0; }
+    .m-brand { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .m-brand .jd-logo { width: 34px; height: 34px; border-radius: 12%; box-shadow: none; }
+    .m-brand .jd-logo svg { width: 100%; height: 100%; }
+    .m-brand span { font: 800 17px var(--font-d); letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Sync status: icon-only pill */
+    #sync-badge { display: flex !important; height: 36px; width: 36px; padding: 0 !important; justify-content: center; }
+    #sync-badge > * + * { margin-left: 0 !important; }
+    #sync-text, #sync-dot { display: none; }
+    #sync-icon { display: block; font-size: 16px; }
+    .cta-new { height: 44px; padding: 0 13px; border-radius: 14px; font-size: 16px; }
+
+    main { padding: 18px 16px calc(104px + env(safe-area-inset-bottom)) !important; }
+    .m-head { display: flex; flex-direction: column; gap: 4px; margin-bottom: 20px; animation: jd-up .45s cubic-bezier(.2, .8, .2, 1) both; }
+    .m-head-kicker { font: 600 13px var(--font-b); color: var(--ink2); text-transform: capitalize; }
+    .m-head-title { margin: 0; font: 750 28px/1.04 var(--font-d); letter-spacing: -.035em; text-wrap: balance; color: var(--ink); }
+    .m-head-sub { margin: 2px 0 0; color: var(--ink2); font-size: 14.5px; text-wrap: pretty; }
+    .m-head-sub:empty { display: none; }
+    .m-only { display: block; }
+
+    #toast { top: auto; bottom: calc(96px + env(safe-area-inset-bottom)); }
+
+    /* Floating bottom navigation */
+    .bottom-nav { position: fixed; left: 10px; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 40; display: flex; padding: 6px; border-radius: 26px; background: color-mix(in oklab, var(--surface) 86%, transparent); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); border: 1px solid var(--line); box-shadow: var(--shadow-lg); }
+    .bottom-nav button { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 5px 0; min-height: 56px; border: 0; background: none; color: var(--ink2); font: 600 11px var(--font-b); cursor: pointer; transition: transform .15s; }
+    .bottom-nav button:active { transform: scale(.9); }
+    .bottom-nav button > span:last-child { white-space: nowrap; }
+    .bn-pill { width: 54px; height: 30px; border-radius: 999px; display: grid; place-items: center; background: transparent; transition: background .25s cubic-bezier(.2, .8, .2, 1); }
+    .bn-pill i { font-size: 20px; color: var(--ink2); }
+    .bottom-nav button.is-active { color: var(--ink); font-weight: 750; }
+    .bottom-nav button.is-active .bn-pill { background: var(--ink); }
+    .bottom-nav button.is-active .bn-pill i { color: var(--accent); }
 }
+
+/* "More" sheet */
+@keyframes jd-sheet { from { transform: translateY(100%); } }
+@keyframes jd-fade { from { opacity: 0; } }
+.more-scrim { position: fixed; inset: 0; z-index: 45; background: var(--scrim); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); display: flex; align-items: flex-end; animation: jd-fade .2s both; }
+.more-scrim.hidden { display: none; }
+.more-panel { width: 100%; padding: 10px 14px calc(96px + env(safe-area-inset-bottom)); border-radius: 28px 28px 0 0; background: var(--surface); display: flex; flex-direction: column; gap: 14px; animation: jd-sheet .35s cubic-bezier(.2, .8, .2, 1) both; }
+.more-handle { width: 40px; height: 5px; border-radius: 5px; background: var(--line2); margin: 2px auto 4px; }
+.more-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.more-grid button { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 6px; border-radius: 18px; border: 1px solid var(--line); background: var(--surface2); color: var(--ink); font: 650 12px var(--font-b); cursor: pointer; text-align: center; transition: transform .15s; }
+.more-grid button:active { transform: scale(.94); }
+.more-grid button i { font-size: 24px; color: currentColor; }
+.more-grid button.is-active { background: var(--ink); color: var(--bg); }
+.more-grid button.is-active i { color: var(--accent); }
+.more-actions { display: flex; gap: 8px; }
+.more-actions button { flex: 1; height: 48px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface2); color: var(--ink); font: 650 13px var(--font-b); display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+.more-actions button i { font-size: 18px; }
+.more-actions .more-signout { flex: none; width: 48px; border: 0; background: var(--bad-bg); color: var(--bad); font-size: 19px; }
+@media (min-width: 900px) { .more-scrim { display: none !important; } }
+
+/* Workspace data rows (Settings, mobile) */
+.data-row { width: 100%; display: flex; align-items: center; gap: 14px; padding: 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface2); color: var(--ink); text-align: left; cursor: pointer; transition: border-color .15s; }
+.data-row:hover { border-color: var(--line2); }
+.data-row > i { font-size: 24px; flex: none; }
+.data-row b { display: block; font-size: 14px; font-weight: 700; }
+.data-row small { display: block; font-size: 12.5px; color: var(--ink2); margin-top: 2px; }
+.data-row.danger { background: var(--bad-bg); color: var(--bad); border-color: transparent; }
+.data-row.danger small { color: var(--bad); opacity: .8; }
 
 /* Invoice paper always prints and previews as paper */
 #invoice-paper { background: #fff !important; color: #151513; }
